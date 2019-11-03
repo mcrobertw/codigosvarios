@@ -8,18 +8,6 @@ use Ventas1
 -- y organización.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 select 
 	d.object_id,
 	a.name [table], -- identificara la Tabla
