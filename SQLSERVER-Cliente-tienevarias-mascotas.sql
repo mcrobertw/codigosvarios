@@ -1,3 +1,4 @@
+USE VETERINARIA2;
 
 create table CLIENTE (
    IDCLIENTE            int                  not null,
