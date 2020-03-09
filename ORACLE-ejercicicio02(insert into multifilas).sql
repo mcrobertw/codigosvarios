@@ -1,0 +1,12 @@
+DROP TABLE LIBRO;
+
+CREATE TABLE LIBRO(
+	idlibro integer PRIMARY KEY,
+	nombrelibro varchar(40),
+	numeropaginas integer,
+	isbn varchar(20)
+)
+
+insert into libro(idlibro,nombrelibro,numeropaginas,isbn) 
+    SELECT 1,'Fundamentos de Bases de Datos','478','978-0-07-160846-6' FROM dual UNION ALL
+    SELECT 2,'Programación en Java 2','413','84-481-4591-7' FROM dual
