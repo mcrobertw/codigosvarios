@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<form id="form_id">
+		<ul>
+			<li>Mam&iacute;feros</li>
+			<li>Carn&iacute;voros</li>
+		</ul>
+	</form>
+	<script>
+			var form = document.getElementById('form_id');
+			var lis = form.getElementsByTagName('li');
+			for (var i = 0; i < lis.length; i++) {
+			    //console.log(lis[i].innerText);
+			    lis[i].style.backgroundColor = "red";
+			}
+	</script>
+</body>
+</html>
