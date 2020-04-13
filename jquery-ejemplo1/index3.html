@@ -4,6 +4,7 @@
 	<title></title>
 </head>
 <body>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<form id="form_id">
 		<ul>
 			<li>Mam&iacute;feros</li>
@@ -12,9 +13,12 @@
 	</form>
 	<script>
 			var matches = document.querySelectorAll('li');
-			for (var i = 0; i < matches.length; i++) {
+			/*for (var i = 0; i < matches.length; i++) {
 			    matches.style.backgroundColor = "red";
-			}
+			}*/
+			$.each(matches,function(indice, elemento) {
+				matches[indice].style.backgroundColor = "red";
+			});
 	</script>
 </body>
 </html>
