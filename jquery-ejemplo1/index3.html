@@ -13,12 +13,14 @@
 	</form>
 	<script>
 			var matches = document.querySelectorAll('li');
-			/*for (var i = 0; i < matches.length; i++) {
-			    matches.style.backgroundColor = "red";
-			}*/
-			$.each(matches,function(indice, elemento) {
+			
+			for (var i = 0; i < $( "li" ).length; i++) {
+			//for (var i = 0; i < matches.length; i++) {
+			    matches[i].style.backgroundColor = "red";
+			}
+			/*$.each(matches,function(indice, elemento) {
 				matches[indice].style.backgroundColor = "red";
-			});
+			});*/
 	</script>
 </body>
 </html>
