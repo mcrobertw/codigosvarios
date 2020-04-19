@@ -1,0 +1,38 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+html, body{
+	height: 100%;
+	background-color: #eee;
+}
+header{
+	background-color: #000;
+	height: 40px;
+	text-align: center;
+	color: #fff;
+}
+nav ul>li{
+	display: inline-block;
+	vertical-align: top;
+	padding: 1em;
+	padding-top: 0.5em;
+	padding-bottom: 0;
+	position: relative; /*Position en el padre*/
+}
+nav ul li:hover ul{
+	max-height: 130px;
+}
+nav ul li ul{
+	background-color: #000; /*Para despliegue de submenus*/
+	position: absolute; /*Position en el hijo para que no se desacomenden las opciones*/
+	z-index: 100;
+	text-align: left;
+	overflow: hidden;
+	max-height: 0px;
+	transition: all 0.4s;
+}
+nav ul li ul li{
+	display: block;
+	padding: 0.5em;
+}
