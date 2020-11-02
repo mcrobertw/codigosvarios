@@ -7,8 +7,12 @@ declare
     excep exception;
 BEGIN
     select sum(valorpago) into totalpagos from pago where idprestamo=:new.idprestamo;
+    if(totalpagos is null) then --para evitar que este en nulo la variable "totalpagos" para cuando no hay pagos de las deudas
+        totalpagos:=0;
+    end if;
+    --DBMS_OUTPUT.PUT_LINE('total de pagos antes del insert o update: '||totalpagos);
     select sum(totalprestamo) into montooriginal from prestamo where idprestamo=:new.idprestamo;
-    
+    --DBMS_OUTPUT.PUT_LINE('Monto original de prestamo es: '||montooriginal);
     if ((totalpagos+:new.valorpago)>montooriginal)  then
         raise excep;
     end if;
