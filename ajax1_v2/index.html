@@ -1,0 +1,66 @@
+<html>
+ 
+<head>
+ 
+<title>Ejemplo sencillo de AJAX</title>
+ 
+ 
+<script>
+function realizaProceso(valorCaja1, valorCaja2){
+        
+        // Definimos la URL que vamos a solicitar via Ajax
+        var ajax_url = "ejemplo_ajax_proceso.php";
+
+        // Definimos los parámetros que vamos a enviar
+        var params = "valorCaja1=valorCaja1&valorCaja2=valorCaja2";
+
+        // Añadimos los parámetros a la URL
+        ajax_url += '?' + params;
+
+        // Creamos un nuevo objeto encargado de la comunicación
+        var ajax_request = new XMLHttpRequest();
+
+        // Definimos como queremos realizar la comunicación
+        ajax_request.open( "POST", ajax_url, true );
+
+        // Ponemos las cabeceras de la solicitud como si fuera un formulario, necesario si se utiliza POST
+        ajax_request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        //Enviamos la solicitud
+        ajax_request.send();
+
+        ajax_request.onreadystatechange=function(){
+                if(this.readyState==4 && this.status==200){
+                        //console.log(this.responseText);
+                        document.getElementById("resultado").innerHTML=this.responseText;
+
+                }
+        }
+
+}
+</script>
+ 
+</head>
+ 
+<body>
+ 
+Introduce valor 1
+ 
+<input type="text" name="caja_texto" id="valor1" value="0"/> 
+ 
+ 
+Introduce valor 2
+ 
+<input type="text" name="caja_texto" id="valor2" value="0"/>
+ 
+Realiza suma
+ 
+<input type="button" href="javascript:;" onclick="realizaProceso($('#valor1').val(), $('#valor2').val());return false;" value="Calcula"/>
+ 
+<br/>
+ 
+Resultado: <span id="resultado">0</span>
+ 
+</body>
+ 
+</html>
