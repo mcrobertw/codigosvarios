@@ -23,3 +23,4 @@ function getXMLHTTPRequest(){
 
 return request;
 }
+</script>
