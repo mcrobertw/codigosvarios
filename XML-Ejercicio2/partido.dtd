@@ -1,0 +1,6 @@
+<!ELEMENT partido (equipo+)>
+<!ELEMENT equipo(nombre, entrenador, jugador)>
+<!ATTLIST equipo numero #CDATA #REQUIRED>
+<!ELEMENT nombre(#PCDATA)>
+<!ELEMENT entrenador(#PCDATA)>
+<!ELEMENT jugador(#PCDATA)>

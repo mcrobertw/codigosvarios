@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?> <!DOCTYPE partido SYSTEM "partido.dtd"> 
+<partido><!--Al ser la etiqueta padre, es el DOCUMENTELEMENT -->
+	<equipo numero="74">
+		<nombre>Emelec</nombre>
+		<entrenador>Israel Rescalvo</entrenador>
+		<jugador>Alexis Zapata</jugador>
+		
+	</equipo>
+	<equipo numero="43">
+		<nombre>Barcelona</nombre>
+		<entrenador>Ronald Koeman</entrenador>
+		<jugador>Anzu Fati</jugador>
+	</equipo>
+</partido>
