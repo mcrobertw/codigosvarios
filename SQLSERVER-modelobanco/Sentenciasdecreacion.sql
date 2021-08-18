@@ -7,7 +7,7 @@ create table CUENTA (
 ALTER TABLE CUENTA ADD CHECK (SALDO>=0)
 
 create table MOVIMIENTO (
-   IDMOVIMIENTO         int                  not null,
+   IDMOVIMIENTO         int  IDENTITY(1,1)   not null,
    IDCUENTA             int                  null,
    TIPOMOVIMIENTO       varchar(2)           null,
    VALOR                numeric(10,2)        null,
