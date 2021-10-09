@@ -1,0 +1,14 @@
+delete from notas_o;
+delete from notas;
+delete from detalle_matricula;
+delete from matricula;
+delete from parametros;
+delete from periodo;
+delete from parciales;
+delete from materias;
+delete from carrera;
+delete from escuela;
+delete from facultad;
+delete from cursos;
+delete from personal;
+delete from graduados;
