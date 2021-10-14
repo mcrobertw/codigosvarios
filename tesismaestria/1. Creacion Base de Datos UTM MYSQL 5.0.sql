@@ -22,7 +22,7 @@ create table PERSONAL
    PARROQUIA            varchar(100),
    TIPO_DISCAPACIDAD    varchar(100),
    TIPO_PYN             varchar(200),
-   PORCENTAJE_DISCAPACIDAD numeric(8,0),
+   PORCENTAJE_DISCAPACIDAD varchar(7),
    EGRESADO             varchar(1),
    IDPARROQUIA          numeric(6,0),
    SECTOR               varchar(100),
@@ -114,7 +114,7 @@ drop table if exists MATERIAS;
 /*==============================================================*/
 create table MATERIAS
 (
-   IDMATERIA            numeric(4,2) not null,
+   IDMATERIA            numeric(8,2) not null,
    IDCARRERA            numeric(6,0),
    IDCURSO              numeric(6,0),
    NOMBRE               varchar(50),
@@ -128,7 +128,7 @@ create table MATERIAS
    TIPO2                numeric(2,1),
    CLASE                varchar(2),
    CODIGO2              varchar(10),
-   IDAREA               varchar(1),
+   IDAREA               varchar(5),
    primary key (IDMATERIA)
 );
 
@@ -177,7 +177,7 @@ create table PERIODO
    FECHA_I_C            date,
    FECHA_F_C            date,
    MAXIMO_CREDITOS      numeric(2,0),
-   CICLO                varchar(1),
+   CICLO                varchar(15),
    IDPAR                numeric(2,0),
    INDICE_PERIODO       numeric(2,0),
    SUPLETORIO           varchar(1),
@@ -195,8 +195,8 @@ create table PARAMETROS
 (
    IDPARAMETRO          numeric(6,0) not null,
    IDPARCIAL            numeric(6,0),
-   PARAMETRO            varchar(20),
-   PORCENTAJE           numeric(4,2),
+   PARAMETRO            varchar(70),
+   PORCENTAJE           numeric(5,2),
    primary key (IDPARAMETRO)
 );
 
@@ -224,11 +224,11 @@ create table MATRICULA
    IDTIPOMATRICULA      numeric(2,0),
    IDCONCEPTO           numeric(2,0),
    VALORMATRICULA       numeric(10,2),
-   IDDESCUENTO          numeric(6,0),
+   IDDESCUENTO          varchar(7),
    PORDESCUENTO         numeric(6,2),
    VALORARANCEL         numeric(10,2),
    VALORTOTAL           numeric(10,2),
-   CREDITO              numeric(1,0),
+   CREDITO              varchar(4),
    ADICIONAL            numeric(6,2),
    PAGO                 numeric(10,2),
    PAGOEX               numeric(10,2),
@@ -236,7 +236,7 @@ create table MATRICULA
    CREDITO_APROBADOS    numeric(6,2),
    PROM_S               numeric(10,2),
    CREDITOS_APROBADOS_A numeric(6,2),
-   IDMATRICULAUNICO     numeric(6,2),
+   IDMATRICULAUNICO     varchar(10),
    primary key (IDMATRICULA, IDPERIODO, IDPERSONAL, IDCARRERA)
 );
 
@@ -261,16 +261,16 @@ create table DETALLE_MATRICULA
    IDPERIODO            numeric(6,0) not null,
    IDPERSONAL           numeric(8,0),
    IDCARRERA            numeric(6,0) not null,
-   IDMATERIA            numeric(4,2),
+   IDMATERIA            numeric(8,2),
    SUPLETORIO           numeric(5,2),
    NOTA_FINAL           numeric(5,2),
    REVALIDADO           varchar(1),
    APROBADO             varchar(2),
-   SUMA                 numeric(4,2),
+   SUMA                 numeric(6,2),
    ANULADO              varchar(2),
    ASISTENCIA           numeric(5,2),
    OBSERVACION          varchar(20),
-   OBSERVACION1         varchar(20),
+   OBSERVACION1         varchar(50),
    NORMAL               varchar(1),
    EVALUO               numeric(3,1),
    OYENTE               varchar(2),
