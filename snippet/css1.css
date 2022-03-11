@@ -1,0 +1,13 @@
+/*En equiteta "head", luego de "title"*/
+<style>
+		.displaybox{
+			width: 150px;
+			background-color: #CC9900;
+			border: 2px solid #000000;
+			padding:10px;
+			font: 24p normal verdana, helvetica, arial, sans-serif;
+		}
+</style>
+
+/*En bloques DIV*/
+<div id="MiElementoPagina1" class="displaybox"></div>
