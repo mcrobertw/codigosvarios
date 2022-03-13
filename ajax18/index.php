@@ -20,7 +20,6 @@
 			$(nuevosdatos[0]).innerHTML="Estoy";
 			$(nuevosdatos[1]).innerHTML="utilizando";
 			$(nuevosdatos[2]).innerHTML="prototype.js";
-
 		}
 
 	</script>
@@ -35,6 +34,5 @@
 		<div id="caja2" class="displaybox">b</div>
 		<div id="caja3" class="displaybox">c</div>
 	</center>
-	
 </body>
 </html>
