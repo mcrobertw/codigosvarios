@@ -24,11 +24,11 @@
 
 	</script>
 </head>
-<body style="background-color: #006666" onload="doAjax('dimehoraXML.php','','mostrar','post','1')">
+<body style="background-color: #006666">
 	<center>
 		<h1 style="color: #FFFF00">Función global $ de prototype.js</h1>
 		<form>
-			<input type="button" class="Estilo2" onclick="utilizarFuncionGlobal()" value="Usando Prototype.js">
+			<input type="button" onclick="utilizarFuncionGlobal()" value="Usando Prototype.js">
 		</form>
 		<div id="caja1" class="displaybox">a</div>
 		<div id="caja2" class="displaybox">b</div>
