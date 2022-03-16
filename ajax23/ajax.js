@@ -1,18 +1,9 @@
 function getXMLHTTPRequest(){
-	try{
-		req=new XMLHttpRequest(); /*p.e. firefox*/
-	}catch(err1){
-		try{
-			req=new ActiveXObject("Msxml2.XMLHTTP");/*Algunas versiones de I.E.*/
-		}catch(err2){
-			try{
-				req=new ActiveXObject("Microsoft.XMLHTTP");/*Algunas versiones de I.E.*/
-			}catch(err3){
-				req=false;
-			}
-		}
-	}
-	return req;	
+	return Try.these(
+		function(){return new ActiveXObject("Msxml2.XMLHTTP")}, 
+		function(){return new ActiveXObject("Microsoft.XMLHTTP")}, 
+		function(){return new XMLHttpRequest()}
+	)
 }
 
 var miPeticion=getXMLHTTPRequest();
