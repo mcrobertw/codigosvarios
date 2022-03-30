@@ -1,0 +1,131 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Grid Browser Compatibility</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Rico Grid Browser Compatibility</h1>
+
+<p><a href='browsers_ja.html'><img src='client/images/japanese.gif' alt='View this page in Japanese'></a>
+<a href='browsers_ja.html'>View this page in Japanese</a></p>
+
+<p>Rico 2.x grid examples have been tested on the following browsers and operating systems.
+LiveGrid and SimpleGrid likely work in other environments 
+(e.g. Opera on the Mac, etc); this list
+just indicates where developer testing has been completed.
+Except where noted below, all aspects of the grid are fully functional.
+<p><table border="1" cellpadding='4' cellspacing='0' class="compat">
+	<thead><tr>
+	  <th>&nbsp;</th>
+	  <th colspan="3">Operating System</th>
+	</tr>
+	<tr>
+	  <th>Browser</th>
+	  <th>Windows XP/Vista</th>
+	  <th>Macintosh 10.4</th>
+	  <th>Linux (Knoppix 5)</th>
+	</tr></thead>
+	<tbody><tr>
+	  <th>IE6</th>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+	  <td>&nbsp;</td>
+	  <td>&nbsp;</td>
+	</tr>
+	<tr>
+	  <th>IE7</th>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+	  <td>&nbsp;</td>
+	  <td>&nbsp;</td>
+	</tr>
+	<tr>
+	  <th>IE8</th>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'><sup>4</sup></td>
+	  <td>&nbsp;</td>
+	  <td>&nbsp;</td>
+	</tr>
+	<tr>
+	  <th>FF 1.5/2.0</th>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'><sup>1</sup></td>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+	</tr>
+	<tr>
+	  <th>FF 3.0</th>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+	  <td>&nbsp;</td>
+	  <td>&nbsp;</td>
+	</tr>
+	<tr>
+	  <th>Opera 9.0 - 9.2</th>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'><sup>1,2,3</sup></td>
+	  <td>&nbsp;</td>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'><sup>1,2,3</sup></td>
+	</tr>
+	<tr>
+	  <th>Opera 9.5 or later</th>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'><sup>2</sup></td>
+	  <td>&nbsp;</td>
+	  <td>&nbsp;</td>
+	</tr>
+	<tr>
+	  <th>Safari 2.0</th>
+	  <td>&nbsp;</td>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+	  <td>&nbsp;</td>
+	</tr>
+	<tr>
+	  <th>Safari 3.x</th>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+	  <td>&nbsp;</td>
+	  <td>&nbsp;</td>
+	</tr>
+	<tr>
+	  <th>Camino</th>
+	  <td>&nbsp;</td>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'><sup>1</sup></td>
+	  <td>&nbsp;</td>
+	</tr>
+	<tr>
+	  <th>Konqueror 3.5</th>
+	  <td>&nbsp;</td>
+	  <td>&nbsp;</td>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+	</tr>
+	<tr>
+	  <th>Google Chrome (beta)</th>
+	  <td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+	  <td>&nbsp;</td>
+	  <td>&nbsp;</td>
+	</tr>
+	</tbody>
+</table>
+<p>Notes:
+<ol>
+<li>In these configurations scrollbars are hidden when the menu is displayed
+(the scrollbars interfered with the menus).
+<li>In Opera, when using double-clicking to invoke menus, you should
+  turn off Opera's "Double click text to display context menu" setting by
+  going to Tools > Preferences > Advanced tab > Toolbars.
+<li>LiveGrid Forms is not recommended with Opera versions less than 9.5 due to a 
+<a href="http://dowdybrown.com/dbprod/testselect.htm">bug</a> 
+in the way it handles select boxes.
+<li>The production release of IE8 works correctly with Rico 2.1 in both standards and compatibility modes. 
+With Rico 2.0, the column resizer image is not displayed in grids, but everything else works. 
+Pre-release versions of IE8 only worked with Rico when IE8 was set to compatibility mode.
+</ol>
+
+<p>The <a href="http://laptop.org">OLPC</a> contains a custom browser based on 
+the Gecko layout engine. Rico runs without issue on this system.
+
+<p>Firefox versions 1.x and 2.x displayed minor artifacts when a popup menu
+overlayed a scrollbar. This is fixed in version 3.
+
+<p>In order to display properly, a browser displaying a LiveGrid must be operating in 
+<a href="http://www.quirksmode.org/css/quirksmode.html">strict (aka standards) mode</a>.
+
+
+</body>
+</html>

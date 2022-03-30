@@ -1,0 +1,179 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Installing the Rico Examples</title>
+
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+<style type="text/css">
+tbody td {
+  font-size: 8pt;
+  vertical-align: top;
+}
+p.comment {
+  color: #888;
+}
+</style>
+</head>
+
+<body>
+<h1>Installing the Rico Examples</h1>
+
+<p><a href='InstallNotes_ja.html'><img src='client/images/japanese.gif' alt='View this page in Japanese'></a>
+<a href='InstallNotes_ja.html'>View this page in Japanese</a></p>
+
+<p>Simply unzipping the Rico distribution file and copying the resulting
+directory structure into your web service's path should be sufficient to get
+most, if not all, of the examples running. If you have installed it into a
+directory called "rico" under the web service root, then you should be able
+to point your browser to the following address to access the examples:
+<blockquote><p>http://myserver.mydomain.com/rico/examples/</blockquote>
+<p>Or if you installed it on your personal computer, then access it as:
+<blockquote><p>http://localhost/rico/examples/</blockquote>
+
+<h2>IIS Configuration</h2>
+
+<p>Rico can be served from any web server. This section describes some configuration issues specific to IIS on Windows.
+
+<p>On a server running IIS6 or higher, you will need to change the security settings for ASP
+in order to run the ASP examples. In particular, you will need to enable ASP files
+to reference include files in the parent directory. To do this, follow these steps:
+<ol>
+<li>Open ISS Manager
+<li>Right click on "Default Web Site" and select "Properties" from the context menu
+<li>Click on the "Home Directory" tab
+<li>Click the "Configuration" button
+<li>Click the "Options" tab of the new window
+<li>Check the box labelled "Enable parent paths"
+</ol>
+
+<p>In order for the sample scripts to read the Northwind Access database on a computer running IIS7 (e.g. Vista PCs), 
+you will need to disable the loadUserProfile setting using this command:
+<pre>
+%windir%\system32\inetsrv\appcmd set config -section:applicationPools /[name='DefaultAppPool'].processModel.loadUserProfile:false
+</pre>
+The technique is described in 
+<a href="http://blogs.iis.net/bills/archive/2006/10/18/loadUserProfile-and-IIS7-_2D00_-understanding-temporary-directory-failures.aspx">
+this article</a>. If you prefer not to change the loadUserProfile setting, the alternative is to load 
+the Northwind database into SQL Server or MySQL and change connection settings in the relevant applib file as described below.
+
+<h2>LiveGrid Examples</h2>
+
+<p>Many of the LiveGrid examples fetch data from the Northwind sample database.
+In order to get these examples to work you will need to do 2 things:
+<ol>
+<li>Create the Northwind database
+<li>Modify the database connection settings which reside in the applib.* file
+</ol>
+
+<h2>Creating the Northwind database</h2>
+
+<p>The examples/data directory contains several different formats of the database needed 
+to run most of the Rico LiveGrid ASP, .net, and PHP examples.
+
+<p>Data is provided in these formats:
+
+<ol>
+<li>northwind.mdb - this is the standard Northwind database provided by Microsoft, 
+with the exception that the [Order Details] table has been renamed to Order_Details.
+If you will be accessing the ASP or .net examples, then no database configuration is
+necessary -- those examples will directly access this database using the Microsoft Jet driver.
+
+<li>mysql-northwind.sql - a backup file for MySQL (created using MySQL version 4.1)
+
+<li>mysql-northwind-dblquote.sql - same as above, except all instances of \' 
+have been changed to '' (recommended for MySQL version 5 or above)
+
+<li>ORA-EXPDAT.DMP - an Oracle export file for the Northwind schema -- generated using the "exp" utility in 
+<a href='http://www.oracle.com/technology/products/database/xe/index.html'>Oracle XE</a>. 
+The password for this schema is "password".
+</ol>
+
+<p>A version for MS SQL Server 2000 &amp; 2005 is available as a free download from <a href='http://www.microsoft.com/downloads/details.aspx?FamilyID=06616212-0356-46A0-8DA2-EEBC53A68034&amp;displaylang=en'>msdn.microsoft.com</a>. 
+After downloading it, you should follow <a href='http://msdn2.microsoft.com/en-us/library/ms227484.aspx'>Microsoft's intructions to install it</a>.
+Finally, you will need to either rename the [Order Details] table  to Order_Details, 
+or create a view named Order_Details using the following SQL statement:
+<pre>
+
+create view Order_Details as select * from [Order Details]
+
+</pre>
+
+
+<h2>Database connection settings</h2>
+
+<p>Specific instructions depend upon your environment:
+<table border='1' cellspacing='0' cellpadding='3'>
+<thead><tr>
+<th>Database</th>
+<th>PHP</th>
+<th>ASP</th>
+<th>.net</th>
+<th>Perl</th>
+</tr></thead>
+<tbody>
+<tr><td>Connection settings located in:</td>
+<td>examples/php/applib.php</td>
+<td>examples/asp/applib.asp</td>
+<td>examples/dotnet/applib.ascx</td>
+<td>examples/perl/ricoXMLquery.pl</td>
+
+<tr><th>MySQL</th>
+<td>return $GLOBALS['oDB']->MySqlLogon( "northwind", "userid", "password");</td>
+<td>oDB.Use_MySQL
+<p>oDB.SqlSvr="localhost"
+<p class='comment'>Set the user id, and password in the SqlLogon() statement.
+<p class='comment'>The Rico plug-in assumes that the MySQL 3.51 ODBC driver has been installed.
+If you are using a later ODBC driver, such as 5.1, then you will need to add this line:
+<p>oDB.OdbcDriver="{MySQL ODBC 5.1 Driver}"
+</td>
+<td>Public const dbDialect = "MySQL"
+<p class='comment'>Set the server name, user id, and password in OpenDB()
+<p class='comment'>The MySQL 3.51 ODBC driver must also be installed.
+</td>
+<td>$dbh = DBI->connect( "dbi:mysql:northwind", "userid", "password");</td>
+
+<tr><th>SQL Server</th>
+<td>
+$oDB->Dialect="TSQL";
+<p>return $GLOBALS['oDB']->MSSqlLogon( "ServerName\InstanceName", "Northwind", "userid", "password");
+<p class='comment'>Omit InstanceName when connecting to the default instance
+</td>
+<td>oDB.SqlSvr= "ServerName\InstanceName"
+<p class='comment'>Omit InstanceName when connecting to the default instance
+<p class='comment'>Set the user id, and password in the SqlLogon() statement.
+</td>
+<td>Public const dbDialect = "TSQL"
+<p class='comment'>Set the server name, user id, and password in OpenDB()</td>
+<td>&nbsp;</td>
+
+<tr><th>MS Access</th>
+<td>
+$oDB->Dialect="Access";
+<p>return $GLOBALS['oDB']->OdbcLogon( "northwindDSN", "Northwind", "Admin", "");</td>
+<td>oDB.Use_Access Server.Mappath( "../data/northwind.mdb")
+<p class='comment'>This is the default, so no changes should be required.</td>
+<td>Public const dbDialect = "Access"
+<p class='comment'>This is the default, so no changes should be required.</td>
+<td>&nbsp;</td>
+
+<tr><th>Oracle</th>
+<td>
+$oDB->Dialect="Oracle";
+<p>return $GLOBALS['oDB']->OracleLogon( "XE", "northwind", "password");</td>
+<td>oDB.Use_Oracle "XE"</td>
+<td>Public const dbDialect = "Oracle"
+<p class='comment'>Set the server name and password in OpenDB()
+<td>&nbsp;</td>
+
+<tr><th>DB2</th>
+<td><p class='comment'>not supported</td>
+<td>&nbsp;</td>
+<td>Public const dbDialect = "DB2"
+<p class='comment'>Set the server name, user id, and password in OpenDB()</td>
+<td>&nbsp;</td>
+</tbody>
+</table>
+
+</body>
+</html>

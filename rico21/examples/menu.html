@@ -1,0 +1,467 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Rico 2.0</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<base target="content">
+
+<script src="../src/rico.js" type="text/javascript"></script>
+<script type='text/javascript'>
+Rico.loadModule('Accordion','Corner');
+
+var acc;
+Rico.onLoad( function() {
+  $('RicoVersion').innerHTML=Rico.Version;
+  $('ProtoVersion').innerHTML=Prototype.Version;
+  Rico.Corner.round('menuheader');
+  acc=new Rico.Accordion( '.accordionTabTitleBar', '.accordionTabContentBox', {panelHeight:100} );
+  WinResize();
+  setTimeout(function() {Event.observe(top, "resize", WinResize, false);},100);
+});
+
+function CalcAccHt() {
+  var winht=RicoUtil.windowHeight();
+  var txtht=$('accordion1').offsetTop;
+  var titleht=acc.titles.length * acc.titles[0].offsetHeight;
+  return Math.max(winht-txtht-titleht-30,60);
+}
+
+function WinResize(e) {
+  acc.options.panelHeight=CalcAccHt();
+  acc.initContent();
+}
+
+</script>
+
+<style type="text/css">
+html {
+  padding: 10px;
+}
+body {
+  font-family: Arial, Tahoma, Verdana;
+  background: #4f4f4f;
+  color: #fff;
+  margin: 2px;
+  overflow: hidden;
+}
+div.top {
+  margin: 6px 0px;
+  padding-left: 5px;
+  font-size: 11px;
+}
+
+#accordion1 {
+  width: 99%;
+}
+
+div.selected, div.hover {
+  background-color:#63699C;
+  color:#FFFFFF;
+  font-weight:bold;
+  height: 22px;
+  padding-left: 5px;
+}
+
+.accordionTabTitleBar {
+  background-color:#6B79A5;
+  color:#CED7EF;
+  height: 22px;
+  font-weight : normal;
+  padding-left: 5px;
+  padding-top: 5px;
+  overflow: hidden;
+
+  border-bottom:1px solid #182052;
+  border-style:solid none;
+  border-top:1px solid #BDC7E7;
+  border-width:1px 0px;
+  font-size:12px;
+  white-space:nowrap;
+}
+
+.accordionTabContentBox {
+  font-size: 11px;
+  padding-left: 5px;
+  overflow: auto;
+}
+
+#menuheader {
+  background-color: #1381d4;
+  position: relative;
+  width: 99%;
+}
+
+#menuheader p {
+  padding: 1em;
+  margin: 0px;
+  font-weight: bold;
+  font-size:11pt;
+}
+
+ul {
+  margin:3px 0 0 0;
+  padding: 0px;
+}
+ul li {
+  background: url(client/images/phokus/blt-01.gif) no-repeat;
+  list-style: none;
+  padding: 0 0 0 16px;
+  margin: 4px 0;
+  font-size: 11px;
+}
+
+a {
+  color: #9999ff;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+div.subhead {
+  font-weight: bold;
+  margin-top:18px;
+  margin-bottom:3px;
+}
+</style>
+<!--[if lt IE 7]>
+  <style type="text/css">
+ul li {
+   height: 1%;
+}
+ </style>
+<![endif]-->
+</head>
+
+
+<body>
+
+<div id="menuheader">
+<p>Rico <span id='RicoVersion'></span>&nbsp;Examples
+<br><span style="font-weight:normal;font-size:smaller;">with
+<a href="http://www.prototypejs.org" target="_top" style="color:white;">Prototype</a>
+version: <span id='ProtoVersion'></span></span></p>
+</div>
+
+<div class='top'>
+<ul>
+<li><a href="http://sourceforge.net/projects/openrico/" target="_top">OpenRico@SourceForge</a> - home of OpenRico!
+<li><a href="http://dowdybrown.com/dbprod/" target="_top">dowdybrown.com</a> - online demos &amp; javascript reference
+<li><a href="http://openrico.org/" target="_top">openrico.org</a> - original forums &amp; demos
+</ul>
+</div>
+
+
+<div id="accordion1">
+
+  <div class="accordionTabTitleBar">Introduction &amp; Documentation</div>
+  <div id='overview' class="accordionTabContentBox">
+
+<ul>
+<li><a href="welcome.html">Welcome to Rico!</a>
+<li><a href="InstallNotes.html">Installing the examples</a>
+<li><a href="grids.html">Grid overview</a>
+<li><a href="browsers.html">LiveGrid browser compatibility</a>
+<li><a href="LiveGrid.html">Creating a LiveGrid</a>
+<li><a href="SimpleGrid.html">Creating a SimpleGrid</a>
+<li><a href="GridStyles.html">Grid Styles</a>
+<li><a href="LiveGridForms.html">Using LiveGrid Forms</a>
+<li><a href="LiveGridAjax.html">LiveGrid AJAX request &amp; response formats</a>
+<li><a href="translations.html">Multiple language support</a>
+</ul>
+
+  </div>
+
+  <div class="accordionTabTitleBar">HTML Examples (Accordion, Spreadsheet, etc)</div>
+  <div id='Accordion' class="accordionTabContentBox">
+
+<p>These examples do not rely on any plug-in.
+
+<ul>
+<li><a href="client/accordion.html">Basic Accordion</a>
+<li><a href="client/accordion1.html">Accordion with 3D backgrounds</a>
+<li><a href="client/accordion2.html">Accordion used for site navigation</a>
+<li><a href="client/accordion3.html">Nested accordions</a>
+<li><a href="client/accordion4.html">Accordion with memory</a>
+<li><a href="client/pull_down.html">Pull-down</a>
+<li><a href="client/panel1.html">Tabbed panels #1</a>
+<li><a href="client/panel2.html">Tabbed panels #2</a>
+<li><a href="client/corners.html">Corners without borders</a>
+<li><a href="client/corners2.html">Corners using color names</a>
+<li><a href="client/corners_with_border.html">Corners with borders</a>
+<li><a href="client/effect_animation.html">Animation</a>
+<li><a href="client/drag_and_drop_simple.html">Drag &amp; Drop-Simple</a>
+<li><a href="client/drag_and_drop_dyn.html">Drag &amp; Drop-dynamically created drop zones</a>
+<li><a href="client/drag_and_drop_log.html">Drag &amp; Drop-log from/to elements</a>
+<li><a href="client/drag_and_drop_grid.html">Drag &amp; Drop between LiveGrids</a>
+<li><a href="client/drag_and_drop_custom_draggable.html">Drag &amp; Drop with custom drag class</a>
+<li><a href="client/spreadsheet.html">Rico Spreadsheet</a>
+<li><a href="client/gridFromJSarray.html">LiveGrid populated from a javascript array</a>
+<li><a href="client/gridFromTable.html">LiveGrid populated from an HTML table</a>
+<li><a href="client/gridJSbuffer.html">LiveGrid with AjaxXML buffer and javascript callback</a>
+<li><a href="client/gridJSbuffer2.html">LiveGrid with AjaxSQL buffer and javascript callback</a>
+<li><a href="client/gridGoogleProto.html">LiveGrid, Prototype loaded from Google AJAX Library</a>
+<li><a href="client/accordion_grid.html">LiveGrids in an accordion</a>
+<li><a href="client/controls.html">Calendar, Color-picker, and popup window controls</a>
+<li><a href="client/tree5.html">Tree control</a>
+</ul>
+
+  </div>
+
+  <div class="accordionTabTitleBar">PHP Examples</div>
+  <div id='php' class="accordionTabContentBox">
+
+    <p>The PHP-based XML data provider (ricoXMLquery.php, dbClass2.php, ricoXmlResponse.php) has been tested with the following databases:
+    MySQL 4 &amp; 5, Oracle XE, SQL Server 2005, MS Access.
+
+<p>
+<div class='subhead'>LiveGrid-Static Buffer</div>
+<div>Uses Rico.Buffer.Base - takes advantage of LiveGrid scrolling, but no AJAX</div>
+<ul>
+<li><a href="php/ex1.php">Simple demo with pre-filled grid and selectable styles</a>
+<li><a href="php/ex1simple.php">Even simpler demo</a> - same as above, but without the style selections (simpler code is easier to follow)
+<li><a href="php/ex5.php">Select a range of cells and fill them in from the pop-up menu</a>
+<li><a href="php/ex7.php">Check boxes in pre-filled grid</a>
+</ul>
+
+<div class='subhead'>LiveGrid-Database Connection</div>
+<div>Uses Rico.Buffer.AjaxSQL on the client and Rico's PHP plug-in on the server to pass query results 
+from the database to the client via AJAX</div>
+<ul>
+<li><a href="php/ex2.php">Simple demo with 1 grid and selectable styles</a>
+<li><a href="php/ex2simple.php">Even simpler demo</a> - same as above, but without the style selections (simpler code is easier to follow)
+<li><a href="php/ex2abs.php">Grid in a popup window</a>
+<li><a href="php/ex3livegrid.php">Filter as you type</a> - grid is filtered as you type
+<li><a href="php/ex4.php">3 grids on a page</a> - drill down from customer, to orders for a customer, to line items on a specific order
+<li><a href="php/ex4btn.php">Same as above, but the 3 grids are displayed one at a time (created dynamically)</a>
+<li><a href="php/ex4panel.php">Same as above, but the 3 grids are displayed on tabbed panels</a>
+<li><a href="php/ex6.php">Applying a filter to the SQL query</a>
+<li><a href="php/ex2filterbyproduct.php">Filter grid based on a user selection external to the grid</a>
+<li><a href="php/ex2gradient.php">Cross-browser gradient headings</a>
+<li><a href="php/ex2outline.php">Grid highlighting using outline</a>
+<li><a href="php/ex2multiline.php">Display content that contains multiple lines of text</a>
+<li><a href="php/ex2highlight.php">Highlight rows where cell contains a specific value</a>
+<li><a href="php/ex2debug.php">Display debug messages generated by grid</a>
+<li><a href="php/ex2nototal.php">Grid does not fetch the total number of records</a>
+<li><a href="php/ex2json.php">Single grid, but data is returned in JSON format</a>
+<li><a href="php/RicoDbViewer.php">Display data in any database object</a>
+</ul>
+
+<div class='subhead'>LiveGrid Forms-Database Connection</div>
+<div>Popup forms allow data to be edited and posted back to the original script. 
+Populated using Rico.Buffer.AjaxSQL</div>
+<ul>
+<li><a href="php/ex2edit.php">Orders table editable via pop-up forms</a>
+<li><a href="php/ex2editfilter.php">Same as above, but with filter as you type also enabled</a>
+<li><a href="php/ex4edit.php">3 grids editable via pop-up forms</a>
+<li><a href="php/ShipperEdit.php">Shippers table editable via pop-up forms</a>
+</ul>
+
+<div class='subhead'>LiveGrid-XML Data Source</div>
+<div>Uses Rico.Buffer.AjaxXML to load data via AJAX at grid startup</div>
+<ul>
+<li><a href="php/weather.php">Yahoo Weather via AJAX</a>
+<li><a href="php/photos.php">Flickr photos via AJAX</a>
+<li><a href="php/ex3livegridxml.php">Filter as you type</a>
+</ul>
+
+<div class='subhead'>SimpleGrid</div>
+<div>No buffer - all data is in the DOM</div>
+<ul>
+<li><a href="php/simplegrid.php">Example using SimpleGrid plug-in for PHP</a>
+<li><a href="php/simplegrid2.php">SimpleGrid embedded in a form</a>
+<li><a href="php/ex3simplegrid.php">Filter as you type</a>
+</ul>
+
+<div class='subhead'>Popup Controls</div>
+<ul>
+<li><a href="php/controls.php">Calendar, Color-picker, and popup window controls</a>
+<li><a href="php/tree1.html">Tree control #1</a> - single selection
+<li><a href="php/tree2.php">Tree control #2</a> - checkbox selection
+<li><a href="php/tree3.html">Tree control #3</a> - single selection
+<li><a href="php/tree4.html">Tree control #4</a> - checkbox selection
+<li><a href="client/tree5.html">Tree control #5</a> - populated without AJAX
+</ul>
+
+  </div>
+
+
+  <div class="accordionTabTitleBar">ASP Examples</div>
+  <div id='asp' class="accordionTabContentBox">
+
+    <p>The ASP-based XML data provider (ricoXMLquery.asp, dbClass2.vbs, ricoXmlResponse.vbs) has been tested with the following databases:
+    SQL Server 2000/2005, Oracle XE, DB2 Express-C, MySQL 4 &amp; 5, MS Access.
+    The code is based on the ADO library, so it should work with most ADO compatible databases.
+
+<p>
+<div class='subhead'>LiveGrid-Static Buffer</div>
+<div>Uses Rico.Buffer.Base - takes advantage of LiveGrid scrolling, but no AJAX</div>
+<ul>
+<li><a href="asp/ex1.asp">Simple demo with pre-filled grid and selectable styles</a>
+<li><a href="asp/ex1simple.asp">Even simpler demo</a> - same as above, but without the style selections (simpler code is easier to follow)
+<li><a href="asp/ex5.asp">Select a range of cells and fill them in from the pop-up menu</a>
+<li><a href="asp/ex7.asp">Check boxes in pre-filled grid</a>
+</ul>
+
+<div class='subhead'>LiveGrid-Database Connection</div>
+<div>Uses Rico.Buffer.AjaxSQL on the client and Rico's ASP plug-in on the server to pass query results 
+from the database to the client via AJAX</div>
+<ul>
+<li><a href="asp/ex2.asp">Simple demo with 1 grid and selectable styles</a>
+<li><a href="asp/ex2simple.asp">Even simpler demo</a> - same as above, but without the style selections (simpler code is easier to follow)
+<li><a href="asp/ex2abs.asp">Grid in a popup window</a>
+<li><a href="asp/ex3livegrid.asp">Filter as you type</a> - grid is filtered as you type
+<li><a href="asp/ex4.asp">3 grids on a page</a> - drill down from customer, to orders for a customer, to line items on a specific order
+<li><a href="asp/ex4btn.asp">Same as above, but the 3 grids are displayed one at a time (created dynamically)</a>
+<li><a href="asp/ex4panel.asp">Same as above, but the 3 grids are displayed on tabbed panels</a>
+<li><a href="asp/ex6.asp">Applying a filter to the SQL query</a>
+<li><a href="asp/ex2filterbyproduct.asp">Filter grid based on a user selection external to the grid</a>
+<li><a href="asp/ex2gradient.asp">Cross-browser gradient headings</a>
+<li><a href="asp/ex2outline.asp">Grid highlighting using outline</a>
+<li><a href="asp/ex2multiline.asp">Display content that contains multiple lines of text</a>
+<li><a href="asp/ex2highlight.asp">Highlight rows where cell contains a specific value</a>
+<li><a href="asp/ex2debug.asp">Display debug messages generated by grid</a>
+<li><a href="asp/ex2nototal.asp">Grid does not fetch the total number of records</a>
+<li><a href="asp/RicoDbViewer.asp">Display data in any database object</a>
+</ul>
+
+<div class='subhead'>LiveGrid Forms-Database Connection</div>
+<div>Popup forms allow data to be edited and posted back to the original script. 
+Populated using Rico.Buffer.AjaxSQL</div>
+<ul>
+<li><a href="asp/ex2edit.asp">Orders table editable via pop-up forms</a>
+<li><a href="asp/ex2editfilter.asp">Same as above, but with filter as you type also enabled</a>
+<li><a href="asp/ex4edit.asp">3 grids editable via pop-up forms</a>
+<li><a href="asp/ShipperEdit.asp">Shippers table editable via pop-up forms</a>
+</ul>
+
+<div class='subhead'>LiveGrid-XML Data Source</div>
+<div>Uses Rico.Buffer.AjaxXML to load data via AJAX at grid startup</div>
+<ul>
+<li><a href="asp/ex3livegridxml.asp">Filter as you type</a>
+</ul>
+
+<div class='subhead'>SimpleGrid</div>
+<div>No buffer - all data is in the DOM</div>
+<ul>
+<li><a href="asp/simplegrid.asp">Example using SimpleGrid plug-in for ASP</a>
+<li><a href="asp/simplegrid2.asp">SimpleGrid embedded in a form</a>
+<li><a href="asp/ex3simplegrid.asp">Filter as you type</a>
+</ul>
+
+<div class='subhead'>Popup Controls</div>
+<ul>
+<li><a href="asp/controls.asp">Calendar, Color-picker, and popup window controls</a>
+<li><a href="asp/tree1.html">Tree control #1</a> - single selection
+<li><a href="asp/tree2.asp">Tree control #2</a> - checkbox selection
+<li><a href="asp/tree3.html">Tree control #3</a> - single selection
+<li><a href="asp/tree4.html">Tree control #4</a> - checkbox selection
+<li><a href="client/tree5.html">Tree control #5</a> - populated without AJAX
+</ul>
+
+  </div>
+
+
+  <div class="accordionTabTitleBar">.net Examples</div>
+  <div id='dotnet' class="accordionTabContentBox">
+
+    <p>The .net-based XML data provider (ricoXMLquery.aspx, ricoXmlResponse.ascx) has been tested with the following databases:
+    SQL Server 2005, Oracle XE, DB2 Express-C, MySQL 4 &amp; 5, MS Access.
+    The code is based on the ADO.net library, so it should work with any database that has an ADO.net data provider.
+    An alternate plug-in is available at: <a href="http://www.codeplex.com/sharppieces">SharpPieces</a>.
+
+<p>
+<div class='subhead'>LiveGrid-Static Buffer</div>
+<div>Uses Rico.Buffer.Base - takes advantage of LiveGrid scrolling, but no AJAX</div>
+<ul>
+<li><a href="dotnet/ex1.aspx">Simple demo with pre-filled grid and selectable styles</a>
+<li><a href="dotnet/ex1simple.aspx">Even simpler demo</a> - same as above, but without the style selections (simpler code is easier to follow)
+<li><a href="dotnet/ex5.aspx">Select a range of cells and fill them in from the pop-up menu</a>
+<li><a href="dotnet/ex7.aspx">Check boxes in pre-filled grid</a>
+</ul>
+
+<div class='subhead'>LiveGrid-Database Connection</div>
+<div>Uses Rico.Buffer.AjaxSQL on the client and Rico's .net plug-in on the server to pass query results 
+from the database to the client via AJAX</div>
+<ul>
+<li><a href="dotnet/ex2.aspx">Simple demo with 1 grid and selectable styles</a>
+<li><a href="dotnet/ex2simple.aspx">Even simpler demo</a> - same as above, but without the style selections (simpler code is easier to follow)
+<li><a href="dotnet/ex2abs.aspx">Grid in a popup window</a>
+<li><a href="dotnet/ex3livegrid.aspx">Filter as you type</a> - grid is filtered as you type
+<li><a href="dotnet/ex4.aspx">3 grids on a page</a> - drill down from customer, to orders for a customer, to line items on a specific order
+<li><a href="dotnet/ex4btn.aspx">Same as above, but the 3 grids are displayed one at a time (created dynamically)</a>
+<li><a href="dotnet/ex4panel.aspx">Same as above, but the 3 grids are displayed on tabbed panels</a>
+<li><a href="dotnet/ex6.aspx">Applying a filter to the SQL query</a>
+<li><a href="dotnet/ex2filterbyproduct.aspx">Filter grid based on a user selection external to the grid</a>
+<li><a href="dotnet/ex2gradient.aspx">Cross-browser gradient headings</a>
+<li><a href="dotnet/ex2outline.aspx">Grid highlighting using outline</a>
+<li><a href="dotnet/ex2multiline.aspx">Display content that contains multiple lines of text</a>
+<li><a href="dotnet/ex2highlight.aspx">Highlight rows where cell contains a specific value</a>
+<li><a href="dotnet/ex2debug.aspx">Display debug messages generated by grid</a>
+<li><a href="dotnet/ex2nototal.aspx">Grid does not fetch the total number of records</a>
+<li><a href="dotnet/RicoDbViewer.aspx">Display data in any database object</a>
+</ul>
+
+<div class='subhead'>LiveGrid Forms-Database Connection</div>
+<div>Popup forms allow data to be edited and posted back to the original script. 
+Populated using Rico.Buffer.AjaxSQL</div>
+<ul>
+<li><a href="dotnet/ex2edit.aspx">Orders table editable via pop-up forms</a>
+<li><a href="dotnet/ex2editfilter.aspx">Same as above, but with filter as you type also enabled</a>
+<li><a href="dotnet/ex4edit.aspx">3 grids editable via pop-up forms</a>
+<li><a href="dotnet/ShipperEdit.aspx">Shippers table editable via pop-up forms</a>
+</ul>
+
+<div class='subhead'>LiveGrid-XML Data Source</div>
+<div>Uses Rico.Buffer.AjaxXML to load data via AJAX at grid startup</div>
+<ul>
+<li><a href="dotnet/weather.aspx">Yahoo Weather via AJAX</a>
+<li><a href="dotnet/photos.aspx">Flickr photos via AJAX</a>
+<li><a href="dotnet/ex3livegridxml.aspx">Filter as you type</a>
+</ul>
+
+<div class='subhead'>SimpleGrid</div>
+<div>No buffer - all data is in the DOM</div>
+<ul>
+<li><a href="dotnet/simplegrid.aspx">Example using SimpleGrid plug-in for .net</a>
+<li><a href="dotnet/simplegrid2.aspx">SimpleGrid embedded in a form</a>
+<li><a href="dotnet/ex3simplegrid.aspx">Filter as you type</a>
+</ul>
+
+<div class='subhead'>Popup Controls</div>
+<ul>
+<li><a href="dotnet/controls.aspx">Calendar, Color-picker, and popup window controls</a>
+<li><a href="dotnet/tree1.html">Tree control #1</a> - single selection
+<li><a href="dotnet/tree2.aspx">Tree control #2</a> - checkbox selection
+<li><a href="dotnet/tree3.html">Tree control #3</a> - single selection
+<li><a href="dotnet/tree4.html">Tree control #4</a> - checkbox selection
+<li><a href="client/tree5.html">Tree control #5</a> - populated without AJAX
+</ul>
+
+  </div>
+
+  <div class="accordionTabTitleBar">Perl Examples</div>
+  <div id='perl' class="accordionTabContentBox">
+
+    <p>The Perl-based XML data provider (ricoXMLquery.pl) is based on the dbi library
+    and has been tested with the following databases:
+    SQL Server 2000/2005, Oracle XE, MySQL 4 &amp; 5, MS Access.
+    Perl's lack of direct support for session variables has made it difficult to port
+    code from the other Rico plug-ins.
+    We are looking for contributors who would like to take up this challenge
+    and more fully integrate this plug-in with Rico.
+
+<p>
+<div class='subhead'>LiveGrid-Static Buffer</div>
+<div>Uses Rico.Buffer.Base</div>
+<ul>
+<li><a href="perl/ex1.pl">Simple demo with pre-filled grid</a> - takes advantage of LiveGrid scrolling, but no AJAX
+<li><a href="perl/ex1simple.pl">Even simpler demo</a> - same as above, but without the style selections (simpler code is easier to follow)
+</ul>
+
+<div class='subhead'>LiveGrid-Database Connection</div>
+<div>Uses Rico.Buffer.AjaxSQL</div>
+<ul>
+<li><a href="perl/ex2.pl">Simple demo with 1 grid</a> - orders for all customers are retrieved via AJAX
+</ul>
+</div></div>
+</body></html>

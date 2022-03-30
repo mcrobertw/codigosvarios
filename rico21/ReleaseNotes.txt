@@ -1,0 +1,33 @@
+Release Notes for Rico 2.1
+Matt Brown
+3 May 2009
+
+Added database viewer examples - the PHP version only works with MySQL for now. Updated JSON format example in docs. Added more explanatory comments to applib files.
+
+Fixed small bug on calendar's month selector.
+
+Fixed bug where a column of type SL in LiveGrid Forms that also had filterUI=s displayed hidden tags in the filter list. Added ex2editfilter.asp/aspx/php examples to demonstrate this capability.
+
+Removed all calls to window.prompt (one in ricoCalendar.js and one for LiveGrid's keyword filter). Fixed bug when accessing MySQL from ASP plug-in.
+
+Finished testing with production release of IE8. Incorporated the following patch submittals:
+
+1) 1969959 - multiple operations in HighlightCell
+2) 2014452 - Determining isRailsPath failing on IE
+3) 2133970 - Custom filter for Columns
+4) 2133959 - TabbedPanel with Memory (also works with accordions, added accordion4.html example to demonstrate)
+
+Fixed bug 2649866 - Highlight option "selection" does not work after page scroll
+
+Fixed bug when right-clicking on a LiveGrid Forms pop-up form caused the form to close.
+
+Fixed bug where typing fast in a text box filter caused the text box to display a different filter than was being used in the sql request.
+
+Fixed bug where choose columns dialog did not respect column's canHide setting.
+
+Updated most Class.create() calls to use the new Prototype 1.6 convention. Updated many doc comments to be compatible with jsdoc-toolkit. Tagged several RicoUtil methods as deprecated.
+
+Ran all js files through javascript lint - added many curly brackets and semi-colons. Also fixed some undeclared local variables. Added compressed js and css files. Removed many Rico.loadModule calls in the examples because they now load the compressed version of Rico. Made the SimpleGrid.php plug-in compatible with PHP5. The .net LiveGrid control now assumes the calling script is loading the compressed version of Rico - this will likely require a minor code change in .net applications that use this control.
+
+Fixed bug in LiveGrid Forms where a record's key was not being encoded during update & delete operations. Fixed bug in ricoDragDrop.js where DragDrop interfered with draggable windows created with Rico.Popup. Changed exportImgTags default to false in LiveGrid export so that sort/filter image tags don't appear in export. Updated accordion3.html to demonstrate use of selectedIndex option. Added maxPrint property to dotnet LiveGrid plugin and also made it easier to dynamically add columns (new AddColumn/AddCalculatedField methods).
+

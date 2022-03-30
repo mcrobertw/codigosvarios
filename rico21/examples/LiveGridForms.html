@@ -1,0 +1,470 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Rico LiveGrid Forms</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Using Rico LiveGrid Forms</h1>
+
+<p><a href='LiveGridForms_ja.html'><img src='client/images/japanese.gif' alt='View this page in Japanese'></a>
+<a href='LiveGridForms_ja.html'>View this page in Japanese</a></p>
+
+<h2>OVERVIEW</h2>
+
+<p>While this document just refers to ASP, identical functionality is provided
+by the PHP and .net plugins.
+
+<ol>
+<li>create a new ASP file that includes ricoLiveGridForms.vbs
+
+<li>in the new ASP, define each of the fields in the table to be edited - usually 1-3 lines of code per field
+
+<li>the resulting ASP not only creates the appropriate grid, but also generates an input form in a hidden div
+
+<li>the ASP also adds "add/edit/delete record" entries to the popup menu
+
+<li>when add or edit is chosen, the form is unhidden (and filled in if edit was chosen)
+
+<li>when the user hits the save button, the form silently posts back to the original ASP
+
+<li>the ASP saves the data to the database and sends a response back to the client
+
+<li>the client displays a success or failure message in the bookmark area
+</ol>
+
+<p>The following two diagrams shows how requests and responses flow with LiveGrid Forms pages,
+and with LiveGrid pages without forms.
+While the two diagrams are labelled ASP/PHP, they also apply to .net (except that there is no dbClass2 in .net).
+<p><img src='client/images/asp-php-structure1.jpg'>
+<p><img src='client/images/asp-php-structure2.jpg'>
+
+
+<h2>USAGE</h2>
+
+<p>This class provides all of the functions necessary to view, insert, update, and delete
+records on a single table. An ASP script should follow these steps:
+
+<ol>
+<li>Create a single instance of the class
+<pre>set oForm=new TableEditClass</pre>
+
+<li>call the SetTableName method
+<pre>oForm.SetTableName "customer"</pre>
+
+<li>optionally set the CanAdd, CanEdit, CanDelete, ConfirmDelete, and/or RecordName properties if desired
+<pre>
+oForm.options("canAdd")=CanAdd
+oForm.options("canEdit")=CanModify
+oForm.options("canDelete")=CanDelete
+</pre>
+<li>if TableName is a view or has no primary key defined, editing will be disabled
+<li>call AddEntryField or AddCalculatedField for each field/column to be displayed
+      Fields appear in both the table and form views, with the following exceptions:
+<ul>
+<li>entry type is H never gets sent to the client. Writes to the database get the defined default value.
+<li>if FormView field property is set to "exclude", then the field appears in the table only.
+<li>if FormView field property is set to "hidden", then the data is put in a hidden form field.
+<li>Calculated fields appear in the table view only (same as FormView=exclude)
+</ul>
+
+<li>After each call to AddEntryField or AddCalculatedField, the other methods and properties
+      can be invoked to control how the field is presented to the user (e.g. SortAsc).
+      Calls to these properties/methods apply only to the field most recently added.
+<li>call DisplayPage - this displays the grid or executes the database update
+<pre>oForm.DisplayPage</pre>
+</ol>
+
+
+<h2>TABBED FORMS</h2>
+
+<p>Forms with multiple panels/tabs are fully supported using the Rico.TabbedPanel class.
+ Simply call AddPanel before calling AddEntryField to define the fields for that panel.
+ For example:
+<pre>
+' these fields appear on the first panel
+oForm.AddPanel "Panel #1"
+oForm.AddEntryField "field1", "Field #1", "T", ""
+oForm.AddEntryField "field2", "Field #2", "T", ""
+oForm.AddEntryField "field3", "Field #3", "T", ""
+
+' these fields appear on the second panel
+oForm.AddPanel "Panel #2"
+oForm.AddEntryField "field4", "Field #4", "T", ""
+oForm.AddEntryField "field5", "Field #5", "T", ""
+oForm.AddEntryField "field6", "Field #6", "T", ""
+</pre>
+
+<p>Alternatively, the panelIdx property can be set for each field as it is defined. In this
+case, AddPanel can be called at any time prior to DisplayPage.
+<pre>
+' these fields appear on the first panel
+oForm.AddEntryField "field1", "Field #1", "T", ""
+oForm.CurrentField("panelIdx")=0
+oForm.AddEntryField "field2", "Field #2", "T", ""
+oForm.CurrentField("panelIdx")=0
+oForm.AddEntryField "field3", "Field #3", "T", ""
+oForm.CurrentField("panelIdx")=0
+
+' these fields appear on the second panel
+oForm.AddEntryField "field4", "Field #4", "T", ""
+oForm.CurrentField("panelIdx")=1
+oForm.AddEntryField "field5", "Field #5", "T", ""
+oForm.CurrentField("panelIdx")=1
+oForm.AddEntryField "field6", "Field #6", "T", ""
+oForm.CurrentField("panelIdx")=1
+
+oForm.AddPanel "Panel #1"
+oForm.AddPanel "Panel #2"
+</pre>
+
+
+<h2>FORM METHODS</h2>
+<dl>
+  <dt>AddPanel "Panel Heading"
+  <dd>Defines the heading for a tabbed panel on the input form.
+
+  <dt>DisplayPage
+  <dd>Displays the grid or updates the database depending on the value of "action".
+
+  <dt><a name='DefineAltTable'></a>DefineAltTable (TableName, FieldList, FieldData, Delim)
+  <dd>Function that returns a TabId to be used in subsequent <a href='#AltTable'>AltTable</a> calls.
+  Defines a secondary table to store additional, related fields.
+  Key field(s) in main table must also exist in AltTable.
+  FieldList & FieldData are delimited strings that define
+  additional, constant values/functions to be stored in the secondary table.
+  Delim specifies the delimiter character used in FieldList & FieldData.
+  FieldList & FieldData must contain the same number of delimited entries.
+
+  <dt>genXHTML
+  <dd>Call to generate pure XHTML output.
+
+  <dt>SetDbConn (dbcls)
+  <dd>Specifies the instance of dbClass to be used.
+  If a global instance named oDB exists, then it will be used without this method having to be called.
+</dl>
+
+
+<h2>FORM PROPERTIES</h2>
+
+<p>All <a href="LiveGrid.html#options">LiveGrid</a> options are supported as properties, in addition to these which are specific to LiveGrid Forms.
+
+<dl>
+
+<dt>action (read only)
+<dd>specifies the current action being performed: table, ins, upd, del
+
+<dt>gridVar (read only)
+<dd>returns the name of the client-side LiveGrid object
+
+<dt>bufferVar (read only)
+<dd>returns the name of the client-side LiveGrid Buffer object
+
+<dt>AutoInit
+<dd>automatically initialize the grid (create the data rows)
+    default is true
+
+<dt>InitScript (read only)
+<dd>returns the javascript code (as a string) to initialize the grid (use when AutoInit is false)
+
+<dt>TableFilter
+<dd>specifies a where clause to be used in table view (optional)
+<pre>
+// only show records for the logged in user
+$oForm->TableFilter = "userid=$myuserid";
+</pre>
+
+<dt>canAdd
+<dd>allow user to add new records, defaults to true
+<dt>canEdit
+<dd>allow user to edit records, defaults to true
+<dt>canDelete
+<dd>allow user to delete records, defaults to true
+<dt>canClone
+<dd>allow user to clone records (edit existing record but save as new), defaults to false
+
+<dt>formView
+<dd>Extend the grid with LiveGrid Forms -- data entry form is created, add/edit/delete items are
+added to the grid menu, etc. Default is true in ASP and PHP, false in .net.
+
+<dt>updateURL
+<dd>post updates back to this location, defaults to the page that generated the grid
+
+<dt>ConfirmDelete
+<dd>flag specifying whether a confirmation popup should be displayed
+    after the user clicks the delete button, defaults to true
+    (see also <a href='#ConfirmDeleteCol'>ConfirmDeleteCol</a>)
+
+<dt>DebugFlag
+<dd>displaying debugging messages, defaults to false
+
+<dt>RecordName
+<dd>string to customize add, edit, and delete title tags,
+    defaults to "Record"
+
+<dt>maxDisplayLen
+<dd>Text box width. default is 20.
+
+<dt>TableName (write only)
+<dd>the table or view to be displayed/edited (required)
+
+<dt>TableSelectNew
+<dd>String used to identify when a user has selected to create a new value
+for an EntryType N field. Default is "___new___".
+
+<dt>showSaveMsg
+<dd>Disposition of database update responses:
+<ul>
+<li>full - show full response
+<li>errors - show full response for errors and short response otherwise (default)
+</ul>
+</dd>
+
+<dt style='color:navy;'><em>When using tabbed panels on the input form:</em>
+
+<dt>panelWidth
+<dd>Width of tabbed panels in pixels. Default is 500.
+
+<dt>panelHeight
+<dd>Height of tabbed panels in pixels. Default is 200.
+
+<dt>hoverClass
+<dd>CSS class when hovering over panel tab. Default is "tabHover".
+
+<dt>selectedClass
+<dd>CSS class when panel tab is selected. Default is "tabSelected".
+
+</dl>
+
+
+<h2>FORM EVENTS</h2>
+
+<p>It is possible to hook into several form events.
+
+<dl>
+<dt>formOpen
+<dd>Fires when the input form is displayed.
+<pre>
+oForm.options("formOpen")=
+  "alert('Questions? Please call the support desk.');"
+</pre>
+
+<dt>formClose
+<dd>Fires right after the input form is closed.
+
+<dt>onSubmitResponse
+<dd>Fires after a form has been sent to the server and a response has been received and processed.
+
+</dl>
+
+
+<h2>FIELD DEFINITION-METHODS</h2>
+<dl>
+<dt>AddEntryField (ColumnName, Heading, EntryTypeCode, DefaultValue)
+<dd>Adds a new column to the grid and a new entry field to the popup form in ASP and PHP.
+  <dl>
+
+  <dt>ColumnName
+  <dd>column name in the database table (does not support blanks or any name that would require square brackets in SQL, e.g.  [Apr 2005])
+
+  <dt>Heading
+  <dd>name that appears on the grid column's heading and also on the popup form
+
+  <dt>EntryTypeCode
+  <dd>string containing a code that controls how the column is displayed on the input form
+
+    <ul>
+    <li><strong>S</strong>:
+    Display this column as a drop-down select list during data entry.
+    Values may be specified using the "SelectValues" or "SelectSql" options.
+    If neither is specified, then the values for the column are obtained using 
+    a "select distinct" query.
+    <li><strong>R</strong>: Same as "S", except the items are displayed using radio buttons.
+    <li><strong>SL,RL</strong>: 
+    Same as S & R, except that a lookup value is displayed in table view 
+    (uses query specified by SelectSql).
+    Typically used on columns that are foreign keys. SQL to get the display value 
+    is specified using the "SelectSql" option.
+    <li><strong>CL</strong>:  Same as "SL", except that the value is selected 
+    using a custom control (such as the Rico Tree control).
+    The SelectCtl option must be assigned the id of the custom control.
+    <li><strong>N</strong>:
+    Same as "S", but allows the user to create a new value.
+    Typically used <em>without</em> the "SelectValues" or "SelectSql" options.
+    <li><strong>H</strong>:   column is hidden from the user (DefaultValue will be stored in the table on adds and edits)
+    <li><strong>D</strong>:   this is a date field (blanks allowed if column allows nulls)
+    <li><strong>DT</strong>:  same as D, except that it also includes the time
+    <li><strong>I</strong>:   integer number (blanks allowed if column allows nulls and required is false)
+    <li><strong>F</strong>:   floating-point number (blanks allowed if column allows nulls and required is false)
+    <li><strong>B</strong>:   non-blank text field (user gets a popup message in form view when clicking save and the field is empty)
+    <li><strong>T</strong>:   standard text field (blanks allowed)
+    <li><strong>TA</strong>:  text area field
+    <li><strong>tinyMCE</strong>:  rich text edit field using the 
+    <a href="http://tinymce.moxiecode.com/">tinyMCE</a> library.
+    </ul>
+
+  <dt>DefaultValue
+  <dd>column's default value in the form view
+  </dl>
+
+  <p>The equivalent to AddEntryField() in .net is to declare column fields as part of the markup.
+  The "ColData" attribute contains the default value.
+  Here is an example from ex2edit.aspx:
+<pre>
+&lt;Rico:Column runat='server' heading='Order#' width='60' 
+             ColName='OrderID' EntryType='B' ColData='&lt;auto&gt;' /&gt;
+</pre>
+
+<dt>AddEntryFieldW (ColumnName, Heading, EntryTypeCode, DefaultValue, ColWidth)
+<dd>Same as AddEntryField except an extra parameter is added for column width (in pixels).
+
+<dt>AddCalculatedField (ColumnFormula, Heading)
+<dd>ColumnFormula is any valid SQL expression or subquery.
+    If the subquery needs to reference a column in the table being displayed,
+    then the column name should be prefaced with the alias "t."
+    Calculated fields will be displayed in table view, but not in form view.
+
+<dt>AddFilterField (ColumnName, FilterValue)
+<dd>Only display records where the contents of ColumnName=FilterValue.
+    This becomes a hidden field (entry type H).
+
+<dt><a name='ConfirmDeleteCol'></a>ConfirmDeleteCol
+<dd>The contents of the most recently added column will be included in delete confirmation messages
+
+<dt>SortAsc
+<dd>In table view, sort by this column in ascending order (applies to most recently added field)
+
+<dt>SortDesc
+<dd>In table view, sort by this column in descending order (applies to most recently added field)
+
+</dl>
+
+
+<h2>FIELD DEFINITION-PROPERTIES</h2>
+
+<p>All <a href="LiveGrid.html#column">LiveGrid</a> column properties are supported, in addition to these which are specific to LiveGrid Forms.
+
+<dl>
+
+<dt>AddQuotes
+<dd>When false, the column value will be left unquoted when inserting or updating 
+    the database (default=true). This makes it possible to populate columns with 
+    SQL function calls. For example:
+<pre>
+oForm.AddEntryField "LastEditUser","","H","suser_sname()"
+oForm.CurrentField("AddQuotes")=false
+oForm.AddEntryField "LastEditDate","","H","getdate()"
+oForm.CurrentField("AddQuotes")=false
+</pre>
+
+<dt>required
+<dd>Boolean value that specifies whether the input field may be left empty 
+(default: false if column allows nulls and EntryType is not "B", true otherwise).
+  
+<dt><a name='AltTable'></a>AltTable (TabId)
+<dd>Specifies that the field should be stored in an alternate table
+    TabId should be the value returned by a previous call to <a href='#DefineAltTable'>DefineAltTable</a>
+
+<dt>TxtAreaRows
+<dd>For columns with entry type "TA", this is # of rows to display in the 
+    textarea when in form view (default 4)
+
+<dt>TxtAreaCols
+<dd>For columns with entry type "TA", this is # of columns to display in the 
+    textarea when in form view (default 80)
+
+<dt>FilterFlag
+<dd>If true, then the grid is filtered by the default value for this column (default=false)
+
+<dt>Help
+<dd>Creates a title tag containing the specified text (form view only). So if the user
+hovers over the field label, they will see this text as balloon help. For example:
+<pre>
+oForm.CurrentField("Help")="Date must be entered in mm/dd/yyyy format"
+</pre>
+
+<dt>pattern
+<dd>A string containing a regular expression. User entries will be checked to ensure
+they match the pattern specified. There are a few special values:
+<ul>
+<li>"email" - tests for a valid email address
+<li>"float-unsigned" - tests for a valid unsigned floating point (real) number
+<li>"float-signed" - tests for a valid signed floating point (real) number (this is the default when EntryType is "F")
+<li>"int-unsigned" - tests for a valid unsigned integer number
+<li>"int-signed" - tests for a valid signed integer number (this is the default when EntryType is "I")
+</ul>
+<br>It is recommended that a Help entry be included
+whenever a pattern is specified. If the field fails validation, the help text
+will be included in the error message presented to the user. For example:
+<pre>
+oForm.CurrentField("Help")="Enter date as mm/dd/yyyy"
+oForm.CurrentField("pattern")="^\\d{1,2}/\\d{1,2}/\\d{4}$"
+</pre>
+
+<dt>min/max
+<dd>Specifies the minimum/maximum allowable values for fields with EntryType "I", "F", and "D". 
+For example:
+<pre>
+oForm.AddEntryField "field1", "Field #1", "I", "0"
+oForm.CurrentField("min")=1
+oForm.CurrentField("max")=10
+oForm.CurrentField("Help")="Enter a value between 1 and 10"
+
+oForm.AddEntryField "field2", "Field #2", "D", Date()
+oForm.CurrentField("min")="2000-01-01"
+oForm.CurrentField("max")="2099-12-31"
+oForm.CurrentField("Help")="Enter a value in the 21st century!"
+</pre>
+
+<dt>InsertOnly
+<dd>Only write this field to the database when peforming an insert (default=false).
+<pre>
+oForm.AddEntryField "CreateDate","","H","getdate()"
+oForm.CurrentField("AddQuotes")=false
+oForm.CurrentField("InsertOnly")=true
+</pre>
+
+<dt>UpdateOnly
+<dd>Only write this field to the database when peforming an update (default=false).
+<pre>
+oForm.CurrentField("UpdateOnly")=true
+</pre>
+
+<dt>ReadOnly
+<dd>If true, data is displayed on the entry form but cannot be changed, text is gray (default=false).
+Does not apply to entry types of S, SL, N, R, RL -- use objTE.CurrentField("FormView")="hidden" instead.
+
+<dt>SelectValues
+<dd>Specifies the choices the user sees in form view for EntryTypes of N, S, and R.
+    If supplied, then this should be a string of comma-separated values. For example:
+<pre>
+oForm.CurrentField("SelectValues")="Y,N"
+</pre>
+
+<dt>SelectSql
+<dd>Specifies the SQL select statement to use for EntryTypes of SL, CL, and RL.
+    The select statement should return 2 columns: the first being the code 
+    and the second being the text value/description. For example:
+<pre>
+oForm.CurrentField("SelectSql")="select ID,Name from Customers"
+</pre>
+
+<dt>SelectFilter
+<dd>SelectSql serves 2 purposes. First, it is used to retrieve the appropriate
+    data to display in the grid. Second, it is used to populate the values in
+    the select box (SL) or radio buttons (RL) on the pop-up form. In some cases,
+    you may want these to be different. In the SelectSql example above, we
+    are retrieving customer name. But let's say that our Customers table has
+    a "CreditHold" field and we want to disable the selection of customers on
+    credit hold in the form view, but still display them in the grid.
+    This is where SelectFilter comes in:
+<pre>
+oForm.CurrentField("SelectFilter")="CreditHold='NO'"
+</pre>
+
+</dl>
+
+</body>
+</html>

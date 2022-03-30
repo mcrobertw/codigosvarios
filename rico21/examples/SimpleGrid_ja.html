@@ -1,0 +1,435 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Rico SimpleGrid</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Rico SimpleGrid の作成</h1>
+
+<p>SimpleGrid は Rico 2.0 で追加され、LiveGrids と同じ機能のいくらかを共有します - 
+リサイズ可能な列、固定された列と固定された見出し。
+しかしながら、LiveGrid と異なり、データは静的であり DOM に存在します - 
+それゆえに、バッファリング、AJAX リフレッシュ、ソート、フィルタリングの機能がありません。
+なぜ、SimpleGrid を使うのでしょうか？
+<ul>
+<li>それぞれのセルが含むことが出来るものが、より柔軟であるので - 
+列内のセルがすべて同じタイプである必要はありません。
+<li>状況によって、それは LiveGrid よりクライアント上で、より良く実行することができます。
+特にグリッドに多くの列を表示している遅いクライアントで。
+<li>最後に、SimpleGrid は入力要素である（チェックボックス、セレクトリスト、その他）を含むことができます。 
+LiveGrid も入力要素を含むことができますが、要素の値が LiveGrid のバッファに保存されるので、
+サーバに値をサブミットするには扱いにくいです。
+SimpleGrids は、この問題で苦しみません。
+あなたが単に標準的な <code>&lt;form&gt;...&lt;/form&gt;</code> タグでグリッド全体を囲めば、
+グリッド中のどんな入力要素でもサーバーへサブミットされます。
+</ul>
+
+<p>SimpleGrids は、次の 2 つの方法で作成する事が出来ます。
+<ol>
+<li>SimpleGrid プラグインの中の 1 つを用いて。PHP、ASP と .net のためのプラグインが存在します。
+<li>XSLTを用いて。Rico は、標準的なHTMLテーブルを SimpleGrid に変換する XSL ファイルを持っています。
+</ol>
+
+<h2>利用モデル 1: SimpleGrid プラグインの利用</h2>
+<p>このセクションは、Rico ディストリビューションに含まれる 
+simplegrid.php/asp/aspx の実例について記述します
+<ul>
+<li>PHP では。
+<ul>
+<li>最初に、SimpleGrid プラグインへの参照を作成して下さい。
+<pre>
+require "../../plugins/php/SimpleGrid.php";
+</pre>
+<li>SimpleGrid プラグインクラスのインスタンスを作成して下さい（サーバサイド）。
+<pre>
+$grid=new SimpleGrid();
+</pre>
+
+<li>グリッドの見出しを作成して下さい。
+AddHeadingRow に 'true' を渡して、これがメインの見出し行である事を示します - 
+それはリサイザを得ます。
+メインの見出し行の列数は、データの列数と <em>必ず</em> 同じでなければなりません。
+他の見出し行は、複合列を扱うために "colspan" タグを含むかも知れません。
+複合見出し行を持つならば、唯一無二の一行だけが、メインの行として指定されるかもしれません。
+<pre>
+$grid->AddHeadingRow(true);
+for ($c=1; $c<=$numcol; $c++) {
+  $grid->AddCell("Column $c");
+}
+</pre>
+
+<li>グリッドデータセクションを実装して下さい。
+どこででも AddDataRow() を呼んで、通常は、標準的な html テーブルに <code>&lt;tr&gt;</code> タグを配置します。
+どこででも AddCell() を呼んで、 <code>&lt;td&gt;</code> タグを配置します。
+<pre>
+for ($r=1; $r<=100; $r++) {
+  $grid->AddDataRow();
+  $grid->AddCell($r);
+  for ($c=2; $c<=$numcol; $c++) {
+    $grid->AddCell("Cell $r:$c");
+  }
+}
+</pre>
+
+<li>テーブルをレンダリングして下さい（html 出力を生成します）。
+最初のパラメータはグリッド id で、第二のパラメータは、固定された列の数です。
+<pre>
+$grid->Render("ex1", 1);
+</pre>
+
+</ul>
+
+<li>ASP では。
+<ul>
+<li>最初に、SimpleGrid プラグインへの参照を作成して下さい。
+<pre>
+&lt;!-- #INCLUDE FILE = "../../plugins/asp/SimpleGrid.vbs" --&gt;
+</pre>
+
+<li>SimpleGrid プラグインクラスのインスタンスを作成して下さい（サーバサイド）。
+<pre>
+set grid=new SimpleGrid
+</pre>
+
+<li>グリッドの見出しを作成して下さい。
+AddHeadingRow に 'true' を渡して、これがメインの見出し行である事を示します - 
+それはリサイザを得ます。
+メインの見出し行の列数は、データの列数と <em>必ず</em> 同じでなければなりません。
+他の見出し行は、複合列を扱うために "colspan" タグを含むかも知れません。
+複合見出し行を持つならば、唯一無二の一行だけが、メインの行として指定されるかもしれません。
+<pre>
+grid.AddHeadingRow true
+for c=1 to numcol
+  grid.AddCell "Column " & c
+next
+</pre>
+
+<li>グリッドデータセクションを実装して下さい。
+どこででも AddDataRow() を呼んで、通常は、標準的な html テーブルに <code>&lt;tr&gt;</code> タグを配置します。
+どこででも AddCell() を呼んで、<code>&lt;td&gt;</code> タグを配置します。
+<pre>
+for r=1 to 100
+  grid.AddDataRow
+  grid.AddCell r
+  for c=2 to numcol
+    grid.AddCell "Cell " & r & ":" & c
+  next
+next
+</pre>
+
+<li>テーブルをレンダリングして下さい（html 出力を生成します）。
+最初のパラメータはグリッド id で、第二のパラメータは、固定された列の数です。
+<pre>
+grid.Render "ex1", 1
+</pre>
+</ul>
+
+<li>.net では。
+<ul>
+<li>最初に、SimpleGrid プラグインへの参照を作成して下さい。
+<pre>
+&lt;%@ Register TagPrefix="Rico" TagName="SimpleGrid" 
+    Src="../../plugins/dotnet/SimpleGrid.ascx" %&gt;
+</pre>
+
+<li>SimpleGrid プラグインクラスのインスタンスを作成して下さい（サーバサイド）。
+<pre>
+&lt;Rico:SimpleGrid runat='server' id='ex1' FrozenCols='1' /&gt;
+</pre>
+
+<li>グリッドの見出しを作成して下さい - 通常は Page_Load イベント内で。
+AddHeadingRow に 'true' を渡して、これがメインの見出し行である事を示します - 
+それはリサイザを得ます。
+メインの見出し行の列数は、データの列数と <em>必ず</em> 同じでなければなりません。
+他の見出し行は、複合列を扱うために "colspan" タグを含むかも知れません。
+複合見出し行を持つならば、唯一無二の一行だけが、メインの行として指定されるかもしれません。
+<pre>
+  ex1.AddHeadingRow(true)
+  for c=1 to numcol
+    ex1.AddCell("Column " & c)
+  next
+</pre>
+
+<li>グリッドデータセクションを実装して下さい。
+どこででも AddDataRow() を呼んで、通常は、標準的な html テーブルに <code>&lt;tr&gt;</code> タグを配置します。
+どこででも AddCell() を呼んで、<code>&lt;td&gt;</code> タグを配置します。
+<pre>
+  for r=1 to 100
+    ex1.AddDataRow()
+    ex1.AddCell(r)
+    for c=2 to numcol
+      ex1.AddCell("Cell " & r & ":" & c)
+    next
+  next
+</pre>
+
+<li>他のプラグインと違い、.net コントロールにより自動的にレンダリングされます。
+</ul>
+
+<li>最後に、利用されるプラグインに関係なく javascript SimpleGrid オブジェクトを
+初期化する必要があります（クライアントサイド）：
+<pre>
+&lt;script type='text/javascript'&gt;
+Rico.loadModule('SimpleGrid','greenHdg.css');
+
+Rico.onLoad( function() {
+  var opts = {  
+    columnSpecs: ['specQty']  // display first column as a numeric quantity
+  };
+  var ex1=new Rico.SimpleGrid ('ex1', opts);
+});
+&lt;/script&gt;
+</pre>
+
+</ul>
+
+
+<h2>利用モデル 2: XSLT 変換の利用</h2>
+
+<p>ウェブページが XHTML 対応であるなら、ページ上の標準的な html テーブルを、
+"ricoSimpleGrid.xsl" XSL スタイルシートを利用した SimpleGrid にする事が可能です。
+一時、Rico はクライアントでこの変換をする事をサポートしていました。
+しかし、Prototype ライブラリの変化により、これは既に可能でありません。
+したがって、このアプローチを使う方を選ぶなら、XSLT 変換は <em>必ず</em> サーバで実行されなければなりません。
+サーバサイド変換を行うインストラクション。
+<ul>
+<li><a href="http://www.php.net/manual/en/ref.xsl.php">PHP5 を利用して</a>
+<li><a href="http://www.topxml.com/dotnet/articles/xslt/default.asp">.net を利用して</a>
+</ul>
+
+<p>この変換は "ricoSimpleGrid" クラスでテーブルをコンバートするだけです。
+<pre>
+&lt;table id='test1' class='ricoSimpleGrid'&gt;
+</pre>
+
+<p>固定された列の見出しは、 <code>&lt;th&gt;</code> タグに class="ricoFrozen" を持たなければなりません。
+複合見出し行があるならば、メインの見出し行は "_main" で終わる id を持たなければなりません
+（これは、リサイズハンドルを表示する行です）。
+その変換は、テーブルの <code>&lt;thead&gt;</code> セクションでグリッドの見出しを探します。
+thead セクションが存在しないなら、その変換はテーブルの最初の行が見出し列であると仮定します。
+<pre>
+&lt;table id="test1" class="ricoSimpleGrid"&gt;
+
+  &lt;thead&gt;
+     &lt;tr id="customer_livegrid_main"&gt;
+        &lt;th class="ricoFrozen"&gt;ID&lt;/th&gt;
+        &lt;th&gt;Customer&lt;/th&gt;
+        &lt;th&gt;Address&lt;/th&gt;
+        &lt;th&gt;City&lt;/th&gt;
+     &lt;/tr&gt;
+  &lt;/thead&gt;
+
+  &lt;tbody&gt;
+    &lt;!-- grid data --&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</pre>
+
+<p>最後に、SimpleGrid javascript オブジェクトは、CDATA セクションで宣言と初期化が行われなければなりません。
+ricoInit() の呼び出しは、XSLT 変換によって生成されます。
+<pre>
+&lt;script type="text/javascript"&gt;
+//&lt;![CDATA[
+
+function ricoInit() {
+  try {
+  Rico.loadModule('SimpleGrid');
+  Rico.onLoad(ricoInit2);
+  } catch(e) { alert(e.message); }
+}
+
+var grid1
+function ricoInit2() {
+  try {
+  grid1=new Rico.SimpleGrid ('test1',{maxHt:180});
+  } catch(e) { alert(e.message); }
+}
+//]]&gt;
+&lt;/script&gt;
+</pre>
+
+
+
+<h2>リファレンス</h2>
+
+<h3>コンストラクタ</h3>
+<pre>
+
+  var grid = new Rico.SimpleGrid (table_id, grid_options);
+
+</pre>
+<ul><li><strong>table_id</strong> は、LiveGrid によって実装されるテーブルの DOM id です
+<li><strong>grid_options</strong>（下記参照）
+</ul>
+
+<h3>オプション</h3>
+<h4>一般的なオプション</h4>
+<dl>
+
+<dt>frozenColumns
+<dd>グリッドの左側の固定された列の数（デフォルトは 0）
+
+<dt>maxHt
+<dd>SimpleGrid の高さの最大ピクセル（デフォルトは null）
+
+<dt>windowResize
+<dd>window.resize イベントでグリッドをリサイズしますか？
+アコーディオンに埋め込まれる時は false を設定して下さい（デフォルトは true）
+
+<dt>useUnformattedColWidth
+<dd>グリッドの構成時に、html テーブルの列幅を利用しますか？（デフォルトは true）
+
+<dt>scrollBarWidth
+<dd>実際にはスクロールバーの幅を変えず、位置決めで使用されます。（デフォルトは 19）
+
+<dt>minScrollWidth
+<dd>固定された列の幅がクライアントウィンドウの幅を上回る時、
+スクロールしている列の幅の合計がどのくらい広がるべきですか？
+
+<dt>highlightElem
+<dd>グリッドで何がハイライトされますか。取り得る値は。
+<ul>
+<li>cursorRow - カーソルの下のグリッドの行
+<li>cursorCell - カーソルの下のグリッドのセル
+<li>menuRow - ユーザがグリッドのコンテキストメニューを開く時に関連のある行
+<li>menuCell - ユーザがグリッドのコンテキストメニューを開く時に関連のあるセル
+<li>selection - ユーザによって選択されるセル
+<li>none - 何もハイライトされない（デフォルト）
+</ul>
+
+<dt>exportWindow
+<dd>ユーザがグリッドからデータをエクスポートする時 window.open() に渡されるオプション文字列。
+（デフォルトは "height=300,width=500,scrollbars=1,menubar=1,resizable=1"）
+</dl>
+
+
+<h4>画像</h4>
+<dl>
+<dt>resizeBackground
+<dd>列のリサイズハンドルに利用される画像（デフォルトは 'resize.gif'）
+
+<dt>sortAscendImg
+<dd>列を昇順でソートする事を示すために使われる画像（デフォルトは 'sort_asc.gif'）
+
+<dt>sortDescendImg
+<dd>列を降順でソートする事を示すために使われる画像（デフォルトは 'sort_desc.gif'）
+</dl>
+
+
+<h4>メニューとイベントハンドリングオプション</h4>
+<dl>
+
+<dt>contextmenu
+<dd>ユーザがグリッドのセル上で右クリックした時に取る行動（デフォルトは null）
+
+<dt>menuEvent
+<dd>メニューのトリガーイベント。取り得る値は。
+<ul>
+<li>click
+<li>dblclick （デフォルト）
+<li>contextmenu
+<li>none
+</ul>
+
+<dt>click
+<dd>ユーザがグリッドのセル上でシングルクリックした時に取る行動（デフォルトは null）
+
+<dt>dblclick
+<dd>ユーザがグリッドのセル上でダブルクリックした時に取る行動（デフォルトは null）
+
+</dl>
+
+<h4>クッキーオプション</h4>
+<dl>
+
+<dt>saveColumnInfo
+<dd>グリッドのクッキーに、どの詳細設定を保存するかを指定します。
+一つのクッキーだけが、それぞれのグリッドのために利用されます。
+幅の設定が、列の非表示／表示の状態を含む事に注意して下さい。（デフォルトは {width:true, filter:false, sort:false}） 
+
+<dt>cookiePrefix
+<dd>クッキー名の先頭に付け加えられる文字列（デフォルトは 'RicoGrid.'）
+
+<dt>cookieDays
+<dd>数字の日数前のクッキーは期限切れになります。
+指定しなければ、クッキーは現在のセッションの間だけ維持されます。（デフォルトは null）
+
+<dt>cookiePath
+<dd>グリッドのクッキーを読む事が出来るトップレベルディレクトリを設定します。
+指定しなければ、それはクッキーを設定するページのパスになります。（デフォルトは null）
+
+<dt>cookieDomain
+<dd>クッキーがどのドメインに送られなければならないかについて、ブラウザに知らせます。
+指定しなければ、それはクッキーを設定するページのドメインになります。（デフォルトは null）
+
+</dl>
+
+<h4>デフォルトの列</h4>
+<dl>
+<dt style='font-weight:normal;'>これらのアイテムはそれぞれ、
+columnSpecs  オプションによって、列ごとのベースにオーバーライドする事が出来ます。
+
+<dt>canSortDefault
+<dd>列はデフォルトでソート可能ですか？（LiveGrid のデフォルトは true、SimpleGrid のデフォルトは false）
+
+<dt>canFilterDefault
+<dd>列をフィルタする事が出来ますか？
+（LiveGrid のデフォルトは RicoBuffer.options.canFilter、SimpleGrid のデフォルトは false）
+
+<dt>canHideDefault
+<dd>列を 表示／非表示 する事が出来ますか？（デフォルトは true）
+
+<dt>allowColResize
+<dd>ユーザによる列のリサイズを許しますか？ （デフォルトは true）
+
+<dt>defaultWidth
+<dd>それぞれの列のデフォルトのピクセル幅
+
+</dl>
+
+<h4>列ごとの構成</h4>
+<dl>
+<dt style='font-weight:normal;'>各々の列のためのオプションは、columnSpecs オプションに含まれます。
+columnSpecs は、各々の列のためのエントリに関する配列です。
+各々の列のエントリは、以下のいずれかで行う事が出来ます。
+<ul>
+<li>null （デフォルト） --  その場合、Rico.TableColumn.DEFAULT. の仕様によって列はフォーマットされます。
+<li>a string -- あらかじめ定義されたフォーマットの内の一つを定義します：QTY、PERCENT、DOLLAR、または EURO
+<li>an object -- 下記の表にあるプロパティの一つ以上のエントリを含みます。
+</ul>
+<p>ここに、列 0、1 と 3 が仕様を含む例を挙げます。
+<pre>
+columnSpecs : [{noResize:true, ClassName:'alignright'},
+               {ClassName:'aligncenter'},
+               ,
+               {visible:false}]
+</pre>
+
+<dt>canHide
+<dd>列を 表示／非表示 する事が出来ます。（デフォルトは grid.options.canHideDefault）
+
+<dt>visible
+<dd>列は、初めは隠されていません。
+grid.options.saveColumnInfo.width が true で、列のためのクッキーに値があるなら、クッキーの値が優先されます。
+（デフォルトは true）
+
+<dt>width
+<dd>列の初期幅。
+grid.options.saveColumnInfo.width が true で、列のためのクッキーに値があるなら、クッキーの値が優先されます。
+（デフォルトは grid.options.defaultWidth）
+
+<dt>noResize
+<dd>列のリサイズを許しますか？（デフォルトは grid.options.allowColResize）
+
+<dt>ClassName
+<dd>必要に応じて、これを 'alignright' または 'aligncenter' にセットして下さい - 例を見て下さい。
+これが見出しを整列しない事に注意して下さい - ヘッダの整列を達成するためには、&lt;th&gt; タグで align="right" を利用して下さい。
+（デフォルトは table_id + '_col' + column_index）
+
+</dl>
+
+</body>
+</html>

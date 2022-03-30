@@ -1,0 +1,455 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Rico SimpleGrid</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Creating a Rico SimpleGrid</h1>
+
+<p><a href='SimpleGrid_ja.html'><img src='client/images/japanese.gif' alt='View this page in Japanese'></a>
+<a href='SimpleGrid_ja.html'>View this page in Japanese</a></p>
+
+<p>SimpleGrid's are new to Rico 2.0 and share some of the same functionality as LiveGrids - 
+resizable columns, frozen columns, and frozen headings. 
+However, unlike a LiveGrid, the data is static and resides in the DOM -
+so no buffering, no AJAX refreshes, no sorting, no filtering.
+Why would you use a SimpleGrid? 
+<ul>
+<li>Because it is more flexible in what each cell can contain - 
+cells in a column do not all have to be of the same type.
+<li>In some circumstances, it can perform better on the client than LiveGrid; 
+particularly on a slow client and there are many columns in the grid.
+<li>Finally, a SimpleGrid can contain input elements (checkboxes, select lists, etc). 
+While a LiveGrid can also contain input elements, because the element values are stored in the
+LiveGrid buffer, submitting the values back to the server can be tricky.
+SimpleGrids do not suffer from this problem. You can simply surround the
+entire grid with standard <code>&lt;form&gt;...&lt;/form&gt;</code> tags and any
+input elements within the grid will be submitted back to the server.
+</ul>
+
+<p>SimpleGrids can be created either of two ways:
+<ol>
+<li>By using one of the SimpleGrid plug-ins. Plug-ins exist for PHP, ASP, and .net.
+<li>By using XSLT. Rico includes an XSL file that will convert a standard
+HTML table to a SimpleGrid.
+</ol>
+
+<h2>Usage Model 1: Using a SimpleGrid plug-in</h2>
+<p>This section describes the examples simplegrid.php/asp/aspx, 
+which are included in the Rico distribution.
+<ul>
+<li>In PHP:
+<ul>
+<li>First, create a reference to the SimpleGrid plug-in:
+<pre>
+require "../../plugins/php/SimpleGrid.php";
+</pre>
+<li>Create an instance of the SimpleGrid plug-in class (server side):
+<pre>
+$grid=new SimpleGrid();
+</pre>
+
+<li>Create the grid's headings. Passing 'true' to AddHeadingRow indicates
+that this is the main heading row - the one that will get the resizers.
+The number of columns in the main heading row <em>must</em> be the same
+as the number of data columns. Other heading rows may include "colspan" tags
+to cover multiple columns. If you have multiple heading rows, one and only one
+row may be designated as the main row.
+<pre>
+$grid->AddHeadingRow(true);
+for ($c=1; $c<=$numcol; $c++) {
+  $grid->AddCell("Column $c");
+}
+</pre>
+
+<li>Populate the grid's data section. Call AddDataRow() everywhere you would normally
+place a <code>&lt;tr&gt;</code> tag in a standard html table. Call AddCell() everywhere you would
+place a <code>&lt;td&gt;</code> tag.
+<pre>
+for ($r=1; $r<=100; $r++) {
+  $grid->AddDataRow();
+  $grid->AddCell($r);
+  for ($c=2; $c<=$numcol; $c++) {
+    $grid->AddCell("Cell $r:$c");
+  }
+}
+</pre>
+
+<li>Render the table (generate the html output). The first parameter is the grid id, and the
+second parameter is the number of frozen columns.
+<pre>
+$grid->Render("ex1", 1);
+</pre>
+
+</ul>
+
+<li>In ASP:
+<ul>
+<li>First, create a reference to the SimpleGrid plug-in:
+<pre>
+&lt;!-- #INCLUDE FILE = "../../plugins/asp/SimpleGrid.vbs" --&gt;
+</pre>
+
+<li>Create an instance of the SimpleGrid plug-in class (server side):
+<pre>
+set grid=new SimpleGrid
+</pre>
+
+<li>Create the grid's headings. Passing 'true' to AddHeadingRow indicates
+that this is the main heading row - the one that will get the resizers.
+The number of columns in the main heading row <em>must</em> be the same
+as the number of data columns. Other heading rows may include "colspan" tags
+to cover multiple columns. If you have multiple heading rows, one and only one
+row may be designated as the main row.
+<pre>
+grid.AddHeadingRow true
+for c=1 to numcol
+  grid.AddCell "Column " & c
+next
+</pre>
+
+<li>Populate the grid's data section. Call AddDataRow() everywhere you would normally
+place a <code>&lt;tr&gt;</code> tag in a standard html table. Call AddCell() everywhere you would
+place a <code>&lt;td&gt;</code> tag.
+<pre>
+for r=1 to 100
+  grid.AddDataRow
+  grid.AddCell r
+  for c=2 to numcol
+    grid.AddCell "Cell " & r & ":" & c
+  next
+next
+</pre>
+
+<li>Render the table (generate the html output). The first parameter is the grid id, and the
+second parameter is the number of frozen columns.
+<pre>
+grid.Render "ex1", 1
+</pre>
+</ul>
+
+<li>In .net:
+<ul>
+<li>First, create a reference to the SimpleGrid plug-in:
+<pre>
+&lt;%@ Register TagPrefix="Rico" TagName="SimpleGrid" 
+    Src="../../plugins/dotnet/SimpleGrid.ascx" %&gt;
+</pre>
+
+<li>Create an instance of the SimpleGrid plug-in class (server side):
+<pre>
+&lt;Rico:SimpleGrid runat='server' id='ex1' FrozenCols='1' /&gt;
+</pre>
+
+<li>Create the grid's headings - usually within the Page_Load event. 
+Passing 'true' to AddHeadingRow indicates
+that this is the main heading row - the one that will get the resizers.
+The number of columns in the main heading row <em>must</em> be the same
+as the number of data columns. Other heading rows may include "colspan" tags
+to cover multiple columns. If you have multiple heading rows, one and only one
+row may be designated as the main row.
+<pre>
+  ex1.AddHeadingRow(true)
+  for c=1 to numcol
+    ex1.AddCell("Column " & c)
+  next
+</pre>
+
+<li>Populate the grid's data section. Call AddDataRow() everywhere you would normally
+place a <code>&lt;tr&gt;</code> tag in a standard html table. Call AddCell() everywhere you would
+place a <code>&lt;td&gt;</code> tag.
+<pre>
+  for r=1 to 100
+    ex1.AddDataRow()
+    ex1.AddCell(r)
+    for c=2 to numcol
+      ex1.AddCell("Cell " & r & ":" & c)
+    next
+  next
+</pre>
+
+<li>Unlike the other plug-ins, rendering happens automatically in the .net control.
+</ul>
+
+<li>Finally, regardless of the plug-in used, you need to 
+initialize the javascript SimpleGrid object (client side):
+<pre>
+&lt;script type='text/javascript'&gt;
+Rico.loadModule('SimpleGrid','greenHdg.css');
+
+Rico.onLoad( function() {
+  var opts = {  
+    columnSpecs: ['specQty']  // display first column as a numeric quantity
+  };
+  var ex1=new Rico.SimpleGrid ('ex1', opts);
+});
+&lt;/script&gt;
+</pre>
+
+</ul>
+
+
+<h2>Usage Model 2: Using the XSLT transform</h2>
+
+<p>If your web page is XHTML compliant, then it is possible to turn a standard html table
+on that page into a SimpleGrid using the XSL stylesheet "ricoSimpleGrid.xsl". 
+At one time, Rico supported doing this
+transformation on the client; however, due to changes in the Prototype library, this
+is no longer possible. Therefore, if you choose to use this approach, the XSLT transform
+<em>must</em> be performed on the server. Instructions for doing a server-side transform:
+<ul>
+<li><a href="http://www.php.net/manual/en/ref.xsl.php">using PHP5</a>
+<li><a href="http://www.topxml.com/dotnet/articles/xslt/default.asp">using .net</a>
+</ul>
+
+<p>The tranform will only convert tables with a class of "ricoSimpleGrid".
+<pre>
+&lt;table id='test1' class='ricoSimpleGrid'&gt;
+</pre>
+
+<p>Headings for frozen columns must have class="ricoFrozen"
+in the <code>&lt;th&gt;</code> tag. If there are multiple heading rows,
+then the main heading row should have an id ending in "_main" (this is the
+row that will display resizing handles). The transform
+will look for grid headings in the table's <code>&lt;thead&gt;</code> section.
+If no thead section exists, then the transform will assume the first row of the table
+is the heading row.
+<pre>
+&lt;table id="test1" class="ricoSimpleGrid"&gt;
+
+  &lt;thead&gt;
+     &lt;tr id="customer_livegrid_main"&gt;
+        &lt;th class="ricoFrozen"&gt;ID&lt;/th&gt;
+        &lt;th&gt;Customer&lt;/th&gt;
+        &lt;th&gt;Address&lt;/th&gt;
+        &lt;th&gt;City&lt;/th&gt;
+     &lt;/tr&gt;
+  &lt;/thead&gt;
+
+  &lt;tbody&gt;
+    &lt;!-- grid data --&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</pre>
+
+<p>Finally, the SimpleGrid javascript object must be declared and initialized in a CDATA section.
+The call to ricoInit() is generated by the XSLT transform.
+<pre>
+&lt;script type="text/javascript"&gt;
+//&lt;![CDATA[
+
+function ricoInit() {
+  try {
+  Rico.loadModule('SimpleGrid');
+  Rico.onLoad(ricoInit2);
+  } catch(e) { alert(e.message); }
+}
+
+var grid1
+function ricoInit2() {
+  try {
+  grid1=new Rico.SimpleGrid ('test1',{maxHt:180});
+  } catch(e) { alert(e.message); }
+}
+//]]&gt;
+&lt;/script&gt;
+</pre>
+
+
+
+<h2>Reference</h2>
+
+<h3>Constructor</h3>
+<pre>
+
+  var grid = new Rico.SimpleGrid (table_id, grid_options);
+
+</pre>
+<ul><li><strong>table_id</strong> is the DOM id of the table to be populated by LiveGrid
+<li><strong>grid_options</strong> (see below)
+</ul>
+
+<h3>Options</h3>
+<h4>General options</h4>
+<dl>
+
+<dt>frozenColumns
+<dd>Number of frozen columns on the left side of the grid (default: 0)
+
+<dt>maxHt
+<dd>Maximum height of a SimpleGrid in pixels. (default: null)
+
+<dt>windowResize
+<dd>Resize grid on window.resize event?
+Set to false when embedded in an Accordian. (default: true)
+
+<dt>useUnformattedColWidth
+<dd>Use column widths in source html table when configuring the grid? (default: true)
+
+<dt>scrollBarWidth
+<dd>Used in positioning, does not actually change the width of the scrollbar. (default: 19)
+
+<dt>minScrollWidth
+<dd>When the width of the frozen columns exceeds the client window width, 
+how wide should the total width of the scrolling columns be?
+
+<dt>highlightElem
+<dd>What gets highlighted in the grid. Possible values: 
+<ul>
+<li>cursorRow - the grid row under the cursor
+<li>cursorCell - the grid cell under the cursor
+<li>menuRow - the relevant row when the user opens the grid's context menu
+<li>menuCell - the relevant cell when the user opens the grid's context menu
+<li>selection - the cells selected by the user
+<li>none - nothing is highlighted (default)
+</ul>
+
+<dt>exportWindow
+<dd>Option string that gets passed to window.open() when the user exports data from the grid.
+(default: "height=300,width=500,scrollbars=1,menubar=1,resizable=1")
+
+<dt>exportStyleList
+<dd>An array of CSS attributes that will be extracted from the each cell in the grid
+and used to format the exported table. 
+(default: ['background-color', 'color', 'text-align', 'font-weight', 'font-size', 'font-family'])
+
+<dt>exportImgTags
+<dd>Boolean value that specifies whether img text should be included in the export. img text
+is the alt text if it exists, otherwise it is the title text, otherwise it is the src value. (default: true)
+
+<dt>exportFormFields
+<dd>Boolean value that specifies whether form fields should be included in the export. (default: true)
+</dl>
+
+
+<h4>Images</h4>
+<dl>
+<dt>resizeBackground
+<dd>Image to use for column resize handle. (default: 'resize.gif')
+
+<dt>sortAscendImg
+<dd>Image to use to indicate that the column is sorted in ascending order. (default: 'sort_asc.gif')
+
+<dt>sortDescendImg
+<dd>Image to use to indicate that the column is sorted in descending order. (default: 'sort_desc.gif')
+</dl>
+
+
+<h4>Menu and event-handling options</h4>
+<dl>
+
+<dt>contextmenu
+<dd>Action to take when the user right-clicks on a grid cell (default: null)
+
+<dt>menuEvent
+<dd>Event that triggers menus. Possible values: 
+<ul>
+<li>click
+<li>dblclick (default)
+<li>contextmenu
+<li>none
+</ul>
+
+<dt>click
+<dd>Action to take when the user single-clicks on a grid cell (default: null)
+
+<dt>dblclick
+<dd>Action to take when the user double-clicks on a grid cell (default: null)
+
+</dl>
+
+<h4>Cookie options</h4>
+<dl>
+
+<dt>saveColumnInfo
+<dd>Specifies which details to save in the grid's cookie. Only one cookie is used for each grid.
+Note that the width setting includes the hide/show status of the column. 
+(default: {width:true, filter:false, sort:false})
+
+<dt>cookiePrefix
+<dd>A string that is prepended to the cookie name. (default: 'RicoGrid.')
+
+<dt>cookieDays
+<dd>Number of days before the cookie expires. 
+If you don't specify it, then the cookie is only maintained for the current session. (default: null)
+
+<dt>cookiePath
+<dd>Sets the top level directory from which the grid cookie can be read.
+If you don't specify it, it becomes the path of the page that sets the cookie. (default: null)
+
+<dt>cookieDomain
+<dd>Tells the browser to which domain the cookie should be sent. 
+If you don't specify it, it becomes the domain of the page that sets the cookie. (default: null)
+
+</dl>
+
+<h4>Column defaults</h4>
+<dl>
+<dt style='font-weight:normal;'>Each of these items can be overridden 
+on a per-column basis via the columnSpecs option.
+
+<dt>canSortDefault
+<dd>Are columns sortable by default? (LiveGrid default: true, SimpleGrid default: false)
+
+<dt>canFilterDefault
+<dd>Can the column be filtered? 
+(LiveGrid default: RicoBuffer.options.canFilter, SimpleGrid default: false) 
+
+<dt>canHideDefault
+<dd>Columns can be hidden/unhidden (default: true)
+
+<dt>allowColResize
+<dd>Allow user to resize columns (default: true)
+
+<dt>defaultWidth
+<dd>Default width of each column in pixels (default: 100)
+
+</dl>
+
+<h4>Per-column configuration</h4>
+<dl>
+<dt style='font-weight:normal;'>Options for each individual column are contained in the columnSpecs option.
+columnSpecs is an array with an entry for each column. 
+Each column entry can either be:
+<ul>
+<li>null (default) --  in which case the column is formatted according to the spec in Rico.TableColumn.DEFAULT.
+<li>a string -- specifying one of the pre-defined formats: QTY, PERCENT, DOLLAR, or EURO
+<li>an object -- containing entries for one or more of the properties listed below.
+</ul>
+<p>Here is an example that contains specifications for columns 0, 1, and 3:
+<pre>
+columnSpecs : [{noResize:true, ClassName:'alignright'},
+               {ClassName:'aligncenter'},
+               ,
+               {visible:false}]
+</pre>
+
+<dt>canHide
+<dd>Column can be hidden/unhidden. (default: grid.options.canHideDefault)
+
+<dt>visible
+<dd>Column is initially unhidden. If grid.options.saveColumnInfo.width is true
+and there is a value in the cookie for this column, the cookie value will take precedence.
+(default: true)
+
+<dt>width
+<dd>Initial width for column. If grid.options.saveColumnInfo.width is true
+and there is a value in the cookie for this column, the cookie value will take precedence.
+(default: grid.options.defaultWidth)
+
+<dt>noResize
+<dd>Allow column to be resized? (default grid.options.allowColResize )
+
+<dt>ClassName
+<dd>Set this to 'alignright' or 'aligncenter' as needed - see example. 
+Note that this does not align the header - 
+use a align="right" on the &lt;th&gt; line to accomplish the header alignment.
+(default: table_id + '_col' + column_index)
+
+</dl>
+
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<title>Rico</title>
+
+<script src="../../src/rico.js" type="text/javascript"></script>
+<script type='text/javascript'>
+Rico.loadModule('Corner','DragAndDrop');
+Rico.onLoad( function() {
+   Rico.Corner.round('explanation');
+   dndMgr.registerDraggable( new Rico.Draggable('test-rico-dnd','dragme') );
+   dndMgr.registerDropZone( new Rico.Dropzone('droponme') );
+   dndMgr.registerDropZone( new Rico.Dropzone('droponme2') );
+});
+</script>
+
+<style type="text/css">
+body, p {
+	font-family : Trebuchet MS, Arial, Helvetica, sans-serif;
+}
+h1 { font-size: 16pt; }
+
+div.title {
+   font-family      : Arial;
+   font-size        : 10px;
+   background-color : #797979;
+   color            : #ffffff;
+   width            : 200px;
+   margin           : 1px;
+}
+div.box {
+   font-family   : Arial;
+   font-size     : 14px;
+   width         : 100px;
+   height        : 40px;
+   text-align    : center;
+   border-bottom : 1px solid #6b6b6b;
+   border-right  : 1px solid #6b6b6b;
+}
+
+div.panel {
+   width    : 200px;
+   height   : 80px;
+   padding  : 2px;
+   border   : 1px solid #5b5b5b;
+}
+
+div.explanation {
+   font-family      : Arial;
+   font-size        : 12px;
+   width            : 600px;
+   background-color : #cdd7b5;
+}
+
+div.simpleDropPanel {
+   width    : 200px;
+   height   : 80px;
+   padding  : 2px;
+   border   : 1px solid #5b5b5b;
+}
+</style>
+</head>
+
+
+<body>
+
+<h1 style='float:left;'>Rico Simple Drag &amp; Drop Example</h1>
+<p style='float:right;'>
+<a href="http://validator.w3.org/check?uri=referer"><img style='border:none;'
+    src="images/valid-html401.png"
+    alt="Valid HTML 4.01 Strict" height="31" width="88"></a>
+</p>
+
+<div style="padding:5px;border:1px solid #5b5b5b;height:50px;clear:both;">
+
+<div class="box" style="background:#f7a673" id="dragme">Drag Me</div>
+</div>
+
+<p><table style="margin-bottom:8px" cellspacing="3" cellpadding="3">
+<tr>
+   <td>
+      <div id="droponme" class="simpleDropPanel" style="background:#ffd773">
+         <div class="title">Drop On Me</div>
+      </div>
+
+    </td>
+
+    <td>
+      <div id="droponme2" class="simpleDropPanel" style="background:#c6c3de">
+         <div class="title">Drop On Me 2</div>
+      </div>
+	 </td>
+</tr>
+</table>
+
+<div id="explanation" class="explanation">
+   <pre>
+   &lt;div class="box" style="background:#f7a673" id="dragme"&gt;
+      Drag Me
+   &lt;/div&gt;
+
+   &lt;div style="margin-bottom:8px;"&gt;
+      &lt;div id="droponme" class="panel" style="display:inline;background:#ffd773"&gt;
+
+         &lt;div class="title">Drop On Me&lt;/div>
+      &lt;/div&gt;
+
+      &lt;span&gt;&nbsp;&lt;/span&gt;
+									
+      &lt;div id="droponme2" class="panel" style="display:inline;background:#c6c3de"&gt;
+         &lt;div class="title"&gt;Drop On Me 2&lt;/div&gt;
+
+      &lt;/div&gt;
+   &lt;/div&gt;
+
+   &lt;script&gt;
+      dndMgr.registerDraggable( new Rico.Draggable('test-rico-dnd','dragme') );
+      dndMgr.registerDropZone( new Rico.Dropzone('droponme') );
+      dndMgr.registerDropZone( new Rico.Dropzone('droponme2') );
+   &lt;/script&gt;</pre>
+</div>
+
+</body>
+</html>

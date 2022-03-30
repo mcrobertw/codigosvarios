@@ -1,0 +1,12 @@
+require 'rake/packagetask'
+
+THISAPP = 'rico'
+ 
+ Rake::PackageTask.new("#{THISAPP}", :noversion) do |z|
+   z.package_files = FileList["src/**/*", "examples/**/*", "plugins/**/*"] 
+   z.name = "rico"
+   z.need_zip = true
+ end
+   
+task :default => :repackage do
+end

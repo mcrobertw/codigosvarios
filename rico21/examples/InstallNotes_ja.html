@@ -1,0 +1,161 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>Installing the Rico Examples</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css" />
+<style type="text/css">
+tbody td {
+  font-size: 8pt;
+  vertical-align: top;
+}
+p.comment {
+  color: #888;
+}
+</style>
+</head>
+
+<body>
+<h1>Rico の実例のインストール</h1>
+
+<p>単にディストリビューションファイルを解凍し、
+その結果のディレクトリ構成をあなたのウェブサービスのパスへコピーすれば、
+すべてではありませんが実例を動作させる上でほとんど十分でしょう。
+あなたがウェブサービスのルートに "rico" と呼ばれているディレクトリをインストールしたならば、
+実例にアクセスするためにブラウザを以下のアドレスに向けることができるはずです。
+<blockquote>http://myserver.mydomain.com/rico/examples/</blockquote>
+<p>または、それをあなたのパソコン上にインストールしたならば、次のアドレスにアクセスして下さい。
+<blockquote>http://localhost/rico/examples/</blockquote>
+
+<p>IIS6 を実行しているサーバーでは、
+あなたは ASP の実例を走らせるためにセキュリティセッティングを変更する必要があります。
+特に、親ディレクトリでインクルードファイルを参照し、ASPファイルを利用可能にする必要があります。
+そうするために、以下のステップに従ってください。
+<ol>
+<li>ISS Manager を開いて下さい
+<li>"Default Web Site" で右クリックして、"Properties" をコンテキストメニューから選択して下さい。
+<li>"Home Directory" タブをクリックして下さい
+<li>"Configuration" ボタンをクリックしてください
+<li>新しいウィンドウの "Options" タブをクリックします。
+<li>"Enable parent paths" とラベルされたボックスをクリックして下さい
+</ol>
+
+<h2>LiveGrid の実例</h2>
+
+<p>LiveGrid の実例の多くが Northwind サンプルデータベースからのデータをフェッチします。
+これらの実例に動かすために、あなたは 2 つのことをする必要があります。
+<ol>
+<li>Northwindデータベースを作成してください
+<li>applib.* ファイルにあるデータベース接続設定を変更して下さい
+</ol>
+
+<h2>Northwindデータベースの作成</h2>
+
+<p>examples/data ディレクトリは、 Rico LiveGrid ASP、.net、および PHP の実例を実行するために必要な、
+いくつかの異なるフォーマットのデータベースを含みます。
+
+<p>データはこれらのフォーマットを提供します。
+
+<ol>
+<li>northwind.mdb - これはマイクロソフトによって提供された、標準の Northwind データベースで、
+例外として [Order Details] は Order_Details に改名されました。
+あなたが ASP または .net の実例にアクセスしているならば、データベース構成の変更は必要ではありません。
+ -- それらの実例は Microsoft Jet driver を利用して、このデータベースに直接アクセスするでしょう。
+
+<li>mysql-northwind.sql - MySQLのためのバックアップファイル（ MySQL version 4.1 によって作られました）
+
+<li>mysql-northwind-dblquote.sql - すべての \' インスタンスが '' に替えられた事以外は
+上記と同じです（バージョン 5 以上の MySQL に推奨されます）
+
+<li>ORA-EXPDAT.DMP - Northwind スキーマのための Oracle エクスポートファイル
+ -- <a href='http://www.oracle.com/technology/products/database/xe/index.html'>Oracle XE</a> の "exp" ユーティリティによって生成されました。
+ このスキーマのパスワードは "password" です。
+
+</ol>
+
+<p>MS SQL Server 2000 と 2005 用のバージョンは <a href='http://www.microsoft.com/downloads/details.aspx?FamilyID=06616212-0356-46A0-8DA2-EEBC53A68034&displaylang=en'>msdn.microsoft.com</a> から
+自由にダウンロード出来ます。
+ダウンロードしたら、<a href='http://msdn2.microsoft.com/en-us/library/ms227484.aspx'>それをインストールするためのマイクロソフトのインストラクション</a>に従うべきです。
+最後に、[Order Details] テーブルを Order_Details に改名するか、Order_Details と言う名前のビューを次の SQL 文を利用して生成するかのどちらかを行う必要があるでしょう。
+<pre>
+
+create view Order_Details as select * from [Order Details]
+
+</pre>
+
+<h2>データベース接続設定</h2>
+
+<p>特定の命令はあなたの環境に依存します。
+<table border='1' cellspacing='0' cellpadding='3'>
+<thead><tr>
+<th>Database</th>
+<th>PHP</th>
+<th>ASP</th>
+<th>.net</th>
+<th>Perl</th>
+</tr></thead>
+<tbody>
+<tr><td>接続の設定は次の場所です。</td>
+<td>examples/php/applib.php</td>
+<td>examples/asp/applib.asp</td>
+<td>examples/dotnet/applib.ascx</td>
+<td>examples/perl/ricoXMLquery.pl</td>
+
+<tr><th>MySQL</th>
+<td>return $GLOBALS['oDB']->MySqlLogon( "northwind", "userid", "password");</td>
+<td>
+<p>oDB.Use_MySQL
+<p>oDB.SqlSvr="localhost"
+<p class='comment'>SqlLogon() の記述の中に、ユーザＩＤとパスワードを設定して下さい。
+<p class='comment'>MySQL 3.51 ODBC ドライバもインストールされていなければなりません。
+</td>
+<td>Public const dbDialect = "MySQL"
+<p class='comment'>サーバ名、ユーザＩＤとパスワードを OpenDB() に設定して下さい。
+<p class='comment'>MySQL 3.51 ODBC ドライバもインストールされていなければなりません。
+</td>
+<td>$dbh = DBI->connect( "dbi:mysql:northwind", "userid", "password");</td>
+
+<tr><th>SQL Server</th>
+<td>
+$oDB->Dialect="TSQL";
+<p>return $GLOBALS['oDB']->MSSqlLogon( "ServerName\InstanceName", "Northwind", "userid", "password");
+<p class='comment'>デフォルトインスタンスに接続するとき、InstanceName を省略してください。
+</td>
+<td>oDB.SqlSvr= "ServerName\InstanceName"
+<p class='comment'>デフォルトインスタンスに接続するとき、InstanceName を省略してください。
+<p class='comment'>SqlLogon() の記述の中に、ユーザＩＤとパスワードを設定して下さい。
+</td>
+<td>Public const dbDialect = "TSQL"
+<p class='comment'>サーバ名、ユーザＩＤとパスワードを OpenDB() に設定して下さい。</td>
+<td></td>
+
+<tr><th>MS Access</th>
+<td>
+$oDB->Dialect="Access";
+<p>return $GLOBALS['oDB']->OdbcLogon( "northwindDSN", "Northwind", "Admin", "");</td>
+<td>oDB.Use_Access Server.Mappath( "../data/northwind.mdb")
+<p class='comment'>これはデフォルトですので、変更は必要ありません。</td>
+<td>Public const dbDialect = "Access"
+<p class='comment'>これはデフォルトですので、変更は必要ありません。</td>
+<td></td>
+
+<tr><th>Oracle</th>
+<td>
+$oDB->Dialect="Oracle";
+<p>return $GLOBALS['oDB']->OracleLogon( "XE", "northwind", "password");</td>
+<td>oDB.Use_Oracle "XE"</td>
+<td>Public const dbDialect = "Oracle"
+<p class='comment'>サーバ名とパスワードを OpenDB() に設定して下さい。
+<td></td>
+
+<tr><th>DB2</th>
+<td><p class='comment'>サポート外です。</td>
+<td></td>
+<td>Public const dbDialect = "DB2"
+<p class='comment'>サーバ名、ユーザＩＤとパスワードを OpenDB() に設定して下さい。</td>
+<td></td>
+</tbody>
+</table>
+
+</body>
+</html>

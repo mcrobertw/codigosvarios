@@ -1,0 +1,447 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Rico LiveGrid AJAX</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+
+<style type="text/css">
+.request, .response {
+  border: 1px solid black;
+  background-color: #FFF8DC;
+  padding: 4px;
+}
+dt span {
+  font-weight:normal;
+  font-style:italic;
+}
+</style>
+</head>
+
+<body>
+<h1>Rico LiveGrid AJAX</h1>
+
+<p><a href='LiveGridAjax_ja.html'><img src='client/images/japanese.gif' alt='View this page in Japanese'></a>
+<a href='LiveGridAjax_ja.html'>View this page in Japanese</a></p>
+
+<p>One of the key features of the Rico LiveGrid is its ability to load data dynamically
+via AJAX. This document focuses on the format of the LiveGrid AJAX requests and responses. 
+More specifically, it is the LiveGrid <strong>Buffer</strong> object that is
+generating requests and processing responses. So if you are in a situation where data
+is coming from a web service that is out of your control, you could create a custom
+LiveGrid buffer class that would serve as an interface between the web service
+and LiveGrid. However, in this document we will focus on the request and response
+formats of the buffer classes that come with the Rico distribution.
+
+<p>The Rico distribution includes 4 distinct buffer classes:
+<dl>
+<dt>Rico.Buffer.Base
+<dd>Used for static datasets, no AJAX (i.e. no calls to XMLHttpRequest).
+Data can be loaded from an HTML table or from a javascript array.
+Since this buffer does not use AJAX, it will not be discussed further in this document. 
+<dt><a href='#AjaxXML'>Rico.Buffer.AjaxXML</a>
+<dd>All LiveGrid data is loaded in a single AJAX call, data returned in XML format
+<dt><a href='#AjaxSQL'>Rico.Buffer.AjaxSQL</a>
+<dd>LiveGrid data is loaded in chunks as the user scrolls through the grid, data returned in XML format
+<dt><a href='#AjaxJSON'>Rico.Buffer.AjaxJSON</a>
+<dd>Same as AjaxSQL, except that responses are in JSON format
+</dl>
+
+<h2><a name='AjaxXML'>Rico.Buffer.AjaxXML</a></h2>
+
+<p>An AjaxXML buffer will only perform a single XMLHttpRequest 
+regardless of the amount of scrolling a user does in a LiveGrid.
+An AjaxXML buffer is created using the following javascript:
+
+<pre>
+buffer=new Rico.Buffer.AjaxXML(url,options,ajaxOptions)
+</pre>
+
+<dl>
+<dt>url
+<dd>A string containing the url to the data provider.
+<dt>options
+<dd>A Rico buffer options object, which may contain any of the following:
+
+<dl>
+<dt>bufferTimeout
+<dd>An integer that specifies the number of milliseconds a wait message should be presented to the
+user before indicating a timeout. Default is 20000 (20 seconds).
+
+<dt>requestParameters
+<dd>An array of strings of the form "parm=value" that get added to the
+search string of the XMLHttpRequest.
+
+<dt>isEncoded
+<dd>Specifies whether the response will be HTML encoded or not. Default is true.
+All plug-ins supplied with Rico encode the response.
+
+<dt>waitMsg
+<dd>The message that gets displayed to the user while waiting for and XMLHttpRequest response.
+Default is RicoTranslate.getPhraseById("waitForData").
+Note that this can be an image tag, for example: 
+<pre>
+buffer=new Rico.Buffer.AjaxXML(
+  url,
+  {waitMsg: "&lt;img src='MySpinner.gif'&gt;"},
+  ajaxOptions);
+</pre>
+
+<dt>canFilter
+<dd>A boolean value indicating whether the buffer supports filtering. Default is true.
+</dl>
+
+<dt>ajaxOptions
+<dd>An <a href='http://prototypejs.org/api/ajax/options'>Ajax options object</a>
+that is passed to Prototype's Ajax.Request method.
+The "parameters" and "onComplete" options are used by Rico
+and have no effect if specified. The "method" option
+defaults to "get", but can be overridden.
+</dl>
+
+Here is an example taken from ex3livegridxml.php:
+<pre>
+buffer=new Rico.Buffer.AjaxXML('ricoXMLquery.php');
+ex3=new Rico.LiveGrid ('ex3', buffer, grid_options);
+</pre>
+
+<h3>AjaxXML Request</h3>
+
+<p>Assuming grid_options.prefetchBuffer is true (which is the default),
+then a single XMLHttpRequest will be generated during grid initialization
+that will fetch data from ricoXMLquery.php. The URL will include the
+following querystring (search) parameters:
+
+<dl>
+<dt>id
+<dd>The id of the grid that was specified as the first parameter in the call to
+Rico.LiveGrid(), "ex3" in the previous example.
+<dt>offset
+<dd>The first record in the dataset that should be returned. Always "0" for AjaxXML.
+<dt>page_size
+<dd>The number of records that should be returned in the dataset. 
+Always "-1" for AjaxXML, meaning all records should be returned.
+</dl>
+
+<p>Plus, if any options.requestParameters were specified, they would be included also.
+So the complete URL that would be used to fetch data for ex3 would be:
+<pre class='request'>
+ricoXMLquery.php?id=ex3&amp;offset=0&amp;page_size=-1
+</pre>
+
+<h3><a name='AjaxXMLresponse'>AjaxXML Response</a></h3>
+
+<p>Here is a sample response that will populate our ex3 LiveGrid:
+
+<pre class='response'>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;ajax-response&gt;
+  &lt;response type='object' id='ex3_updater'&gt;
+    &lt;rows update_ui='true' offset='0'&gt;
+    &lt;tr&gt;&lt;td&gt;Data for row 1, cell 1&lt;/td&gt;&lt;td&gt;Data for row 1, cell 2&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;Data for row 2, cell 1&lt;/td&gt;&lt;td&gt;Data for row 2, cell 2&lt;/td&gt;&lt;/tr&gt;
+    &lt;/rows&gt;
+    &lt;rowcount&gt;2&lt;/rowcount&gt;
+    &lt;debug&gt;Generated by test server&lt;/debug&gt;
+  &lt;/response&gt;
+&lt;/ajax-response&gt;
+</pre>
+
+<p>When you are creating the response in your request handler you must set the
+content-type of the response header to text/xml. Also you will need to specify the
+xml version and <a href='http://www.opentag.com/xfaq_enc.htm'>character encoding</a>. 
+The encoding value is very important and depends on your specific environment.
+Two common values are "UTF-8" and "iso-8859-1".
+Here is how the first couple of lines would look in Java Server Pages
+(JSP):
+<pre>
+&lt;% response.setHeader(“Content-Type”, “text/xml”); %&gt;
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+</pre>
+
+And this is how they would look in PHP:
+<pre>
+header("Content-type: text/xml");
+echo "&lt;?xml version='1.0' encoding='UTF-8'?"."&gt;\n";
+</pre>
+
+<p>Notice several important items about the Ajax response.
+
+<p>First the response is wrapped in the tags &lt;ajax-response&gt;&lt;/ajax-response&gt;. 
+Every Rico Ajax response must have this element as the root of the XML returned.
+Second, notice the response contained within the ajax-response. 
+The response tags (&lt;response&gt;&lt;/response&gt;) wrap the response content.
+The type and id attributes of the &lt;response&gt; tag were required in Rico 1.1, 
+but are ignored by Rico 2.0.
+Finally, notice the &lt;rowcount&gt; element.
+This specifies the total number of rows in the dataset. In an AjaxXML response,
+this should match the number of &lt;tr&gt; elements.
+
+<p>The debug tag (&lt;debug&gt;&lt;/debug&gt;) is optional. The response
+may contain 0, 1, or more of them. The content of each debug tag is
+sent to Rico's <a href='LiveGrid.html#debug'>message logging facility</a>.
+The Rico plug-ins can return the actual SQL queries that get
+executed by setting ricoXmlResponse.sendDebugMsgs to true in
+ricoXMLquery.php/asp/aspx. This can be very useful during development
+but should be turned off in production, as it is a security risk (gives
+users visibility to actual table and column names).
+
+<p>If an error occurs on the server during the processing of the request,
+the server can return error information to the user by enclosing an
+error message in &lt;error&gt;&lt;/error&gt; tags. For example:
+
+<pre class='response'>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;ajax-response&gt;
+  &lt;response type='object' id='ex3_updater'&gt;
+    &lt;rows update_ui='true' offset='0'&gt;
+    &lt;/rows&gt;
+    &lt;rowcount&gt;0&lt;/rowcount&gt;
+    &lt;error&gt;Unable to retrieve the data&lt;/error&gt;
+  &lt;/response&gt;
+&lt;/ajax-response&gt;
+</pre>
+
+<p>The mere presence of the &lt;error&gt; tag will cause any row data and the rowcount to be ignored.
+Thus, &lt;rows&gt; and &lt;rowcount&gt; can be included or omitted when returning an error.
+The Rico plug-ins will send the database-generated error message when an error occurs.
+
+
+<h2><a name='AjaxSQL'>Rico.Buffer.AjaxSQL</a></h2>
+
+<p>The AjaxSQL buffer extends the capabilities provided by the AjaxXML buffer.
+Many of the concepts are the same, but the AjaxSQL buffer is more complex.
+Query results are returned to the buffer in chunks, rather than returning
+all rows in a single response. Also, an AjaxSQL buffer assumes filtering
+and sorting will occur on the server. So filtering and sorting parameters
+must be sent in each request and the server must process those parameters correctly.
+Fortunately, the Rico plug-ins take care of this complexity for you.
+
+<p>An AjaxSQL buffer is created using the following javascript:
+
+<pre>
+buffer=new Rico.Buffer.AjaxSQL(url,options,ajaxOptions)
+</pre>
+
+Here is an example taken from ex2simple.php:
+<pre>
+buffer=new Rico.Buffer.AjaxSQL(
+  'ricoXMLquery.php', 
+  {TimeOut:&lt;? print array_shift(session_get_cookie_params())/60 ?&gt;});
+orderGrid=new Rico.LiveGrid ('ex2', buffer, opts);
+</pre>
+
+<dl>
+<dt>url
+<dd>A string containing the url to the data provider.
+<dt><a name='AjaxSQLoptions'>options</a>
+<dd>A Rico buffer options object, which may contain any of the following:
+
+<dl>
+<dt>bufferTimeout
+<dd>An integer that specifies the number of milliseconds a wait message should be presented to the
+user before indicating a timeout. Default is 20000 (20 seconds).
+
+<dt>requestParameters
+<dd>An array of strings of the form "parm=value" that get added to the
+search string of the XMLHttpRequest.
+
+<dt>isEncoded
+<dd>Specifies whether the response will be HTML encoded or not. Default is true.
+All plug-ins supplied with Rico encode the response.
+
+<dt>waitMsg
+<dd>The message that gets displayed to the user while waiting for and XMLHttpRequest response.
+Default is RicoTranslate.getPhraseById("waitForData").
+Note that this can be an image tag, for example: 
+<pre>
+buffer=new Rico.Buffer.AjaxXML(
+  url,
+  {waitMsg: "&lt;img src='MySpinner.gif'&gt;"},
+  ajaxOptions);
+</pre>
+
+<dt>canFilter
+<dd>A boolean value indicating whether the buffer supports filtering. Default is true.
+
+<dt>largeBufferSize
+<dd>Used to set the size of the buffer. Default value is 7. The actual buffer size is set to: 
+(the number of visible grid rows) * largeBufferSize; but no less than 50.
+So a grid with 4 rows visible would get the minimum buffer size of 50, while a grid
+with 30 visible rows would have a buffer size of 210.
+
+<dt>nearLimitFactor
+<dd>Used to determine when the user has scrolled near the end of the buffer,
+triggering a new request for data. Default value is 1. The nearLimit value is set to: 
+(the number of visible grid rows) * nearLimitFactor.
+
+<dt>TimeOut
+<dd>The Rico plug-ins store the SQL query in a 
+<a href='http://www.talkphp.com/general/1077-understanding-life-session.html'>session variable</a>. 
+The server can respond to data requests for only as long as the session is valid. The TimeOut
+option is used to measure the time remaining in the session. If option.TimeOut has been
+specified and there is an html element in the document with an id of "MyGridId_timer", then
+the innerHTML of that element will be populated with the remaining time in the session.
+The TimeOut value is specified in minutes and has no default.
+
+<dt><a name='sortParmFmt'>sortParmFmt</a>
+<dd>If set, then sortParmFmt should be the name of an attribute in the Rico column object.
+Set to "displayName" in order generate requests in a format compatible with Rico 1.1:
+<pre class='request'>
+ricoXMLquery.php?id=ex2&amp;...&amp;sort_col=Column0&amp;sort_dir=ASC
+</pre>
+Set to "index" in order generate requests in this format:
+<pre class='request'>
+ricoXMLquery.php?id=ex2&amp;...&amp;sort_col=0&amp;sort_dir=ASC
+</pre>
+When unspecified (the default), then sort parameters are sent in this format 
+('s' followed by the column number). This is what the Rico plug-ins expect.
+<pre class='request'>
+ricoXMLquery.php?id=ex2&amp;...&amp;s0=ASC
+</pre>
+</dl>
+
+<dt>ajaxOptions
+<dd>An <a href='http://prototypejs.org/api/ajax/options'>Ajax options object</a>
+that is passed to Prototype's Ajax.Request method.
+The "parameters" and "onComplete" options are used by Rico
+and have no effect if specified. The "method" option
+defaults to "get", but can be overridden.
+</dl>
+
+
+
+<h3><a name='AjaxSQLrequests'>AjaxSQL Request</a></h3>
+
+<p>An XMLHttpRequest will be generated every time the AjaxSQL buffer needs more data.
+Data is requested in chunks as specified by the offset and page_size parameters.
+This makes it possible for a LiveGrid to efficiently display hundreds of thousands of records;
+because only a small portion of those records would reside in the client-side buffer
+at any one time.
+The URL will include the following querystring (search) parameters:
+
+<dl>
+<dt>id
+<dd>The id of the grid that was specified as the first parameter in the call to
+Rico.LiveGrid(), "ex2" in the previous example.
+
+<dt>offset
+<dd>The first record in the dataset that should be returned. Always "0" for AjaxXML.
+
+<dt>page_size
+<dd>The number of records that should be returned in the dataset. 
+Always "-1" for AjaxXML, meaning all records should be returned.
+
+<dt>get_total
+<dd>If true, then the response should include a &lt;rowcount&gt; element
+that contains the total number of rows in the dataset (not just
+the chunk being requested), with the specified filters.
+"get_total=true" will be sent during the first request to populate
+a grid and any time the user has changed the filters.
+<pre class='request'>
+ricoXMLquery.php?id=ex2&amp;...&amp;get_total=true
+</pre>
+
+<dt>sX <span>(where X is the column #)</span>
+<dd>Specifies that results should be sorted by column X.
+Parameter will be ASC or DESC. See also <a href='#sortParmFmt'>options.sortParmFmt</a>.
+Even though this parameter format theoretically allows for sorting on more than
+one column at a time, this is not possible with the current LiveGrid UI.
+<pre class='request'>
+ricoXMLquery.php?id=ex2&amp;...&amp;s0=ASC
+</pre>
+
+<dt>f[X][op] <span>(where X is the column #)</span>
+<dd>Specifies the filter operator being applied to column X.
+Parameter will be one of the following: EQ (equal), NE (not equal),
+ GE (greater than or equal), LE (less than or equal), LIKE, NULL, NOTNULL
+<pre class='request'>
+ricoXMLquery.php?id=ex2&amp;...&amp;f[0][op]=EQ
+</pre>
+
+<dt>f[X][len] <span>(where X is the column #)</span>
+<dd>Specifies the number of filter values being supplied.
+This will be 1 for EQ, GE, LE, and LIKE filter operators.
+It will be 0 for NULL and NOTNULL operators. It will be
+1 or more for NE.
+<pre class='request'>
+ricoXMLquery.php?id=ex2&amp;...&amp;f[0][op]=EQ&amp;f[0][len]=1
+</pre>
+
+<dt>f[X][Y] <span>(where X is the column #)</span>
+<dd>Specifies the filter value(s) for EQ, NE, GE, LE, and LIKE filter operators.
+Y will range from 0 to f[X][len]-1.
+For the LIKE operator, '*' is treated as the wildcard character,
+which gets converted to '%' by the Rico plug-in for most databases.
+<pre class='request'>
+ricoXMLquery.php?id=ex2&amp;...&amp;f[0][op]=EQ&amp;f[0][len]=1&amp;f[0][0]=Column0Value
+</pre>
+</dl>
+
+<p>Plus, if any options.requestParameters were specified, they would be included also.
+So the complete URL that would be used to fetch data for ex2 would be:
+<pre class='request'>
+ricoXMLquery.php?id=ex2&amp;offset=0&amp;page_size=28
+</pre>
+
+
+<h3>AjaxSQL Response</h3>
+
+<p>The format of the AjaxSQL response is exactly the same as the 
+<a href='#AjaxXMLresponse'>AjaxXML response</a>.
+
+
+<h2><a name='AjaxJSON'>Rico.Buffer.AjaxJSON</a></h2>
+
+<p>The AjaxJSON buffer was created by Jeremy Green and is an extension to the AjaxSQL buffer.
+An AjaxJSON buffer is created using the following javascript:
+
+<pre>
+buffer=new Rico.Buffer.AjaxJSON(jsonUrl,options)
+</pre>
+
+<dl>
+<dt>url
+<dd>A string containing the url to the JSON data provider.
+
+<dt>options
+<dd>A Rico buffer options object. The values available in AjaxJSON are same as those in 
+<a href='#AjaxSQLoptions'>AjaxSQL</a>.
+</dl>
+
+
+<h3>AjaxJSON Request</h3>
+
+<p>The format of AjaxJSON requests are exactly the same as 
+<a href='#AjaxSQLrequests'>AjaxSQL requests</a>.
+
+
+<h3>AjaxJSON Response</h3>
+
+<p>Here is an example of a LiveGrid response in JSON format.
+
+<pre class='response'>
+{
+"update_ui": true,
+"offset": 0,
+"rows": [
+["10248","VINET","Vins et alcools Chevalier","Reims","France","1996-07-04 00:00:00","1996-07-16 00:00:00"],
+["10249","TOMSP","Toms Spezialitäten","Münster","Germany","1996-07-05 00:00:00","1996-07-10 00:00:00"],
+["10250","HANAR","Hanari Carnes","Rio de Janeiro","Brazil","1996-07-08 00:00:00","1996-07-12 00:00:00"],
+["10251","VICTE","Victuailles en stock","Lyon","France","1996-07-08 00:00:00","1996-07-15 00:00:00"],
+["10252","SUPRD","Suprêmes délices","Charleroi","Belgium","1996-07-09 00:00:00","1996-07-11 00:00:00"],
+["10253","HANAR","Hanari Carnes","Rio de Janeiro","Brazil","1996-07-10 00:00:00","1996-07-16 00:00:00"],
+["10254","CHOPS","Chop-suey Chinese","Bern","Switzerland","1996-07-11 00:00:00","1996-07-23 00:00:00"]
+],
+"rowCount": 830
+}
+</pre>
+
+<p>The format closely follows the XML based data consumed by the Rico.Buffer.AjaxSQL buffer 
+and all values should be returned accordingly.
+The ‘rows’ value object of the data object is a normal JS Array with each element 
+being a JS hash that represents the row. For the hash the key/value combo should be colName/colValue.
+
+
+</body>
+</html>

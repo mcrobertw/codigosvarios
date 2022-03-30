@@ -1,0 +1,156 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<title>Rico Accordion &amp; Grid</title>
+<script src="../../src/rico.js" type="text/javascript"></script>
+<script type='text/javascript'>
+Rico.loadModule('Accordion');
+Rico.loadModule('LiveGrid','LiveGridMenu','greenHdg.css');
+
+Rico.onLoad( function() {
+  var myData = [
+    [1,'Cell 1:2','Cell 1:3','Cell 1:4','Cell 1:5'],
+    [2,'Cell 2:2','Cell 2:3','Cell 2:4','Cell 2:5'],
+    [3,'Cell 3:2','Cell 3:3','Cell 3:4','Cell 3:5'],
+    [4,'Cell 4:2','Cell 4:3','Cell 4:4','Cell 4:5'],
+    [5,'Cell 5:2','Cell 5:3','Cell 5:4','Cell 5:5'],
+    [6,'Cell 6:2','Cell 6:3','Cell 6:4','Cell 6:5']
+  ];
+  for (var i=1; i<=3; i++) {
+    var opts = {  
+      useUnformattedColWidth: false,
+      defaultWidth : 90,
+      frozenColumns: 1,
+      windowResize : false,
+      visibleRows  : -4,
+      columnSpecs  : [{Hdg:'Column 1',type:'number', decPlaces:0, ClassName:'alignright'},
+                      {Hdg:'Column 2'},
+                      {Hdg:'Column 3'},
+                      {Hdg:'Column 4'},
+                      {Hdg:'Column 5'}]
+    };
+    var buffer=new Rico.Buffer.Base();
+    buffer.loadRowsFromArray(myData);
+    var grid=new Rico.LiveGrid ('ex'+i, buffer, opts);
+    grid.menu=new Rico.GridMenu();
+  }
+  alert('The grids have been sized, so now initialize the accordion');
+  new Rico.Accordion( $$('div.panelheader'), $$('div.panelContent'),
+                      {panelHeight:200, hoverClass: 'mdHover', selectedClass: 'mdSelected'});
+});
+</script>
+<style type="text/css">
+body, p {
+	font-family : Trebuchet MS, Arial, Helvetica, sans-serif;
+}
+h1 { font-size: 16pt; }
+
+.panelheader {
+  background-color : #6b79a5;
+  height: 26px;
+  color : #ced7ef;
+  font-weight : normal;
+  border-bottom:1px solid #182052;
+  border-top:1px solid #BDC7E7;
+  font-weight : normal;
+  padding-left: 5px;
+}
+
+.mdHover {
+  background-color : #63699c;
+  color : #ffffff;
+}
+.mdSelected {
+  background-color : #63699c;
+  color : #ffffff;
+  font-weight : bold;
+  
+}
+.panelContent {
+  border : 1px solid #1f669b;
+  border-top-width    : 0px;
+  border-bottom-width : 0px;
+  font-size: smaller;
+  overflow: auto;
+  height: 200px; /* allow grids to size during initialization */
+}
+#accordionExample {
+  margin-top : 6px;
+  border : 1px solid #4f4f4f;
+  width: 500px;
+}
+</style>
+</head>
+
+
+<body>
+<h1 style='float:left;'>Rico Accordion &amp; Grid</h1>
+<p style='float:right;'>
+<a href="http://validator.w3.org/check?uri=referer"><img style='border:none;'
+    src="images/valid-html401.png"
+    alt="Valid HTML 4.01 Strict" height="31" width="88"></a>
+</p>
+
+<div style='clear:both;'>
+  <div id="accordionExample">
+
+      <div >
+        <div  class="panelheader">
+          Overview
+        </div>
+        <div class="panelContent">
+This example illustrates how to include LiveGrids in an Accordion.
+<br>
+<br>
+One key is the following grid options:
+<pre>
+windowResize : false, /* don't resize grids if window is resized */
+visibleRows  : -4,    /* size grid to parent element */
+</pre>
+combined with the following css:
+<pre>
+.panelContent {
+  height: 200px; /* allow grids to size during initialization */
+}
+</pre>
+
+        </div>
+      </div>
+
+      <div >
+        <div class="panelheader">
+          Grid 1
+        </div>
+        <div class="panelContent">
+<p class="ricoBookmark"><span id="ex1_bookmark">&nbsp;</span></p>
+<div id="ex1"></div>
+        </div>
+        </div>
+
+      <div>
+        <div class="panelheader">
+          Grid 2
+        </div>
+        <div class="panelContent">
+<p class="ricoBookmark"><span id="ex2_bookmark">&nbsp;</span></p>
+<div id="ex2"></div>
+        </div>
+      </div>
+
+
+      <div>
+        <div class="panelheader">
+          Grid 3
+        </div>
+        <div class="panelContent">
+<p class="ricoBookmark"><span id="ex3_bookmark">&nbsp;</span></p>
+<div id="ex3"></div>
+        </div>
+      </div>
+
+
+  </div>
+
+</div>
+</body></html>

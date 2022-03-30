@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+<title>Rico TV Networks</title>
+
+<script src="../../src/rico.js" type="text/javascript"></script>
+
+<script type='text/javascript'>
+Rico.loadModule('DragAndDrop');
+
+var names = [ "CNN", "ZDF", "BBC", "MTV", "CNBC", "NHK" ];
+var CustomDraggable;
+Rico.onLoad( function() {
+  Rico.setDebugArea('logger');
+  CustomDraggable = Class.create();
+  CustomDraggable.prototype = Object.extend(new Rico.Draggable(), CustomDraggableMethods);
+  var n=$('nameList');
+  for ( var i=0; i < names.length; i++ ) {
+    var d=document.createElement('div');
+    d.id="d" + i;
+    d.className='CustomDraggable';
+    d.innerHTML=names[i];
+    n.appendChild(d);
+    dndMgr.registerDraggable( new CustomDraggable('Custom', d) );
+  }
+  dndMgr.registerDropZone( new Rico.Dropzone('dropZone1'));
+  dndMgr.registerDropZone( new Rico.Dropzone('dropZone2'));
+  dndMgr.registerDropZone( new Rico.Dropzone('nameListDeleted'));
+});
+
+
+var CustomDraggableMethods = {
+
+  startDrag: function() {
+    this.startParent=this.htmlElement.parentNode;
+    Rico.writeDebugMsg("startDragging: " + this.htmlElement.innerHTML + " from [" + this.startParent.id +"]");
+  },
+  
+  endDrag: function() {
+    this.endParent=this.htmlElement.parentNode;
+    Rico.writeDebugMsg("endDragging: " + this.htmlElement.innerHTML + " from [" + this.startParent.id + "] to [" + this.endParent.id + "]" );
+  }
+
+}
+
+</script>
+
+<style type="text/css">
+body, p {
+  font-family : Trebuchet MS, Arial, Helvetica, sans-serif;
+}
+h1 { font-size: 16pt; }
+
+.logBox {
+  background-color : #ffffee;
+  border : 1px solid #8b8b8b;
+  font-size : 8pt;
+}
+
+.listBox {
+  padding: 5px;
+  background-color : #ffffff;
+  border : 1px solid #8b8b8b;
+  width:200px;
+  height:100px;
+  overflow:auto;
+}
+.listBox * {
+  margin: 0px;
+  padding: 0px;
+  font-size : 11px;
+  font-family : Arial, Helvetica;
+}
+span.catHeader {
+  font-family : Arial;
+  font-weight : bold;
+  font-size : 11px;
+  color : #5b5b5b;
+  margin-left : 8px;
+  margin-top : 12px;
+  display : block;
+}
+.zone {
+  display:inline;
+  margin-left:8px;
+  margin-bottom:8px;
+  float:left;
+}
+div.CustomDraggable {
+  z-index:10;
+  color: blue;
+}
+</style>
+</head>
+
+
+<body>
+
+<h1>Rico Drag-and-Drop: TV Networks</h1>
+
+<p>This example demonstrates how to track drop-and-drop objects as they are moved by the user. Watch the log messages!</p>
+
+<div id="exampleContainer" style="float:left;background-color:#DDD;">
+
+<div>
+<div id="dragBox" class='zone'>
+  <span class="catHeader">Channels</span>
+  <div class="listBox" id="nameList"></div>
+</div>
+
+<div id="deleteZone" class='zone'>
+  <span class="catHeader">Delete zone</span>
+  <div class="listBox" id="nameListDeleted"></div>
+</div>
+</div>
+
+<div style='clear:both'>
+<div id="dropBox1" class='zone'>
+  <span class="catHeader">Drop1</span>
+  <div class="listBox" id="dropZone1"></div>
+</div>
+
+<div id="dropBox2" class='zone'>
+  <span class="catHeader">Drop2</span>
+  <div class="listBox" id="dropZone2"></div>
+</div>
+</div>
+
+<div style="clear:both;margin:8px;">
+  <span id='loghead' class="catHeader">drag-n-drop message log:</span>
+  <textarea class="logBox" id="logger" rows='8' cols='80'></textarea>
+</div>
+
+</div>
+</body>
+</html>

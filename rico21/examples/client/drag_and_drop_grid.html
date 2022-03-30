@@ -1,0 +1,190 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+<title>Rico Drag-n-Drop Grids</title>
+
+<script src="../../src/rico.js" type="text/javascript"></script>
+
+<script type='text/javascript'>
+Rico.loadModule('LiveGrid','LiveGridMenu','DragAndDrop','greenHdg.css');
+
+var names = [ ["Holloman", "Debbie"],
+              ["Barnes", "Pat"], 
+              ["Dampier", "Joan"], 
+              ["Alvarez", "Randy"],
+              ["Neil", "William"], 
+              ["Hardoway", "Kimber"],
+              ["Story", "Leslie"],
+              ["Lott", "Charlie"],
+              ["Patton", "Sabrina"], 
+              ["Lopez", "Juan" ] ];
+
+var grid_ids=['nameList','nameListDeleted','dropZone1','dropZone2']
+var CustomDraggable, logger, grid=[], buffer=[];
+
+Rico.onLoad( function() {
+  logger=$('logger');
+  logger.value='';
+
+  // initialize all 4 grids with the same options
+  
+  var opts = {  
+    useUnformattedColWidth: false,
+    visibleRows  : 'parent',
+    columnSpecs  : [{Hdg:'Last Name', canDrag:true},
+                    {Hdg:'First Name', canDrag:true}]
+  };
+  for (var i=0; i<4; i++) {
+    buffer[i]=new Rico.Buffer.Base();
+    grid[i]=new Rico.LiveGrid (grid_ids[i], buffer[i], opts);
+  }
+  
+  // load data into the first grid
+  
+  buffer[0].loadRowsFromArray(names);
+  buffer[0].fetch(0);
+
+  // initialize the drop zones (the other 3 grids)
+  
+  var CustomDropzone = Class.create();
+  CustomDropzone.prototype = Object.extend(new Rico.Dropzone(), CustomDropzoneMethods);
+  dndMgr.registerDropZone( new CustomDropzone(grid[1]));
+  dndMgr.registerDropZone( new CustomDropzone(grid[2]));
+  dndMgr.registerDropZone( new CustomDropzone(grid[3]));
+});
+
+
+var CustomDropzoneMethods = {
+
+  initialize: function( grid ) {
+    this.liveGrid     = grid;
+    this.htmlElement  = grid.outerDiv;
+    this.absoluteRect = null;
+  },
+
+  accept: function(draggableObjects) {
+    for ( var i = 0 ; i < draggableObjects.length ; i++ ) {
+      
+      // copy data from drag grid buffer to drop grid buffer
+      
+      var srcGrid = draggableObjects[i].liveGrid;
+      if (srcGrid==this.liveGrid) continue;
+      var srcRow  = srcGrid.buffer.bufferRow(draggableObjects[i].dragRow);
+      var newRows = this.liveGrid.buffer.appendRows(1);
+      for (var c=0; c < srcGrid.columns.length; c++)
+        newRows[0][c]=srcGrid.buffer.getValue(srcRow,c)
+      logger.value+="CustomDropzone.accept: " + draggableObjects[i].htmlElement.innerHTML + " from [" + srcGrid.tableId +"] to [" + this.liveGrid.tableId +"]\n";
+      
+      // refresh drop grid
+
+      this.liveGrid.buffer.fetch(0);
+      this.liveGrid.scrollToRow(this.liveGrid.buffer.size-1); // scroll to the end
+      
+      // remove item from drag grid
+      
+      srcGrid.buffer.deleteRows(srcRow);
+      srcGrid.buffer.fetch(Math.min(srcGrid.lastRowPos || 0, srcGrid.topOfLastPage()-1));
+    }
+  }
+
+}
+
+</script>
+
+<style type="text/css">
+body, p {
+  font-family : Trebuchet MS, Arial, Helvetica, sans-serif;
+}
+h1 { font-size: 16pt; }
+
+.logBox {
+  background-color : #ffffee;
+  border : 1px solid #888;
+  font-size : 8pt;
+}
+
+.zone {
+  padding: 0px;
+  width:250px;
+  height:150px;
+  overflow:hidden;
+  margin-left:8px;
+  margin-bottom:8px;
+  float:left;
+  position: relative;
+}
+.catHeader {
+  font-family : Arial;
+  font-weight : bold;
+  font-size : 11px;
+  color : #5b5b5b;
+  margin-left : 8px;
+  margin-top : 12px;
+  margin-bottom: 0px;
+  display : block;
+}
+.LiveGridDraggable {
+  background-color : #E0DDB5;
+  color            : #5b5b5b;
+  border           : 1px solid #5b5b5b;
+  filter           : alpha(Opacity=70);
+  opacity          : 0.7;
+  -moz-opacity     : 0.7;
+  padding          : 1px 5px 1px 5px;
+  font-size        : 11px;
+}
+div.ricoLG_outerDiv {
+  border: 1px solid #888;
+  background-color:#FFF;
+}
+#exampleContainer {
+  float:left;
+  background-color:#DDD;
+}
+</style>
+</head>
+
+
+<body>
+
+<h1>Rico Drag-and-Drop: LiveGrids</h1>
+
+<p>This example demonstrates how to enable drag-and-drop actions between LiveGrids. 
+Drag either a first or last name from the upper left grid to any of the other 3 grids.
+Log messages demonstrate that the items can be tracked.</p>
+
+<div id="exampleContainer">
+
+<div>
+<div id="dragBox" class='zone'>
+  <p class="catHeader"><span id="nameList_bookmark">&nbsp;</span></p>
+  <div id="nameList"></div>
+</div>
+
+<div id="deleteZone" class='zone'>
+  <span class="catHeader">Delete zone</span>
+  <div id="nameListDeleted"></div>
+</div>
+</div>
+
+<div style='clear:both'>
+<div id="dropBox1" class='zone'>
+  <span class="catHeader">Drop1</span>
+  <div id="dropZone1"></div>
+</div>
+
+<div id="dropBox2" class='zone'>
+  <span class="catHeader">Drop2</span>
+  <div id="dropZone2"></div>
+</div>
+</div>
+
+<div style="clear:both;margin:8px;">
+  <span id='loghead' class="catHeader">drag-n-drop message log:</span>
+  <textarea class="logBox" id="logger" rows='6' cols='80'></textarea>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<html>
+<head>
+<title>Export</title>
+<script type="text/javascript">
+function getdata() {
+  if (!window.opener || window.opener.closed) {
+    alert('Error! Parent window is closed');
+    return;
+  }
+  var divID=window.location.search;
+  if (divID.length<2) {
+    alert('Error! Invalid id');
+    return;
+  }
+  divID=divID.substring(1);
+  var oDiv=window.opener.document.getElementById(divID);
+  if (!oDiv) {
+    alert('Error! Can not find \"'+divID+'\"');
+    return;
+  }
+  document.body.innerHTML=oDiv.innerHTML;
+}
+window.onload=getdata;
+</script>
+<style type="text/css">
+tbody tr {
+  vertical-align:top;
+}
+</style>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,192 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Rico Translation</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Rico の翻訳</h1>
+
+<p>Rico ライブラリは翻訳オブジェクト（RicoTranslate）を含むので、
+複数の言語をサポートするアプリケーションを、 Rico を利用して書く事が出来ます。
+翻訳オブジェクトは、異なるデフォルト値を言語ごとに指定する事が出来、
+デフォルトの日付および数値フォーマットも保持しています。
+Rico ディストリビューションは、デフォルトグリッドメニューと Rico カレンダーを表示するために
+必要なフレーズと共に、翻訳オブジェクトをロードする言語ファイルを含みます。
+
+<h2>翻訳ステータス</h2>
+
+<p>言語ファイルは "src/translations/ricoLocale_xx.js" に保持されており、
+xx は 2 文字の言語コードです。
+現在、Rico は以下の翻訳と共に配布されています。
+
+<table border='1' cellspacing='0' cellpadding='3'>
+<thead>
+<tr><th>言語</th><th>コード</th><th>ステータス</th></tr>
+</thead>
+<tbody>
+
+<tr>
+<td>英語</td>
+<td>en</td>
+<td>ベースライン</td>
+</tr>
+
+<tr>
+<td>フランス語</td>
+<td>fr</td>
+<td>完了して検査された</td>
+</tr>
+
+<tr>
+<td>スペイン語</td>
+<td>es</td>
+<td>完了して検査された</td>
+</tr>
+
+<tr>
+<td>日本語</td>
+<td>ja</td>
+<td>完了して検査された</td>
+</tr>
+
+<tr>
+<td>中国語（単純化された）</td>
+<td>zh</td>
+<td>完了して検査された</td>
+</tr>
+
+<tr>
+<td>韓国語</td>
+<td>ko</td>
+<td>完了して検査された</td>
+</tr>
+
+<tr>
+<td>ドイツ語</td>
+<td>de</td>
+<td>完了して検査を必要としている</td>
+</tr>
+
+<tr>
+<td>ポルトガル語</td>
+<td>pt</td>
+<td>完了して検査を必要としている</td>
+</tr>
+
+<tr>
+<td>イタリア語</td>
+<td>it</td>
+<td>完了して検査を必要としている</td>
+</tr>
+
+<tr>
+<td>ロシア語</td>
+<td>ru</td>
+<td>新しい ricoLocale フォーマットへの更新を必要としている</td>
+</tr>
+
+<tr>
+<td>ウクライナ語</td>
+<td>ua</td>
+<td>新しい ricoLocale フォーマットへの更新を必要としている</td>
+</tr>
+
+</tbody>
+</table>
+
+<h2>複数言語のサポート</h2>
+
+<p>Rico が進化するにつれ、翻訳ファイルに追加のフレーズが必要とされます。
+英語のフレーズが最初に追加され、そして Rico コミュニティのメンバーが
+新しいフレーズを他の翻訳ファイルに加えます。
+私達は全ての翻訳を同期し続けようとしますが、
+これは必ずしも可能ではありません。
+そのため、rico.js がロードされる時、
+最初に英語の言語ファイルをロードします。
+それから、それはユーザの OS またはブラウザの言語に一致する Rico 翻訳を探します。
+見つかったなら、それは次にロードされます。
+これは、フレーズが翻訳ファイルやそれらの言語用の翻訳が利用出来ない場合に、
+（空白メッセージの代わりに）少なくとも英語でのフレーズを見る事を確実にします。
+
+<p>追加のコーディング無しで、Rico は多くの場合、
+ユーザにふさわしいローカライズされたメニューやカレンダーを表示するはずです。
+しかし、全ての最新のブラウザは、ユーザに OS の言語をオーバライドする方法を与えます。
+例えば、Firefox では ツールメニュー > オプション > 詳細 > 一般タブ > 言語設定ボタン へ進みます。
+Internet Explorer では ツールメニュー > インターネットオプション > 全般タブ > 言語ボタン へ進みます
+この設定は 
+<a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4">accept language</a> 
+から呼ばれ、javascript を通して直接アクセスする事は出来ません。
+しかし、Rico は適切な言語に基づく翻訳ファイルをロードする方法を提供します。
+この設定を構成したユーザーにとって、このアプローチを利用して解析される言語は、
+彼らの本当の選択により近いかもしれません。
+その適切な言語は "Rico.acceptLanguage()" javascript メソッドに、
+適切な言語のヘッダを返すサーバサイドスクリプトを持つ事により Rico で解析されます。
+これは、ASP と PHP のための LiveGrid フォームプラグインと、
+.net のための LiveGrid プラグインを利用する時に、自動的に行われます。
+他の状況では、サーバサイドインクルードファイルは Rico ディストリビューションで提供されます。
+
+<p>PHP では。
+<pre>
+&lt;? 
+// ricoLiveGridForms.php を利用する時は必要ありません
+// rico.js をインクルードする行の後に置かれなければなりません
+
+require "chklang2.php";
+?&gt;
+</pre>
+
+<p>ASP では。
+<pre>
+' ricoLiveGridForms.asp を利用する時は必要ありません
+' rico.js をインクルードする行の後に置かれなければなりません
+
+&lt;!-- #INCLUDE FILE = "chklang2.vbs" --&gt;
+</pre>
+
+<p>.net では。
+<pre>
+' ricoLiveGridForms.ascx を利用する時は必要ありません
+' rico.js をインクルードする行の後に置かれなければなりません
+
+&lt;%@ Register TagPrefix="Rico" TagName="ChkLang" Src="chklang.ascx" %&gt;
+&lt;Rico:ChkLang runat='server' id='translation' /&gt;
+</pre>
+
+<h2>RicoTranslate オブジェクトリファレンス</h2>
+
+<p>RicoTranslate オブジェクトは以下のプロパティとメソッドを含みます。
+<dl>
+<dt>monthNames[]
+<dd>それぞれの月の翻訳された名前を含む 12 アイテムの配列（1 月はアイテム 0）
+<dt>dayNames[]
+<dd>それぞれの曜日の翻訳された名前を含む 7 アイテムの配列（日曜はアイテム 0）
+<dt>monthAbbr()
+<dd>月の数字（0-11）を受け取り、月の省略名を返す関数（デフォルトは monthNames[] の始めの 3 文字ですが、翻訳によってオーバーライドされます）
+<dt>dayAbbr()
+<dd>曜日の数字（0-6）を受け取り、曜日の省略名を返す関数（デフォルトは dayNames[] の始めの 3 文字ですが、翻訳によってオーバーライドされます）
+<dt>langCode
+<dd>現在ロードされた 2 文字の言語コードを含みます（デフォルトは "en"）
+<dt>thouSep
+<dd>数値をフォーマットする時に千桁区切りのセパレータとして利用する文字を含みます（デフォルトは ","）
+<dt>decPoint
+<dd>数値をフォーマットする時に小数点として利用する文字を含みます（デフォルトは "."）
+<dt>dateFmt
+<dd>デフォルトの日付フォーマットを含みます（デフォルトは "mm/dd/yyyy"）
+<dt>timeFmt
+<dd>デフォルトの時間フォーマットを含みます（デフォルトは "hh:nn:ss a/pm"）
+<dt>addPhraseId (phraseId, phrase)
+<dd>指定されたフレーズを加えて、それを phraseId に割り当てます。フレーズの文字列は、任意の置き換えパラメータの参照を含むかもしれず、$1、$2、等を利用して指定されます。
+<dt>getPhraseById (phraseId)
+<dd>phraseId によって指定されたフレーズを返します。任意の置き換えパラメータは phraseId に続くかもしれません。
+</dl>
+
+<h2>最新情報の提出</h2>
+
+<p>質問と訂正は <a href='http://sourceforge.net/forum/forum.php?forum_id=470997'>SourceForge の Open Discussion フォーラム</a> にポストされるかもしれません。
+あるいは、 dowdybrown at yahoo dot com に直接送信する事も出来ます。
+
+</body>
+</html>

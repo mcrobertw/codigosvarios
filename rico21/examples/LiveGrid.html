@@ -1,0 +1,1249 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Rico LiveGrid</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Creating a Rico LiveGrid</h1>
+
+<p><a href='LiveGrid_ja.html'><img src='client/images/japanese.gif' alt='View this page in Japanese'></a>
+<a href='LiveGrid_ja.html'>View this page in Japanese</a></p>
+
+<p>Rico LiveGrid displays data in a scrolling table, with the data buffered in a 
+2-dimensional JavaScript array. As the user scrolls
+vertically through the grid, data is dynamically copied from the array onto the grid.
+The buffer can can be loaded from:
+<ol>
+<li><a href='#model1'>a javascript array</a>
+<li><a href='#model2'>an HTML table</a>
+<li><a href='#model3'>an XML file</a>
+<li><a href='#model4'>a SQL database query</a>
+<li><a href='#model5'>a custom javascript callback function</a>
+</ol>
+
+
+<h2><a name='model1'>Usage Model 1: Loading data from a javascript array</a></h2>
+
+<ul><li>Load the data to be displayed into a javascript array.
+<pre>
+  var myData = [
+    [1,'Cell 1:2','Cell 1:3','Cell 1:4','Cell 1:5'],
+    [2,'Cell 2:2','Cell 2:3','Cell 2:4','Cell 2:5'],
+    [3,'Cell 3:2','Cell 3:3','Cell 3:4','Cell 3:5'],
+    [4,'Cell 4:2','Cell 4:3','Cell 4:4','Cell 4:5']
+  ];
+</pre>
+
+<li>Load the Rico javascript and css files necessary to display the grid.
+<pre>
+Rico.loadModule('LiveGrid','LiveGridMenu','greenHdg.css');
+</pre>
+<dl>
+<dt>LiveGrid
+<dd>This loads the Rico javascript and css files necessary to display a LiveGrid 
+with a static buffer (no AJAX).
+<dt>LiveGridMenu
+<dd>This loads the default grid menu. This menu provides access to all of the LiveGrid capabilities.
+It adjusts the selections presented to the user based on the column selected 
+and the type of buffer used.
+You can also choose to use the grid with no menu at all, or to create your own menu
+customized to the needs of your application.
+<dt>greenHdg.css
+<dd>Rico comes with several sample grid styles: coffee-with-milk,
+grayedout, greenHdg, iegradient (Internet Explorer only), tanChisel, and warmfall. 
+You may choose one of the included styles or create one of your own. 
+</dl>
+
+<li>Load the array into a Rico Buffer object:
+<pre>
+  var buffer=new Rico.Buffer.Base();
+  buffer.loadRowsFromArray(myData);
+</pre>
+
+<li>Define the grid's options, including the grid headings:
+<pre>
+  var opts = {  
+    useUnformattedColWidth: false,
+    defaultWidth : 90,
+    visibleRows  : 'data',
+    frozenColumns: 1,
+    columnSpecs  : [{Hdg:'Column 1',type:'number', ClassName:'alignright'},
+                    {Hdg:'Column 2'},
+                    {Hdg:'Column 3'},
+                    {Hdg:'Column 4'},
+                    {Hdg:'Column 5'}]
+  };
+</pre>
+
+<li>Instantiate the LiveGrid, passing in the base id for the grid, 
+the Rico.Buffer instance, and the grid options.
+<pre>
+  var ex1=new Rico.LiveGrid ('ex1', buffer, opts);
+</pre>
+
+<li>To enable the default pop-up menu for the grid, assign the grid's
+menu property to an instance of Rico.GridMenu.
+<pre>
+  ex1.menu=new Rico.GridMenu();
+</pre>
+
+<li>Rico.loadModule may finish <em>after</em> the window.onload event.
+So to ensure that the grid initialization runs after the Rico modules
+have loaded, you must pass the initialization function to the
+Rico.onLoad method. Putting all of the javascript together would look like this:
+<pre>
+&lt;script type='text/javascript'&gt;
+Rico.loadModule('LiveGrid','LiveGridMenu','greenHdg.css');
+
+Rico.onLoad( function() {
+  var myData = [
+    [1,'Cell 1:2','Cell 1:3','Cell 1:4','Cell 1:5'],
+    [2,'Cell 2:2','Cell 2:3','Cell 2:4','Cell 2:5'],
+    [3,'Cell 3:2','Cell 3:3','Cell 3:4','Cell 3:5'],
+    [4,'Cell 4:2','Cell 4:3','Cell 4:4','Cell 4:5']
+  ];
+  var opts = {  
+    useUnformattedColWidth: false,
+    defaultWidth : 90,
+    visibleRows  : 'data',
+    frozenColumns: 1,
+    columnSpecs  : [{Hdg:'Column 1',type:'number', ClassName:'alignright'},
+                    {Hdg:'Column 2'},
+                    {Hdg:'Column 3'},
+                    {Hdg:'Column 4'},
+                    {Hdg:'Column 5'}]
+  };
+  var buffer=new Rico.Buffer.Base();
+  buffer.loadRowsFromArray(myData);
+  var ex1=new Rico.LiveGrid ('ex1', buffer, opts);
+  ex1.menu=new Rico.GridMenu();
+});
+&lt;/script&gt;
+</pre>
+
+<li>Finally, place a div element in your HTML markup at the position where the grid should go.
+Including the markup for the bookmark will cause the grid's scroll position to be displayed.
+<pre>
+&lt;p class="ricoBookmark"&gt;&lt;span id="ex1_bookmark"&gt;&nbsp;&lt;/span&gt;&lt;/p&gt;
+&lt;div id="ex1"&gt;&lt;/div&gt;
+</pre>
+
+
+
+</ul>
+
+
+<h2><a name='model2'>Usage Model 2: Loading data from an HTML table</a></h2>
+
+<ul><li>Define an HTML table with the headings in a <code>&lt;thead&gt;</code> section
+and the data in a <code>&lt;tbody&gt;</code> section.
+Including the markup for the bookmark will cause the grid's scroll position to be displayed.
+<pre>
+&lt;p class="ricoBookmark"&gt;&lt;span id="data_grid_bookmark"&gt;&nbsp;&lt;/span&gt;&lt;/p&gt;
+&lt;table id="data_grid"&gt;
+  &lt;thead&gt;
+
+  &lt;tr&gt;
+    &lt;th&gt;First column name&lt;/th&gt;
+    &lt;th&gt;Second column name&lt;/th&gt;
+    ...
+    &lt;th&gt;Last column name&lt;/th&gt;
+  &lt;/tr&gt;
+
+  &lt;/thead&gt;
+
+  &lt;tbody&gt;
+
+  &lt;tr&gt;
+    &lt;td&gt;Row 1, column 1 data&lt;/td&gt;
+    &lt;td&gt;Row 1, column 2 data&lt;/td&gt;
+    ...
+    &lt;td&gt;Row 1, last column data&lt;/td&gt;
+  &lt;/tr&gt;
+
+  &lt;tr&gt;
+    &lt;td&gt;Row 2, column 1 data&lt;/td&gt;
+    &lt;td&gt;Row 2, column 2 data&lt;/td&gt;
+    ...
+    &lt;td&gt;Row 2, last column data&lt;/td&gt;
+  &lt;/tr&gt;
+
+  ...
+
+  &lt;tr&gt;
+    &lt;td&gt;Row n, column 1 data&lt;/td&gt;
+    &lt;td&gt;Row n, column 2 data&lt;/td&gt;
+    ...
+    &lt;td&gt;Row n, last column data&lt;/td&gt;
+  &lt;/tr&gt;
+
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</pre>
+
+<li>Load the Rico javascript and css files necessary to display the grid.
+<pre>
+Rico.loadModule('LiveGrid','LiveGridMenu','greenHdg.css');
+</pre>
+<dl>
+<dt>LiveGrid
+<dd>This loads the Rico javascript and css files necessary to display a LiveGrid 
+with a static buffer (no AJAX).
+<dt>LiveGridMenu
+<dd>This loads the default grid menu. This menu provides access to all of the LiveGrid capabilities.
+It adjusts the selections presented to the user based on the column selected 
+and the type of buffer used.
+You can also choose to use the grid with no menu at all, or to create your own menu
+customized to the needs of your application.
+<dt>greenHdg.css
+<dd>Rico comes with several sample grid styles: coffee-with-milk,
+grayedout, greenHdg, iegradient (Internet Explorer only), tanChisel, and warmfall. 
+You may choose one of the included styles or create one of your own. 
+</dl>
+
+<li>Load the table's data rows into a Rico Buffer object:
+<pre>
+var buffer = new Rico.Buffer.Base($('data_grid').tBodies[0]);
+</pre>
+
+<li>Finally, instantiate the LiveGrid, passing in the DOM id of the HTML table
+(this allows the LiveGrid to load the column headings from the table's thead section), 
+the Rico.Buffer instance, and any options (in this case the first column gets
+a width of 50 pixels and the second column gets a width of 80 pixels).
+<pre>
+var grid_options = { columnSpecs: [ {width:50}, {width:80} ] };
+var grid = new Rico.LiveGrid('data_grid', buffer, grid_options);
+</pre>
+
+<li>Rico.loadModule may finish <em>after</em> the window.onload event.
+So to ensure that the grid initialization runs after the Rico modules
+have loaded, you must pass the initialization function to the
+Rico.onLoad method. Putting all of the javascript together would look like this:
+<pre>
+&lt;script type='text/javascript'&gt;
+Rico.loadModule('LiveGrid','LiveGridMenu','greenHdg.css');
+
+Rico.onLoad( function() {
+  var buffer = new Rico.Buffer.Base($('data_grid').tBodies[0]);
+  var grid_options = { columnSpecs: [width:50, width:80] };
+  var grid = new Rico.LiveGrid('data_grid', buffer, grid_options);
+});
+&lt;/script&gt;
+</pre>
+
+</ul>
+
+
+<h2><a name='model3'>Usage Model 3: Loading data from an XML file</a></h2>
+
+<ul><li>Define an HTML table, supplying the table header cells, but no table body cells.
+Including the markup for the bookmark will cause the grid's scroll position to be displayed.
+<pre>
+&lt;p class="ricoBookmark"&gt;&lt;span id="data_grid_bookmark"&gt;&nbsp;&lt;/span&gt;&lt;/p&gt;
+&lt;table id="data_grid"&gt;
+  &lt;tr&gt;
+
+    &lt;th&gt;First column name&lt;/th&gt;
+    &lt;th&gt;Second column name&lt;/th&gt;
+
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+
+<li>Load the Rico javascript and css files necessary to display the grid.
+<pre>
+Rico.loadModule('LiveGridAjax','LiveGridMenu','greenHdg.css');
+</pre>
+<dl>
+<dt>LiveGridAjax
+<dd>This loads the Rico javascript and css files necessary to display a LiveGrid 
+with an AJAX-enabled buffer.
+<dt>LiveGridMenu
+<dd>This loads the default grid menu. This menu provides access to all of the LiveGrid capabilities.
+It adjusts the selections presented to the user based on the column selected 
+and the type of buffer used.
+You can also choose to use the grid with no menu at all, or to create your own menu
+customized to the needs of your application.
+<dt>greenHdg.css
+<dd>Rico comes with several sample grid styles: coffee-with-milk,
+grayedout, greenHdg, iegradient (Internet Explorer only), tanChisel, and warmfall. 
+You may choose one of the included styles or create one of your own. 
+</dl>
+
+<li>Create a Rico Buffer, which fetches data to populate the table.
+The AjaxXML buffer makes just one request for data to the supplied URL
+at grid startup.
+<pre>
+var buffer = new Rico.Buffer.AjaxXML('/controller/action?format=xml');
+</pre>
+
+The URL ("/controller/action?format=xml" in this example) must return data in the following format:
+<pre>
+&lt;ajax-response&gt;
+&lt;response type='object' id='data_grid_updater'&gt;
+&lt;rows update_ui='true' offset='0'&gt;
+&lt;tr&gt;&lt;td&gt;Data for row 1, cell 1&lt;/td&gt;&lt;td&gt;Data for row 1, cell 2&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Data for row 2, cell 1&lt;/td&gt;&lt;td&gt;Data for row 2, cell 2&lt;/td&gt;&lt;/tr&gt;
+&lt;/rows&gt;
+&lt;/response&gt;
+&lt;/ajax-response&gt;
+</pre>
+
+<li>Finally, instantiate the LiveGrid, passing in the DOM id of the HTML table, 
+the Rico.Buffer instance, and any options (columnSpecs is not required, 
+but shown here as a placeholder for customization of the columns).
+<pre>
+var grid_options = { columnSpecs: [,] };
+var grid = new Rico.LiveGrid('data_grid', buffer, grid_options);
+</pre>
+
+<li>Rico.loadModule may finish <em>after</em> the window.onload event.
+So to ensure that the grid initialization runs after the Rico modules
+have loaded, you must pass the initialization function to the
+Rico.onLoad method. Putting all of the javascript together would look like this:
+<pre>
+&lt;script type='text/javascript'&gt;
+Rico.loadModule('LiveGridAjax','LiveGridMenu','greenHdg.css');
+
+Rico.onLoad( function() {
+  var buffer = new Rico.Buffer.AjaxXML('/controller/action?format=xml');
+  var grid_options = { columnSpecs: [,] };
+  var grid = new Rico.LiveGrid('data_grid', buffer, grid_options);
+});
+&lt;/script&gt;
+</pre>
+</ul>
+
+
+<h2><a name='model4'>Usage Model 4: Loading data from an SQL database query</a></h2>
+
+<p>The descriptions below apply directly to the ASP and PHP implementations of the Rico LiveGrid plug-ins.
+The concepts are the same in .net, but the implementation is quite different 
+(examine ex2simple.aspx to see how this gets implemented in .net).
+
+<ul>
+<li>Define a session variable that contains the query to be run. The variable name must
+match the id of the table below. When requesting data, the grid will pass its id 
+to ricoXMLquery, and ricoXMLquery will use it to get the query text from
+the session variable.
+<ul>
+<li>ASP:
+<pre>
+&lt;%
+session.contents("data_grid")="select ID,Name,City from customers"
+%&gt;
+</pre>
+
+<li>PHP:
+<pre>
+&lt;? 
+$_SESSION['data_grid']="select ID,Name,City from customers";
+?&gt;
+</pre>
+
+<li>.net:
+<pre>
+Sub Page_Load(Sender As object, e As EventArgs)
+  data_grid.sqlQuery="select ID,Name,City from customers"
+  ' session variable is set by the control
+End Sub
+</pre>
+</ul>
+
+
+<li>Define an HTML table, supplying the table header cells, but no table body cells.
+Including the markup for the bookmark will cause the grid's scroll position to be displayed.
+<pre>
+&lt;p class="ricoBookmark"&gt;&lt;span id="data_grid_bookmark"&gt;&nbsp;&lt;/span&gt;&lt;/p&gt;
+&lt;table id="data_grid"&gt;
+  &lt;tr&gt;
+
+    &lt;th&gt;Customer #&lt;/th&gt;
+    &lt;th&gt;Customer Name&lt;/th&gt;
+    &lt;th&gt;City&lt;/th&gt;
+
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+
+<li>Load the Rico javascript and css files necessary to display the grid.
+<pre>
+Rico.loadModule('LiveGridAjax','LiveGridMenu','greenHdg.css');
+</pre>
+<dl>
+<dt>LiveGridAjax
+<dd>This loads the Rico javascript and css files necessary to display a LiveGrid 
+with an AJAX-enabled buffer.
+<dt>LiveGridMenu
+<dd>This loads the default grid menu. This menu provides access to all of the LiveGrid capabilities.
+It adjusts the selections presented to the user based on the column selected 
+and the type of buffer used.
+You can also choose to use the grid with no menu at all, or to create your own menu
+customized to the needs of your application.
+<dt>greenHdg.css
+<dd>Rico comes with several sample grid styles: coffee-with-milk,
+grayedout, greenHdg, iegradient (Internet Explorer only), tanChisel, and warmfall. 
+You may choose one of the included styles or create one of your own. 
+</dl>
+
+<li>Create a Rico Buffer, which fetches data to populate the table.
+Unlike the AjaxXML buffer which fetches all grid data at once, the AjaxSQL
+buffer fetches data in chunks. This makes it possible for LiveGrid to
+efficiently display query results containing thousands, or even hundreds of thousands
+of rows.
+<pre>
+var buffer = new Rico.Buffer.AjaxSQL('ricoXMLquery.asp');
+</pre>
+
+The URL ("ricoXMLquery.asp" in this example) utilizes one of the included plug-ins to
+fetch data from the database and return it to the grid in this XML format:
+<pre>
+&lt;ajax-response&gt;
+&lt;response type='object' id='data_grid_updater'&gt;
+&lt;rows update_ui='true' offset='0'&gt;
+&lt;tr&gt;&lt;td&gt;Data for row 1, cell 1&lt;/td&gt;&lt;td&gt;Data for row 1, cell 2&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Data for row 2, cell 1&lt;/td&gt;&lt;td&gt;Data for row 2, cell 2&lt;/td&gt;&lt;/tr&gt;
+&lt;/rows&gt;
+&lt;rowcount&gt;99&lt;/rowcount&gt;
+&lt;/response&gt;
+&lt;/ajax-response&gt;
+</pre>
+
+The &lt;rowcount&gt; tag is optional, but should be returned whenever the "get_total"
+querystring parameter is present in the request.
+
+<li>Finally, instantiate the LiveGrid, passing in the DOM id of the HTML table, 
+the Rico.Buffer instance, and any options (columnSpecs is not required, 
+but shown here as a placeholder for customization of the columns).
+<pre>
+var grid_options = { columnSpecs: [,,] };
+var grid = new Rico.LiveGrid('data_grid', buffer, grid_options);
+</pre>
+
+<li>Rico.loadModule may finish <em>after</em> the window.onload event.
+So to ensure that the grid initialization runs after the Rico modules
+have loaded, you must pass the initialization function to the
+Rico.onLoad method. Putting all of the javascript together would look like this:
+<pre>
+&lt;script type='text/javascript'&gt;
+Rico.loadModule('LiveGridAjax','LiveGridMenu','greenHdg.css');
+
+Rico.onLoad( function() {
+  var buffer = new Rico.Buffer.AjaxSQL('ricoXMLquery.asp');
+  var grid_options = { columnSpecs: [,,] };
+  var grid = new Rico.LiveGrid('data_grid', buffer, grid_options);
+});
+&lt;/script&gt;
+</pre>
+</ul>
+
+
+<h2><a name='model5'>Usage Model 5: Loading data using a custom callback function</a></h2>
+
+<p>This model works the same way as models 3 and 4 except that, rather than fetching
+data using an xmlHTTPrequest, the data is fetched using javascript callback functions.
+This allows you to do creative things in the callback function - like call Google Gears.
+Setting up the callback is very easy. Rather than passing a string containing the data provider's URL
+to the AjaxXML or AjaxSQL constructor, you just pass the callback function instead.
+
+<p>The code that follows is taken from 
+<a href='client/gridJSbuffer.html'>examples/client/gridJSbuffer.html</a>, 
+which uses the AjaxXML buffer. The "jsfetch" callback function
+returns a 2-dimensional array that is 100 rows long by 5 columns wide.
+Note that AjaxXML only loads its buffer once (at grid startup), so
+jsfetch will only be called once.
+The options hash is identical in structure to the options hash used
+by Prototype's <a href='http://prototypejs.org/api/ajax/options'>Ajax.Request</a> method.
+
+<pre>
+buffer=new Rico.Buffer.AjaxXML(<strong>jsfetch</strong>);
+
+function <strong>jsfetch</strong>(options) {
+  Rico.writeDebugMsg("jsfetch");
+  var newRows=[], offset=options.parameters.offset;
+  for (var r=0; r<100; r++) {
+    var row=[];
+    row.push(offset.toString());
+    row.push(new Date().toString());
+    for (var c=2; c<5; c++) row.push('cell '+r+':'+c);
+    newRows.push(row);
+  }
+  options.onComplete(newRows);
+}
+</pre>
+
+<p>The code that follows is taken from 
+<a href='client/gridJSbuffer2.html'>examples/client/gridJSbuffer2.html</a>, 
+which uses the AjaxSQL buffer. The "jsfetch" callback function
+simulates a 2-dimensional array that is 500 rows long by 5 columns wide.
+However, only a section of that array is returned during any one callback --
+just the rows from <code>options.parameters.offset</code> to
+<code>options.parameters.offset + options.parameters.page_size</code>.
+
+<pre>
+buffer=new Rico.Buffer.AjaxSQL(<strong>jsfetch</strong>);
+
+function <strong>jsfetch</strong>(options) {
+  var newRows=[], totrows=500;
+  var offset=options.parameters.offset;
+  var limit=Math.min(totrows-offset,options.parameters.page_size)
+  for (var r=0; r&lt;limit; r++) {
+    var row=[];
+    row.push(new Date().toString());
+    row.push(offset.toString());
+    for (var c=2; c&lt;5; c++) row.push('cell '+(r+offset)+':'+c);
+    newRows.push(row);
+  }
+  options.onComplete(newRows,false,totrows);
+}
+</pre>
+
+<p>options.onComplete takes the following parameters:
+<ul>
+<li>newRows - 2-dimensional array where each item is a string
+<li>newAttr - 2-dimensional array where each item is an object containing acceptAttr values for the cell,
+or false if acceptAttr is not being used
+<li>totalRows - an integer representing the total number of rows in the dataset
+<li>errMsg - if an error occurs, this is the message text to be displayed to the user
+</ul>
+
+
+<h2><a name='debug'></a>Debugging</h2>
+<p>Rico 2.0 includes the ability to route time-stamped debug messages to a message log.
+The log may be an html textarea or the browser's javascript console.
+<ul>
+<li>If a textarea exists with the id of the LiveGrid table plus '_debugmsgs', i.e.
+<pre style='margin:3px;'>&lt;textarea cols="100" rows="5" id="data_grid_debugmsgs" /&gt;</pre>
+then this textarea will be used for the message log.
+<li>Alternatively, the textarea may be designated by a call to Rico.setDebugArea()
+
+<pre>
+&lt;textarea id='debug' rows='5' cols='80'&gt;&lt;/textarea&gt;
+&lt;script type='text/javascript'&gt;
+Rico.setDebugArea('debug');
+&lt;/script&gt;
+</pre>
+
+<li>If no textarea is designated, Rico will attempt to use the browser's
+built-in javascript console. The following consoles are known to work:
+  <ul>
+  <li>The console in Firefox's <a href='http://www.getfirebug.com/'>Firebug</a> add-on
+  <li>The Opera javascript console
+  <li>The Safari javascript console
+  <li>The console in <a href='http://blogs.msdn.com/ie/archive/2008/09/03/developer-tools-in-internet-explorer-8-beta-2.aspx'>IE8's Developer Toolbar</a> (under the Script tab)
+  </ul>
+</ul>
+
+<p>LiveGrid is programmed to send a number of messages to the message log that may prove helpful in debugging.
+You can also send your own messages by using Rico.writeDebugMsg(). For example:
+<pre>
+Rico.writeDebugMsg('My debug message');
+</pre>
+
+<h2>Grid Menus</h2>
+
+<p>Rico LiveGrids come with a lot of functionality built in. To access that functionality,
+Rico includes a default set of menus -- defined in ricoLiveGridMenu.js.
+To use the default menu, simply load the 'LiveGridMenu' module and then
+assign the grid's menu property to an instance of the Rico.GridMenu class.
+<pre>
+  Rico.loadModule('LiveGridMenu');
+  ...
+  var ex1=new Rico.LiveGrid ('ex1', buffer, grid_options);
+  ex1.menu=new Rico.GridMenu();
+</pre>
+<p>By default, the menu will open when a user double-clicks on a grid cell.
+To change the event that opens the menu, assign a value to the grid's
+<a href='#menuEvent'>menuEvent</a> option. The following code will open the menu on a right-click:
+<pre>
+  Rico.loadModule('LiveGridMenu');
+  ...
+  var grid_options = {
+    menuEvent: 'contextmenu'
+  }
+  var ex1=new Rico.LiveGrid ('ex1', buffer, grid_options);
+  ex1.menu=new Rico.GridMenu();
+</pre>
+<p>Rico.GridMenu provides a callback (dataMenuHandler) so that additional menu items can be added.
+The grid menu is always built dynamically -- customized to the row and column the user
+has clicked on. So the callback function is called every time the menu is invoked and
+must add the desired menu items at each invocation.
+<pre>
+  Rico.loadModule('LiveGridMenu');
+  ...
+  var ex1=new Rico.LiveGrid ('ex1', buffer, grid_options);
+  ex1.menu=new Rico.GridMenu();
+  ex1.menu.options.dataMenuHandler=myCustomMenuItems;
+  ...
+function myCustomMenuItems(grid,r,c,onBlankRow) {
+  if (buffer.getWindowValue(r,c)=='Special Value')
+    grid.menu.addMenuItem("Special menu item", specialAction);
+}
+function specialAction() {
+  ...
+}
+</pre>
+
+<p>It is also possible to create completely custom menus. For an example,
+see ex5.php/asp/aspx.
+
+
+<h2>Notes</h2>
+
+<ul>
+<li>If you create an element with a DOM id matching the name of the LiveGrid table 
+plus '_bookmark', it will be updated with text indicating 
+the number of records displayed in the grid. The LiveGrid examples typically use
+this markup:
+<pre>
+&lt;p class="ricoBookmark"&gt;&lt;span id="data_grid_bookmark"&gt;&nbsp;&lt;/span&gt;&lt;/p&gt;
+</pre>
+<li>In order to display properly, a browser displaying a LiveGrid must be operating in 
+<a href="http://www.quirksmode.org/css/quirksmode.html">strict (aka standards) mode</a>.
+Therefore, you must include a doctype declaration just before the 
+<code> &lt;html&gt; </code> tag. For example:
+<pre>
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+ "http://www.w3.org/TR/html4/strict.dtd"&gt;
+</pre>
+</ul>
+
+
+<h2>Reference</h2>
+
+<h3>Constructor</h3>
+<pre>
+
+  var grid = new Rico.LiveGrid (table_id, rico_buffer, grid_options);
+
+</pre>
+
+<ul>
+<li><strong>table_id</strong> is the DOM id of the table (or div) that will be replaced by a LiveGrid
+<li><strong>rico_buffer</strong> is a Rico Buffer object, e.g.
+  <ul>
+  <li>Rico.Buffer.Base (for non-AJAX tables)
+  <li>Rico.Buffer.AjaxXML
+  <li>Rico.Buffer.AjaxSQL
+  <li>Rico.Buffer.AjaxJSON
+  </ul>
+<li><strong>grid_options</strong> (see below)
+</ul>
+
+<h3><a name="options"></a>Options</h3>
+
+
+<h4>Grid Size</h4>
+<dl>
+<dt>visibleRows (rows in .net plug-in)
+<dd>How many rows of the grid are made visible?
+A positive integer specifies that the grid should always contain exactly that many rows.
+<p>Negative values have the following meanings:
+  <ul>
+  <li>-1: size grid to client window (default)
+  <li>-2: size grid to whichever is smaller: the client window or the data
+  <li>-3: size grid so that the page body does not have a scrollbar
+  <li>-4: size grid to the parent node in the DOM
+  </ul>
+<p>String values have the following meanings:
+  <ul>
+  <li>'window': size grid to client window (default)
+  <li>'data': size grid to whichever is smaller: the client window or the data
+  <li>'body': size grid so that the page body does not have a scrollbar
+  <li>'parent': size grid to the parent node in the DOM
+  <li>'XX%': size grid to XX percent of the total window height
+  <li>'XXpx': size grid to XX pixels
+  </ul>
+  
+<dt>minPageRows
+<dd>Minimum # of visible rows. Used only when visibleRows < 0. (default: 2 - after Rico 2b3, 1 - up to Rico 2b3)
+
+<dt>maxPageRows
+<dd>Maximum # of visible rows. Used only when visibleRows < 0. (default: 50)
+
+<dt>defaultWidth
+<dd>An integer used in setting the initial width of columns. 
+See the <a href='#width'>column width option</a> for an explanation.
+(default: 100)
+
+<dt><a name='useUnformattedColWidth'>useUnformattedColWidth</a>
+<dd>A boolean value used in setting the initial width of columns. 
+See the <a href='#width'>column width option</a> for an explanation.
+(default: true)
+
+<dt>scrollBarWidth
+<dd>For some calculations, LiveGrid needs to know the width of scrollbars on the page. (default: 19)
+
+<dt>minScrollWidth
+<dd>Minimum scroll area width in pixels when width of frozen columns exceeds window width. (default: 100)
+</dl>
+
+
+<h4>Grid Data</h4>
+<dl>
+<dt>offset<dd>First row of data to be displayed (default: 0)
+<dt>prefetchBuffer<dd>Load the buffer (and therefore the grid) on page load? (default: true)
+<dt>sortCol<dd>Name or index of column for initial sort
+<dt>sortDir<dd>Direction of initial sort
+  <br>possible values: 'ASC', 'DESC'
+<dt>getQueryParms<dd>If true, check the web page's query string for filter parameters and apply
+any filter that is found.  Filter parameters must be of the form "f[x]=" where x is the column index.
+(default: false)
+</dl>
+
+<h4>Header Configuration</h4>
+<dl>
+<dt>frozenColumns
+<dd>number of columns on the left side of the grid that should be
+    frozen (like Excel). 
+
+<dt>headingSort
+<dd>A string that defines how headings are displayed to facilitate sorting.
+  <ul>
+  <li>'link' -- make headings a link that will sort columns (default)
+  <li>'hover' -- user can click in any part of the heading cell to sort. 
+       Heading changes background color when cursor hovers over cell.
+  <li>'none' -- events on headings are disabled
+  </ul>
+
+<dt>hdrIconsFirst
+<dd>Put sort and filter icons before or after header text (default: true)
+
+<dt><a name='allowColResize'>allowColResize</a>
+<dd>Allow columns to be resized by the user? If true, then resizing for individual columns 
+can be disabled using <a href='#noResize'>noResize</a> in columnSpecs[].
+
+<dt>panels
+<dd>An array of strings that can serve as secondary headings.
+In LiveGrid Forms, they also serve as the headings for the tabbed panels on the input form.
+
+<dt>PanelNamesOnTabHdr
+<dd>Set to 'true' for the strings in panels[] to be used as secondary headings.
+In LiveGrid Forms, it may be set to 'false' so that panels[] is only used on the input form.
+
+<dt><a name='FilterLocation'>FilterLocation</a>
+<dd>Specifies the heading row where filters should be placed.
+-1 causes a new row to be appended to the header and that new row used for filtering.
+See also the <a href='#filterUI'>filterUI</a> option.
+
+<dt>FilterAllToken
+<dd>Token in select filters used to indicate "show all values" (default: "___ALL___").
+</dl>
+
+<h4>Images</h4>
+<dl>
+<dt>resizeBackground
+<dd>Image to use for column resize handle. (default: 'resize.gif')
+
+<dt>sortAscendImg
+<dd>Image to use to indicate that the column is sorted in ascending order. (default: 'sort_asc.gif')
+
+<dt>sortDescendImg
+<dd>Image to use to indicate that the column is sorted in descending order. (default: 'sort_desc.gif')
+
+<dt>filterImg
+<dd>Image used to indicate an active filter on a column. (default: 'filtercol.gif')
+</dl>
+
+
+<h4>Cookie options</h4>
+<dl>
+
+<dt><a name='saveColumnInfo'>saveColumnInfo</a>
+<dd>Specifies which details to save in the grid's cookie. Only one cookie is used for each grid.
+Note that the width setting includes the hide/show status of the column. 
+(default: {width:true, filter:false, sort:false})
+<br>In the .net plug-in, this option is represented by 3 separate properties:
+saveColumnWidth, saveColumnFilter, saveColumnSort
+
+<dt>cookiePrefix
+<dd>A string that is prepended to the cookie name. (default: 'RicoGrid.')
+
+<dt>cookieDays
+<dd>Number of days before the cookie expires. 
+If you don't specify it, then the cookie is only maintained for the current session. (default: null)
+
+<dt>cookiePath
+<dd>Sets the top level directory from which the grid cookie can be read.
+If you don't specify it, it becomes the path of the page that sets the cookie. (default: null)
+
+<dt>cookieDomain
+<dd>Tells the browser to which domain the cookie should be sent. 
+If you don't specify it, it becomes the domain of the page that sets the cookie. (default: null)
+
+</dl>
+
+<h4>Highlighting and selection</h4>
+<dl>
+
+<dt>highlightElem
+<dd>a string that specifies what gets highlighted/selected
+  <ul>
+  <li>'cursorRow' -- the grid row under the cursor
+  <li>'cursorCell' -- the grid cell under the cursor
+  <li>'menuRow' -- the grid row where the menu is displayed
+  <li>'menuCell' -- the grid cell where the menu is displayed
+  <li>'selection' -- allow the user to select cells
+  <li>'none' -- never highlight
+  </ul>
+
+<dt>highlightSection
+<dd>an integer that specifies which section of the table is highlighted
+  <ul>
+  <li>1 -- frozen
+  <li>2 -- scrolling
+  <li>3 -- all (default)
+  <li>0 -- none
+  </ul>
+
+<dt>highlightMethod
+<dd>Method used to highlight cells &amp; rows. Possible values:
+  <ul>
+  <li>'outline' -- least CPU-intensive on client-side
+  <li>'class' -- adds CSS class to highlighted cell/row (default)
+  <li>'both' -- highlight using both outline and class
+  </ul>
+
+<dt>highlightClass
+<dd>When highlighting by class, this is the class name used (default: 'ricoLG_selection')
+</dl>
+
+
+<h4>Export and print</h4>
+<dl>
+
+<dt>maxPrint
+<dd>The maximum number of rows that the user is allowed
+to Print/Export.  Set to 0 to disable print/export. (default: 1000)
+
+<dt>exportWindow
+<dd>Options string passed to <a href='http://www.w3schools.com/htmldom/met_win_open.asp'>window.open()</a>
+when the export window is created. (default: "height=400,width=500,scrollbars=1,menubar=1,resizable=1")
+
+<dt>exportStyleList
+<dd>An array of CSS attributes that will be extracted from the first visible row of the grid and used
+to format all rows of the exported table. 
+(default: ['background-color', 'color', 'text-align', 'font-weight', 'font-size', 'font-family'])
+</dl>
+
+
+<h4>Behavior Defaults</h4>
+<dl>
+<dt><a name='canHideDefault'>canHideDefault</a>
+<dd>Controls whether columns can be hidden/shown (default: true). 
+Hide/show can be disabled for individual columns using the <a href='#canHide'>canHide</a> property in columnSpecs.
+
+<dt><a name='canSortDefault'>canSortDefault</a>
+<dd>Controls whether columns can be sorted (default: true).
+Sorting can be disabled for individual columns using the <a href='#canSort'>canSort</a> property in columnSpecs.
+
+<dt><a name='canFilterDefault'>canFilterDefault</a>
+<dd>Controls whether columns can be filtered (default: true).
+Filtering can be disabled for individual columns using the <a href='#canFilter'>canFilter</a> property in columnSpecs.
+
+</dl>
+
+
+<h4>Event control</h4>
+<dl>
+<dt><a name='menuEvent'>menuEvent</a>
+<dd>A string that specifies when the grid's menu should be invoked
+  <ul>
+  <li>'click' -- invoke menu on single-click
+  <li>'dblclick' -- invoke menu on double-click (default)
+  <li>'contextmenu' -- invoke menu on right-click
+  <li>'none' -- no pop-up menu
+  </ul>
+
+<dt>windowResize
+<dd>A boolean value specifying whether to resize the grid during a window.resize event.
+This should be set to false when the grid is embedded in an accordian. (default: true)
+</dl>
+
+
+<h4>Event handles</h4>
+<dl>
+<dt style='font-weight:normal;'>Event handlers cannot be passed in options to the constructor, but may be set after the LiveGrid has been constructed.
+<dt>sortHandler<dd> (default: Rico.LiveGridMethods.sortHandler -- bound)
+<dt>filterHandler<dd> (default: Rico.LiveGridMethods.filterHandler -- bound)
+<dt>onRefreshComplete<dd> (default: Rico.LiveGridMethods.bookmarkHandler -- bound)
+<dt>rowOverHandler<dd> (default: Rico.LiveGridMethods.rowMouseOver -- bound as event listener)
+<dt>mouseDownHandler<dd> (default: Rico.LiveGridMethods.selectMouseDown -- bound as event listener)
+<dt>mouseOverHandler<dd> (default: Rico.LiveGridMethods.selectMouseOver -- bound as event listener)
+<dt>mouseUpHandler<dd> (default: Rico.LiveGridMethods.selectMouseUp -- bound as event listener)
+<dt>onscroll<dd> called whenever the grid is scrolled vertically. (default: null)
+<dt>onscrollidle<dd> called 1.2 seconds after the grid is scrolled vertically. (default: null)
+<dt>click<dd> called when a grid cell is clicked. (default: null, unless menuEvent='click')
+<dt>dblclick<dd> called when a grid cell is double-clicked. (default: null, unless menuEvent='dblclick')
+<dt>contextmenu<dd> called when a grid cell is right-clicked. (default: null, unless menuEvent='contextmenu')
+</dl>
+
+<h4><a name="column"></a>Per-column configuration</h4>
+<dl>
+<dt style='font-weight:normal;'>Options for each individual column are contained in the columnSpecs option.
+columnSpecs is an array with an entry for each column. 
+Each column entry can either be:
+<ul>
+
+<li>null (default) --  in which case the column is formatted according to the spec in Rico.TableColumn.DEFAULT.
+If most columns in your grid share common formatting, then it may make sense to override
+the default column spec for that grid:
+<pre>
+Rico.TableColumn.DEFAULT = {ClassName:'aligncenter', width:50};
+</pre>
+In this case, any column with no spec will have content aligned to the center and a width of 50 pixels.
+
+<li>a string -- provides a simple way to specify a column format.
+These values are built-in: DOLLAR, EURO, PERCENT, QTY, DEFAULT.
+It is also possible to define your own. This example, which defines a temperature format,
+is taken from weather.php:
+<pre>
+Rico.TableColumn.TEMP = {type:'number', decPlaces:0, 
+  ClassName:'alignright', suffix:'&amp;deg;C', width:50};
+var opts = {  
+  frozenColumns : 1,
+  columnSpecs   : [{width:120},{width:70},{width:70},{width:100},
+                   'TEMP','TEMP','TEMP',
+                   {width:150},{width:200},{width:60}]
+};
+</pre>
+
+<li>an object -- containing entries for one or more of the properties listed below.
+Here is an example that contains specifications for columns 0, 1, and 3.
+Column 2 would get the default spec.
+<pre>
+columnSpecs : [{canSort:false, noResize:true, ClassName:'alignright'},
+               {ClassName:'aligncenter'},
+               ,
+               {visible:false}]
+</pre>
+</ul>
+
+<dt>Hdg
+<dd>An alternate way of specifying the heading text for a column.
+Only used by LiveGrid if the grid id refers to a &lt;div&gt; instead of an html table.
+
+<dt><a name='canSort'>canSort</a>
+<dd>Column can be sorted. (default: <a href='#canSortDefault'>grid.options.canSortDefault</a>)
+
+<dt><a name='canFilter'>canFilter</a>
+<dd>Column can be filtered. (default: <a href='#canFilterDefault'>grid.options.canFilterDefault</a>)
+
+<dt>canDrag
+<dd>Column cells can serve as the source for a drag-n-drop operation. The "DragAndDrop" module must be loaded. 
+The temporary drag objects have a class of "LiveGridDraggable".
+For an example, see <a href='client/drag_and_drop_grid.html'>drag_and_drop_grid.html</a>. (default: false)
+
+<dt><a name='canHide'>canHide</a>
+<dd>Column can be hidden/unhidden. (default: <a href='#canHideDefault'>grid.options.canHideDefault</a>)
+
+<dt>visible
+<dd>Controls whether the column is visible at grid startup (default: true). 
+If <a href='#saveColumnInfo'>grid.options.saveColumnInfo.width</a> is true
+and there is a value in the cookie for this column, the cookie value will take precedence.
+
+<dt><a name='width'>width</a>
+<dd>An integer specifying the initial width (in pixels) for the column. 
+Here is the algorithm LiveGrid uses for setting the initial width of each column:
+<ol>
+<li>If <a href='#saveColumnInfo'>options.saveColumnInfo.width</a> is true and column information is present in the grid's cookie 
+(due to the user previously performing a resize on that grid's column), 
+then the width in the cookie is used. Otherwise...
+
+<li>If there is a width spec for the column in options.columnSpecs[], then the width in the spec is used. For an example, see ex3.php/asp/aspx. Otherwise...
+
+<li>If <a href='#useUnformattedColWidth'>options.useUnformattedColWidth</a> is true (default) and the grid header is initialized from an html table, then the column's width in the html table is used. 
+You can usually control the column widths of the initial table by using col tags (e.g. &lt;col style='width:40px;' &gt;). 
+If the total table width is less than the browser width then this works; however if it is greater, then the browser often ignores &lt;col width&gt; 
+and tries to squeeze all of the columns into the available window width. Thus, using this method to set the column width is unreliable. Otherwise...
+
+<li>If <a href='#useUnformattedColWidth'>options.useUnformattedColWidth</a> is false, then the column's width is set to options.defaultWidth (which defaults to 100).
+</ol>
+Therefore, the most reliable way to set column widths in LiveGrid and SimpleGrid is to specify a width for every column in options.columnSpecs[]. 
+If many columns share a common width, then you can shortcut this somewhat by setting options.useUnformattedColWidth=false, 
+and setting options.defaultWidth to the common width.
+
+<dt><a name='noResize'>noResize</a>
+<dd>Allow column to be resized? (default <a href='#allowColResize'>grid.options.allowColResize</a> )
+
+<dt>ClassName
+<dd>By default, LiveGrid assigns a unique CSS class name to each
+column, which follows the naming convention: table_id + '_col' + column_index.
+For example, the fourth column in the grid 'mygrid' would have the class name
+'mygrid_col3'. The value of the ClassName option overrides this default name.
+The ClassName option is most commonly used to specify column alignment via the
+Rico-provided 'alignright' and 'aligncenter' classes. 
+So, if you wanted the first 3 columns in your grid to be displayed with white
+text on a red background, you could do either of the following:
+
+<pre>
+In CSS:
+.mygrid_col0 div.ricoLG_cell, 
+.mygrid_col1 div.ricoLG_cell, 
+.mygrid_col2 div.ricoLG_cell {
+  color: white;
+  background-color: red;
+}
+</pre>
+
+OR
+
+<pre>
+In CSS:
+.WhiteOnRed div.ricoLG_cell {
+  color: white;
+  background-color: red;
+}
+
+In javascript:
+columnSpecs : [{ClassName:'WhiteOnRed'},
+               {ClassName:'WhiteOnRed'},
+               {ClassName:'WhiteOnRed'},
+               ...
+</pre>
+
+Finally, please note that this ClassName is not applied to the grid headings - 
+use a align="right" on the &lt;th&gt; tag to accomplish the header alignment.
+
+<dt>type (DataType in .net plug-in)
+<dd>A string containing one of these values: 
+<ul>
+<li>text - any tags in the column value are removed before being displayed to the user.
+<li>showTags - any tags in the column value are displayed to the user as text.
+<li>number - column value is treated as a number, 
+and any <a href='#NumberFormatting'>number formatting options</a> 
+supplied in the column specification are applied.
+<li>datetime - column value is treated as a date &amp; time, 
+and any <a href='#DateFormatting'>date formatting options</a> 
+supplied in the column specification are applied.
+<li>UTCasLocalTime - column/database value is treated as a GMT/UTC date &amp; time, and any <a href='#DateFormatting'>date formatting options</a> 
+supplied in the column specification are applied. Before display, the value is converted to the user's local time zone.
+<li>date - column value is treated as a date, and any <a href='#DateFormatting'>date formatting options</a> 
+supplied in the column specification are applied.
+<li>raw (default) - column values are displayed directly to the grid cell. 
+Any HTML markup gets copied into the cell.
+</ul>
+</dd>
+
+<dt><a name='control'></a>control
+<dd>An object that can be used to provide special formatting for a column.
+Several column controls are provided with LiveGrid. The code for them
+resides in ricoLiveGridControls.js. Here is a brief description of the
+provided controls:
+
+<dl style='font-size:smaller;'>
+<dt>Rico.TableColumn.checkboxKey(showKey)
+<dd>Display unique key column as: &lt;checkbox&gt; &lt;key value&gt;
+and keep track of which keys the user selects.
+Key values should not contain &lt;, &gt;, or &amp;.
+
+<dt>Rico.TableColumn.checkbox(checkedValue, uncheckedValue, defaultValue, readOnly)
+<dd>Display column as checkboxes. Database column should contain only two-values  (e.g. yes/no).
+The following code is taken from ex7 (column values are 1 and 0):
+<pre>
+columnSpecs: [{canHide:false,
+               control:new Rico.TableColumn.checkbox('1','0'),
+               ClassName:'aligncenter'},
+              'specQty'],
+</pre>
+
+<dt>Rico.TableColumn.textbox(boxSize, boxMaxLen, readOnly)
+<dd>Display the column value in a text box.
+
+<dt>Rico.TableColumn.HighlightCell(chkcol,chkval,highlightColor,highlightBackground,chkop)
+<dd>Highlight a grid cell when a particular value is present in the specified column.
+chkop optionally specifies the comparison to be performed: ==, !=, &lt;, &lt;=, &gt;, &gt;=.
+If not specified, then == is used.
+The following code is taken from ex2highlight and highlights the entire row when column 1
+contains "HANAR":
+<pre>
+var CustId='HANAR';
+var CustIdCol=1;
+var highlight=Rico.TableColumn.HighlightCell;
+...
+columnSpecs: [
+{ control:new highlight(CustIdCol,CustId,'red','yellow') },
+{ control:new highlight(CustIdCol,CustId,'red','yellow') },
+{ control:new highlight(CustIdCol,CustId,'red','yellow') },
+{ control:new highlight(CustIdCol,CustId,'red','yellow') },
+{ control:new highlight(CustIdCol,CustId,'red','yellow') },
+{ type:'date', control:new highlight(CustIdCol,CustId,'red','yellow') },
+{ type:'date', control:new highlight(CustIdCol,CustId,'red','yellow') }]
+</pre>
+
+<dt>Rico.TableColumn.bgColor()
+<dd>Database value contains a css color name/value
+
+<dt>Rico.TableColumn.link(href,target)
+<dd>Database value contains a url to another page.
+The href parameter may contain references to grid values by including "{x}" in the string,
+where x is a column number. The following code is taken from ex6:
+<pre>
+columnSpecs: [,
+{control:new Rico.TableColumn.link('ex2.asp?id={0}','_blank'),
+ width:250},
+,'specQty']
+</pre>
+
+<dt>Rico.TableColumn.image()
+<dd>Database value contains a url to an image.
+The following code is taken from photos.php:
+<pre>
+imgctl=new Rico.TableColumn.image();
+...
+columnSpecs: [
+{control:imgctl,width:90},,,
+{type:'datetime'},{width:200}]
+</pre>
+
+<dt>Rico.TableColumn.lookup(map, defaultCode, defaultDesc)
+<dd>Map a database value to a display value
+
+<dt>Rico.TableColumn.MultiLine()
+<dd>Overcomes issues when displaying multi-line content (i.e. content with &lt;br&gt; tags) in IE6 and IE7
+
+</dl>
+
+<br>It is also possible to write your own column control, which
+implements logic specific to your application. Here is an example:
+<pre>
+// Display values white on black if
+//   first column contains the value "reverse"
+// Usage: { control:new MyCustomColumn() }
+MyCustomColumn = Class.create();
+
+MyCustomColumn.prototype = {
+  initialize: function() {},
+
+  _clear: function(gridCell,windowRow) {
+    gridCell.style.color='';
+    gridCell.style.backgroundColor='';
+    gridCell.innerHTML='&amp;nbsp;';
+  },
+
+  _display: function(v,gridCell,windowRow) {
+    var col0=this.liveGrid.buffer.getWindowValue(windowRow,0);
+    if (col0=="reverse") {
+      gridCell.style.color='white';
+      gridCell.style.backgroundColor='black';
+    } else {
+      gridCell.style.color='';
+      gridCell.style.backgroundColor='';
+    }
+    gridCell.innerHTML=this._format(v);
+  }
+}
+</pre>
+
+<dt><a name='filterUI'></a>filterUI
+<dd>If a <a href='#FilterLocation'>FilterLocation</a> option is specified for the grid, then filterUI will control
+how each column is filtered. If filterUI is:
+<ul>
+<li>null or omitted, then no filter is displayed for the column.
+<li>'t' - will generate a text box filter and the records being displayed
+are filtered as the user types. 
+<br>May optionally be followed by a caret (^) to
+indicate that text box values should match the beginning of the column value.
+Otherwise, they can match anywhere in the column's value.
+<br>May also be followed by a number to indicate the size of the text box (default size is 10).
+<pre>
+filterUI:'t^20' 
+// will create a text box that is 20 characters wide
+// text typed into the box will be compared to
+//    the beginning of each column value
+</pre>
+<li>'s' - will generate a select list filter with all possible column values contained in the list.
+Populated using a 'select distinct' query if the grid's source is a SQL query.
+</ul>
+
+<dt></a>filterCol
+<dd>Specifies that the filter should be applied to a different column. For example, ex3livegrid.asp/aspx/php
+uses this feature to filter the order and ship date columns by year. The full date is shown in the column
+in which the filter appears; however, there is another hidden, calculated column containing "year(orderdate)"
+to which the filter is applied.
+</dl>
+
+<dl>
+<dt style='color:navy;'><a name='NumberFormatting'></a><em>Number formatting:</em>
+
+<dt>multiplier
+<dd>The value is multiplied by this number before it is displayed. (default: 1)
+
+<dt>decPlaces
+<dd>Number of places to the right of the decimal point. (default: 0)
+
+<dt>decPoint
+<dd>Decimal point symbol. (default: '.' but overridden in the translation files)
+
+<dt>thouSep
+<dd>Symbol for thousands separator. (default: ',' but overridden in the translation files)
+
+<dt>negSign
+<dd>Specifies how negative numbers should be displayed. Possible values:
+<ul>
+<li>L=leading minus (default)
+<li>T=trailing minus
+<li>P=parentheses
+</ul>
+
+<dt>prefix
+<dd>A string added to the beginning of the number. Typically a currency symbol.
+
+<dt>suffix
+<dd>A string added to the end of a number. For example, a "%" symbol.</dd>
+</dl>
+
+<dl>
+<dt style='color:navy;'><a name='DateFormatting'></a><em>Date formatting:</em>
+
+<dt>dateFmt
+<dd>A string specifying how the date or datetime should be displayed. Default is "translateDate", which means
+that the dateFmt and timeFmt strings in the RicoTranslate object are used 
+(this defaults to "mm/dd/yyyy" for dates and "mm/dd/yyyy hh:nn:ss a/pm" for datetimes, 
+but is overridden by the various language translation files). 
+If dateFmt="localeDate", then the value is formatted using javascript's built-in toLocaleDateString() function. 
+If dateFmt="localeDateTime", then the value is formatted using javascript's built-in toLocaleString() function. 
+The dateFmt string may contain the following special character sequences:
+
+<ul>
+<li>yyyy - 4 digit year
+<li>yy - 2 digit year
+<li>mmmm - month name
+<li>mmm - 3 character month name abbreviation. In Asian languages this often doesn't make sense - in these cases it returns the full month name (same as mmmm).
+<li>mm - 2 digit month number (zero padded)
+<li>m - 1 or 2 digit month number
+<li>dddd - day-of-the-week
+<li>ddd - 3 character day-of-the-week abbreviation
+<li>dd - 2 digit day number (zero padded)
+<li>d - 1 or 2 digit day number
+<li>hh - 2 digit hour, 12-hour clock (zero padded)
+<li>h - 1 or 2 digit hour, 12-hour clock
+<li>HH - 2 digit hour, 24-hour clock (zero padded)
+<li>H - 1 or 2 digit hour, 24-hour clock
+<li>nn - 2 digit minutes (zero padded)
+<li>ss - 2 digit seconds (zero padded)
+<li>a/p - a or p (for am or pm)
+</ul>
+
+<pre>
+// display first column as "month year"
+columnSpecs : [{type:date, dateFmt:'mmm yyyy'}]
+</pre>
+</dd>
+
+<dt>prefix
+<dd>A string added to the beginning of the date.
+
+<dt>suffix
+<dd>A string added to the end of a date. For example, you could use this to include a time zone:
+<pre>
+// indicate that times are GMT/UTC
+columnSpecs : [{type:datetime, suffix:' UTC'}]
+</pre>
+</dl>
+
+</body>
+</html>

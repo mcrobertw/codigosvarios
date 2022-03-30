@@ -1,0 +1,197 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<title>Rico Grid Overview</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Rico のグリッド</h1>
+<p>Rico ライブラリは 2 つの異なったタイプのグリッドをサポートします。
+<strong>LiveGrid</strong> と <strong>SimpleGrid</strong>. 
+LiveGrid のデータは、2次元の JavaScript 配列で、常にバッファリングされます。
+ユーザがグリッドを通して垂直にスクロールするとき、データは配列からグリッドに動的にコピーされます。
+一方、SimpleGrids はバッファリングを行いません。
+-- グリッドのためのすべてのデータは JavaScript のデータ構造では無く、
+<a href="http://en.wikipedia.org/wiki/Document_Object_Model">DOM</a> に存在しています。
+
+<p>どちらのタイプのグリッドも、次のようないくつかの共通点を持っています。
+<ul>
+<li>画面上部で切り離されてスクロールしない、固定された列見出し
+<li>グリッドの左端で固定された列
+<li>リサイズ可能な列
+<li>共通の css スタイリング - LiveGrids 用に開発されたスタイルは、SimpleGrids でも同様に機能します
+<li>右から左に読む言語(rtl)との互換性 - 
+<a href="asp/rtl/ex1.asp" target="_top">ASP</a> と <a href="php/rtl/ex1.php" target="_top">PHP</a> の実例に含まれます</a>
+<li>Rico のポップアップ(コンテキスト)メニューとの互換性
+</ul>
+
+<hr>
+<h2>LiveGrid</h2>
+<p>Rico は、LiveGrid バッファをロードするために多くのサポートを提供します。
+バッファは次の項目からロードする事が出来ます。
+<ul>
+<li>SQL データベースクエリ
+<li>XML ファイル
+<li>HTML テーブル
+<li>javascript 配列
+</ul>
+
+<h3>LiveGrid のデータベース接続</h3>
+<p>SQL クエリの実行結果を LiveGrid にロードするタスクを簡素化するために、
+Rico にはデータベースと LiveGrid を接続する "plug-ins" のセットが付属しています。
+Rico プラグインは次のデータベースでテストされました。
+
+<p><table border='1' cellspacing='0' cellpadding='4' class='compat' style='margin-bottom:0px'>
+<thead>
+<tr bgcolor='#DDD'>
+<th>&nbsp;</th>
+<th>MySQL</th>
+<th>Oracle</th>
+<th>DB2</th>
+<th>SQL Server</th>
+<th>MS Access</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>PHP</th>
+<td><img src='client/images/checkmark.gif'></td>
+<td><img src='client/images/checkmark.gif'></td>
+<td>&nbsp;</td>
+<td><img src='client/images/checkmark.gif'></td>
+<td><img src='client/images/checkmark.gif'></td>
+</tr>
+<tr>
+<th>ASP</th>
+<td><img src='client/images/checkmark.gif'></td>
+<td><img src='client/images/checkmark.gif'></td>
+<td><img src='client/images/checkmark.gif'></td>
+<td><img src='client/images/checkmark.gif'></td>
+<td><img src='client/images/checkmark.gif'></td>
+</tr>
+<tr>
+<th>.net</th>
+<td><img src='client/images/checkmark.gif'></td>
+<td><img src='client/images/checkmark.gif'></td>
+<td><img src='client/images/checkmark.gif'></td>
+<td><img src='client/images/checkmark.gif'></td>
+<td><img src='client/images/checkmark.gif'></td>
+</tr>
+</tbody>
+</table>
+<p style='font-size:8pt; margin:0px;'>2007 年 11 月における Rico プラグイン／データベース の互換性
+<br>
+<br>* ASP プラグインは ADO を、.netプラグインは ADO.net を使用するので、
+<br>ADO と互換性があるどんなデータソースにも接続することができるはずです。</p>
+
+<p>LiveGrid は <a href="http://en.wikipedia.org/wiki/Ajax_%28programming%29">AJAX</a> テクノロジーを使うので、
+一度にクライアントへ送る SQL クエリの実行結果は一部だけです。
+ユーザーが格子をスクロールすると、
+JavaScript コードはクエリの結果のどの部分が必要とされているかについて決定し、
+AJAX リクエストをプラグインに送り返します。
+プラグインはそれらの結果をデータベースから検索して、それらをクライアントに返します。
+なので、クエリが返す結果が 10 行か 100,000 行かに関係なく、
+LiveGrid はインタラクティブなユーザインタフェースで迅速かつ容易に結果を表示する事ができます。
+
+<p>最後に、もしユーザーがデータの変更を許されているならば、Rico プラグインは、それさえも簡単にします。
+単に <strong>LiveGrid Forms</strong> を使っているグリッドを定義して下さい 
+-- レコードセレクションの追加、編集、そして削除は、グリッドのコンテキスト（ポップアップ）メニューから追加されます。
+
+<ul>
+<li>追加や編集が選ばれるとき、ポップアップフォームはユーザに提示されます。
+<li>ユーザーがフォームを "保存する" とき、データはオリジナルスクリプトへポストバックされ、
+それはデータベースへ結果を書きます。
+</ul>
+
+それが複雑に聞こえるならば、心配しないでください！
+この仕事の全ては、プラグインによって取り扱われます。
+それがユーザーとプログラマーの両方にとって、
+どれくらい簡単かという実証については、 "ex2edit" の実例を見て下さい。
+"ex4edit" は、一つのページ内で複数のグリッドを編集可能にする方法を示します。
+
+<h3>LiveGrid の XML 実装</h3>
+
+<p>LiveGrid にデータをロードするのがプラグインで簡単になっている間は、それらは必要ではありません。
+データがこの形式に従う限り、どんなソースからも LiveGrid のバッファを XML データにロードする事が出来ます。
+
+<pre>
+&lt;ajax-response&gt;
+&lt;response type='object' id='MyGridId_updater'&gt;
+&lt;rows update_ui='true' offset='0'&gt;
+&lt;tr&gt;&lt;td&gt;Data for row 1, cell 1&lt;/td&gt;&lt;td&gt;Data for row 1, cell 2&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Data for row 2, cell 1&lt;/td&gt;&lt;td&gt;Data for row 2, cell 2&lt;/td&gt;&lt;/tr&gt;
+&lt;/rows&gt;
+&lt;/response&gt;
+&lt;/ajax-response&gt;
+</pre>
+
+天気と写真の実例を見てください、それぞれ Yahoo 天気情報と Flickr からデータを検索して、上記のデータ構造に再フォーマットしています。
+これらの実例は、現在、、ASP では無く PHP と .net のバージョンで利用できます。
+
+<h3>HTML テーブルデータによる LiveGrid 実装</h3>
+
+<p>LiveGrid は伝統的な HTML テーブルを持つウェブページの上で簡単に作る事も出来ます。
+単に ID をテーブルに割り当てて、LiveGrid の初期化中に、そのIDを渡してください。
+テーブルの thead セレクションと tbody のデータから見出しは取得する事が出来ます。
+この場合 AJAX は実行されませんが、データは JavaScript 配列でまだバッファリングされます。
+いくつかの実例は Rico ディストリビューションに含まれますので、
+"LiveGrid-Static Buffer" と印されている物を探して下さい。
+</p>
+
+<hr>
+<h2>SimpleGrid</h2>
+
+<p>SimpleGrid は Rico 2.0 にとって新しく、LiveGrids と同じ機能のいくらかを共有します
+ - リサイズ可能な列、固定された列と固定された見出し。
+しかしながら、LiveGrid と異なり、データは静的であり DOM に存在します
+ - それゆえに、バッファリング、AJAX リフレッシュ、ソート、フィルタリングの機能がありません。
+なぜ、SimpleGrid を使うのでしょうか？
+<ol>
+<li>それぞれのセルが含むことが出来るものが、より柔軟であるので - 
+列内のセルがすべて同じタイプである必要はありません。
+<li>状況によって、それは LiveGrid よりクライアント上で、より良く実行することができます。
+特にグリッドに多くの列を表示している遅いクライアントで。
+<li>最後に、SimpleGrid は入力要素である（チェックボックス、セレクトリスト、その他）を含むことができます。
+LiveGrid も入力要素を含むことができますが、要素の値が LiveGrid のバッファに保存されるので、
+サーバに値をサブミットするには扱いにくいです。
+SimpleGrids は、この問題で苦しみません。
+あなたが単に標準的な &lt;form&gt;&lt;/form&gt; タグでグリッド全体を囲めば、
+グリッド中のどんな入力要素でもサーバーへサブミットされます。
+</ol>
+
+<p>SimpleGrid の最も洗練された例は、ディストリビューションに含まれているスプレッドシートです。
+式を入力する事ができ、入力値を変更すると、それは再計算されるでしょう - 
+まさしく商業スプレッドシートのように。
+実例のメニューの "HTML Examples" のセクションでスプレッドシートへのリンクを見つけることができます。
+スプレッドシートで、 <img alt="help" src="client/images/sheet/help.gif"> ボタンをクリックして、それができるすべてを見て下さい。
+
+<p>SimpleGrids は、次の 2 つの方法で作成する事が出来ます。
+<ul>
+<li>SimpleGrid プラグインの中の 1 つを用いて。PHP、ASP と .net のためのプラグインが存在します。
+<li>XSLTを用いて。Rico は、標準的なHTMLテーブルを SimpleGrid に変換する XSL ファイルを持っています。
+</ul>
+
+<h3>プラグインを利用しての SimpleGrid の作成</h3>
+
+<p>各プラグインは SimpleGrid のクラスを定義します。
+クラスの中に、ヘッダ行とデータ行を始めるメソッドがあります。 - 
+HTML テーブル内のどこかに &lt;tr&gt; タブを置いて、それらのメソッドの内の一つを呼ぶだけです。
+また、セルを作成するメソッドもあります。 - 
+HTML テーブル内のどこかに &lt;th&gt; タブか &lt;td&gt; タブを置いて、それを呼ぶだけです。
+テーブルの内容を定義し終わったら、描画メソッドを呼ぶだけです。
+（.net プラグイン以外では描画は自動的に行われます）
+それは、とても簡単です！
+
+<h3>XSLT を利用しての SimpleGrid の作成</h3>
+
+<p>ウェブページが XHTML 対応であるならば、SimpleGrid を生成するもう一つの方法があります。
+ページ上のテーブルを SimpleGrids に変換するために、XSL スタイルシートである "ricoSimpleGrid.xsl" を使うだけです。
+スタイルシートは "ricoSimpleGrid" のクラス名でテーブルを探して、それから変換を行います。
+一時は、Rico はクライアント上でこの変換をサポートしていました。
+しかしながら、Prototype ライブラリの変更のために、すでに出来なくなりました。
+したがって、このアプローチで行う方を選ぶならば、 XSLT 変換はサーバーで実行されなければなりません。
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+/* IE7 FIXES
+*******************************************************************************/
+
+#footer {
+	display: inline;
+	overflow: hidden;
+}
+.sidebar-node,
+li {
+	height: 1%;
+}
+#badges {
+	margin: 0;
+}
+#footer li {
+	display: inline;
+}
+#footer li a,
+#footer li img {
+	display: inline-block;
+}

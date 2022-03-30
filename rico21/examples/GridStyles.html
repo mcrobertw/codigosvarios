@@ -1,0 +1,129 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Rico Grid Styles</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Grid Styles</h1>
+
+<p><a href='GridStyles_ja.html'><img src='client/images/japanese.gif' alt='View this page in Japanese'></a>
+<a href='GridStyles_ja.html'>View this page in Japanese</a></p>
+
+<p>It is very easy to customize the style of Rico LiveGrids and SimpleGrids.
+In fact, LiveGrids and SimpleGrids share many of the same class names
+and DOM structures, so styles that apply to one can be applied to the other.
+
+<h2>Pre-configured Styles</h2>
+
+<p>Rico comes with a variety of stylesheets for LiveGrid.
+You can see how each of them looks by selecting the
+first LiveGrid example in the PHP, ASP, .net, or Perl section.
+At the top of the example page, try each of the "style" selections
+to find one you like. The actual stylesheets are located
+in the src/css directory.
+
+<p>Here are screen shots of each style, taken with "highlight" set to "Cursor Row".
+
+<p><strong>greenHdg.css</strong>
+<br><img src='client/images/gridsamples/greenHdg.png'>
+
+<p><strong>tanChisel.css</strong>
+<br><img src='client/images/gridsamples/tanChisel.png'>
+
+<p><strong>grayedout.css</strong>
+<br><img src='client/images/gridsamples/grayedout.png'>
+
+<p><strong>coffee-with-milk.css</strong>
+<br><img src='client/images/gridsamples/coffee-with-milk.png'>
+
+<p><strong>warmfall.css</strong>
+<br><img src='client/images/gridsamples/warmfall.png'>
+
+<p><strong>iegradient.css</strong> <em>(only works in Internet Explorer)</em>
+<br><img src='client/images/gridsamples/iegradient.png'>
+
+<p>Several of these styles are adapted from the
+<a href="http://icant.co.uk/csstablegallery/index.php">CSS Table Gallery</a>.
+The gallery can serve as an inspiration for styling LiveGrids, however,
+the CSS used in the gallery examples cannot be applied directly to a LiveGrid.
+
+<h2>Customizing a Style</h2>
+
+<p>Even with the variety of pre-configured styles available,
+inevitably some style declarations will need to be overridden
+to display your data the way you want it. What follows are some
+common situations that require a style to be overridden and 
+the suggested CSS styling to solve the issue.
+
+<h3>Row height of column headings</h3>
+
+<p>When column headings get too long, you typically want to allow
+the words to wrap and to display the heading as 2 or 3 lines of text.
+
+<p>Shows headings with 2 lines of text:
+<pre>
+.ricoLG_top div.ricoLG_cell {
+  height:2.5em;
+}
+</pre>
+
+<p>Shows headings with 3 lines of text:
+<pre>
+.ricoLG_top div.ricoLG_cell {
+  height:3.5em;
+}
+</pre>
+
+<h3>Row height in grid body</h3>
+
+<p>Similarly you might need each row in the grid body
+to be taller in order to display long content.
+
+<p>Show body rows with 2 lines of text:
+<pre>
+.ricoLG_bottom div.ricoLG_cell {
+  height:2.5em;
+}
+</pre>
+
+<h3>Word Wrap</h3>
+
+<p>By default, word-wrapping is enabled in each grid cell.
+But sometimes it makes sense to turn word wrapping off.
+
+<p>Turn word-wrap off in headings and body:
+<pre>
+div.ricoLG_cell {
+  white-space:nowrap;
+}
+</pre>
+
+<p>Turn word-wrap off in body only:
+<pre>
+.ricoLG_bottom div.ricoLG_cell {
+  white-space:nowrap;
+}
+</pre>
+
+<h3>Referencing an entire grid</h3>
+
+<p>Sometimes you want to apply a style to an entire grid.
+Each grid is enclosed in a &lt;div&gt; with a class of
+"ricoLG_outerDiv" and an id equal to the id you passed
+to the LiveGrid constructor appended with "_outerDiv"
+(i.e. the id of the grid in the first example is "ex1_outerDiv").
+Thus, you can use ".ricoLG_outerDiv" as a selector when applying
+a style to all grids on a page, or "#ex1_outerDiv" when applying
+a style to only the ex1 grid.
+
+<p>Set the grid's background color:
+<pre>
+div.ricoLG_outerDiv {
+  background-color:aqua;
+}
+</pre>
+
+</body>
+</html>

@@ -1,0 +1,197 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Rico Translation</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Rico Translation</h1>
+
+<p><a href='translations_ja.html'><img src='client/images/japanese.gif' alt='View this page in Japanese'></a>
+<a href='translations_ja.html'>View this page in Japanese</a></p>
+
+<p>The Rico library contains a translation object (RicoTranslate) so that
+applications can be written using Rico that support multiple languages.
+The translation object also stores the default date and number
+formats, so that different defaults can be specified for each language.
+The Rico distribution includes language files that load the translation object
+with the phrases necessary to display the default grid menus and the Rico calendar.
+
+<h2>Translation Status</h2>
+
+<p>Language files are stored in
+"src/translations/ricoLocale_xx.js" where xx is the 2-character language code. 
+Rico is currently distributed with the following translations:
+
+<p><table border='1' cellspacing='0' cellpadding='3'>
+<thead>
+<tr><th>Language</th><th>Code</th><th>Status</th></tr>
+</thead>
+<tbody>
+
+<tr>
+<td>English</td>
+<td>en</td>
+<td>Baseline</td>
+</tr>
+
+<tr>
+<td>French</td>
+<td>fr</td>
+<td>Complete and reviewed</td>
+</tr>
+
+<tr>
+<td>Spanish</td>
+<td>es</td>
+<td>Complete and reviewed</td>
+</tr>
+
+<tr>
+<td>Japanese</td>
+<td>ja</td>
+<td>Complete and reviewed</td>
+</tr>
+
+<tr>
+<td>Chinese (simplified)</td>
+<td>zh</td>
+<td>Complete and reviewed</td>
+</tr>
+
+<tr>
+<td>Korean</td>
+<td>ko</td>
+<td>Complete and reviewed</td>
+</tr>
+
+<tr>
+<td>German</td>
+<td>de</td>
+<td>Complete and reviewed</td>
+</tr>
+
+<tr>
+<td>Portugese</td>
+<td>pt</td>
+<td>Complete, needs review</td>
+</tr>
+
+<tr>
+<td>Italian</td>
+<td>it</td>
+<td>Complete, needs review</td>
+</tr>
+
+<tr>
+<td>Russian</td>
+<td>ru</td>
+<td>Complete and reviewed</td>
+</tr>
+
+<tr>
+<td>Ukranian</td>
+<td>ua</td>
+<td>Complete and reviewed</td>
+</tr>
+
+</tbody>
+</table>
+
+<h2>Supporting Multiple Languages</h2>
+
+<p>As Rico evolves, additional phrases are required in the translation files.
+English phrases are added first, then members of the Rico community
+add the new phrases to the other translation files.
+We try to keep all of the translations synchonized, 
+but this is not always possible.
+Therefore, when rico.js is loaded, it in turn loads the language file 
+for English first. 
+Then it looks for a Rico translation matching the user's OS or browser language.
+If one is found, it is loaded next.
+This ensures that, if a phrase is missing from a translation file or a translation
+for their language is not available, the user at least
+sees the phrase in English (instead of a blank message).
+
+<p>So with no additional coding, Rico should, in most cases, 
+present localized menus and calendars that are appropriate to the user.
+However, all modern browsers give the user a way to override the OS language.
+For example, in Firefox you go to Tools menu > Options > Advanced > General Tab > Languages button.
+In Internet Explorer you go to Tools menu > Internet Options > General Tab > Languages button.
+This setting is called the 
+<a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.4">accept language</a> 
+and is not directly accessible via javascript.
+However, Rico does provide a way to load a translation file based on the accept language.
+For users who have configured this setting, the language resolved using this approach
+may be closer to their true preference.
+The accept language is resolved in Rico by having the server-side script return the
+accept language header back to the javascript method "Rico.acceptLanguage()".
+This happens automatically when using the LiveGrid Forms plug-ins for ASP and PHP,
+and in the LiveGrid plug-in for .net.
+For other situations, server-side include files are provided in the Rico distribution.
+
+<p>In PHP:
+<pre>
+&lt;? 
+// Not required when using ricoLiveGridForms.php
+// Must be placed after the line to include rico.js
+
+require "chklang2.php";
+?&gt;
+</pre>
+
+<p>In ASP:
+<pre>
+' Not required when using ricoLiveGridForms.asp
+' Must be placed after the line to include rico.js
+
+&lt;!-- #INCLUDE FILE = "chklang2.vbs" --&gt;
+</pre>
+
+<p>In .net:
+<pre>
+' Not required when using ricoLiveGrid.ascx
+' Must be placed after the line to include rico.js
+
+&lt;%@ Register TagPrefix="Rico" TagName="ChkLang" Src="chklang.ascx" %&gt;
+&lt;Rico:ChkLang runat='server' id='translation' /&gt;
+</pre>
+
+<h2>RicoTranslate Object Reference</h2>
+
+<p>The RicoTranslate object contains the following properties and methods:
+<dl>
+<dt>monthNames[]
+<dd>A 12 item array containing the translated names of each month (January is item 0)
+<dt>dayNames[]
+<dd>A 7 item array containing the translated names of each day of the week (Sunday is item 0)
+<dt>monthAbbr()
+<dd>A function that takes a month number (0-11) and returns the abbreviated month name (defaults to the first 3 characters of monthNames[], but is overridden by some translations)
+<dt>dayAbbr()
+<dd>A function that takes a day of week number (0-6) and returns the abbreviated day name (defaults to the first 3 characters of dayNames[], but is overridden by some translations)
+<dt>langCode
+<dd>Contains the 2-character language code that is currently loaded (default is "en")
+<dt>thouSep
+<dd>Contains the character to use as the thousands separator when formatting numbers (default is ",")
+<dt>decPoint
+<dd>Contains the character to use as the decimal point when formatting numbers (default is ".")
+<dt>dateFmt
+<dd>Contains the default date format (default is "mm/dd/yyyy")
+<dt>timeFmt
+<dd>Contains the default time format (default is "hh:nn:ss a/pm")
+<dt>addPhraseId (phraseId, phrase)
+<dd>Adds the specified phrase and assigns it to phraseId. The phrase string may contain references to optional substitution parameters, which are specified using $1, $2, etc.
+<dt>getPhraseById (phraseId)
+<dd>Returns the phrase specified by phraseId. Optional substitution parameters may follow phraseId.
+</dl>
+
+<h2>Submitting Updates</h2>
+
+<p>Questions and corrections may be posted to the 
+<a href='http://sourceforge.net/forum/forum.php?forum_id=470997'>Open Discussion forum on SourceForge</a>.
+Alternatively, you can send them directly to: dowdybrown at yahoo dot com.
+
+</body>
+</html>

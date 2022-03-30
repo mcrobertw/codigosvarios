@@ -1,0 +1,449 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Rico LiveGrid Forms</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Rico LiveGrid フォームの利用</h1>
+
+<h2>概要</h2>
+
+<p>このドキュメントがちょうど ASP に言及すると同時に、同一の機能が PHP と .net プラグインによって提供されます。
+
+<ol>
+<li>ricoLiveGridForms.vbs を含む、新しい ASP ファイルを作成して下さい。
+
+<li>新しい ASP で、編集されるテーブルのそれぞれのフィールドを定義して下さい - 通常はフィールドごとに 1-3 行。
+
+<li>結果として ASP は、適当なグリッドを作成するだけで無く、隠された div に入力フォームを生成します。
+
+<li>その ASP は "レコードの追加／編集／削除" のエントリもポップアップメニューに追加します。
+
+<li>追加または編集が選択された時、そのフォームは表示されます（編集が選択されれば、項目が満たされます）
+
+<li>ユーザが保存ボタンをクリックする時、そのフォームは元の ASP に黙ってポストバックします。
+
+<li>ASP はデータベースにデータを保存し、クライアントにレスポンスを送り返します。
+
+<li>クライアントは、成功または失敗のメッセージをブックマークエリアに表示します
+</ol>
+
+<p>以下の二つの図解は、LiveGrid フォームページで、そしてフォームの無い LiveGrid ページで、
+どのようにリクエストとレスポンスが流れるかについて表示します。
+その二つの図解は ASP/PHP とラベルされていますが、.net にも適用されます（.net には dbClass2 が無い事を除いて）。
+<p><img src='client/images/asp-php-structure1.jpg'>
+<p><img src='client/images/asp-php-structure2.jpg'>
+
+<h2>使い方</h2>
+
+<p>このクラスは、一つのテーブルのレコードの表示、挿入、更新そして削除をするのに、
+必要なすべての機能を提供します。ASP スクリプトは、次の手順に従わなければなりません。
+
+
+<ol>
+<li>クラスのインスタンスを一つ作成して下さい
+<pre>set oForm=new TableEditClass</pre>
+
+<li>SetTableName メソッドを呼んで下さい
+<pre>oForm.SetTableName "customer"</pre>
+
+<li>任意に CanAdd、CanEdit、CanDelete、ConfirmDelete および／または 必要に応じて RecordName プロパティを設定して下さい
+<pre>
+oForm.options("canAdd")=CanAdd
+oForm.options("canEdit")=CanModify
+oForm.options("canDelete")=CanDelete
+</pre>
+<li>TableName がビューであるか、またはプライマリーキーが定義されていない場合、編集は利用不能です
+<li>テーブルとフォームビューに見えるフィールドを、次の例外と共に、フィールドおよび列に表示するために、 
+      AddEntryField または AddCalculatedField を呼んで下さい。
+<ul>
+<li>エントリタイプ H は、決してクライアントへ送信されません。定義されたデフォルト値を取得してデータベースへ書き込みます。
+<li>FormView フィールドプロパティに "exclude" がセットされていれば、そのフィールドはテーブルだけに表示されます。
+<li>FormView フィールドプロパティに "hidden" がセットされていれば、そのデータは隠れたフォームフィールドに設定されます。
+<li>計算されたフィールドはテーブルビューにだけ表示されます（FormView=exclude と同じです）
+</ul>
+
+<li>AddEntryField または AddCalculatedField のそれぞれの呼び出しの後、他のメソッドとプロパティは、
+      どのようにしてユーザにフィールドを表示するかを、コントロールするために起動する事が出来ます（例えば SortAsc）
+      これらのプロパティおよびメソッドの呼び出しは、最も最近追加されたフィールドのみに適用されます。
+<li>DisplayPage を呼び出します - これはグリッドを表示するか、データベースの更新を実行します。
+<pre>oForm.DisplayPage</pre>
+</ol>
+
+
+<h2>タブフォーム</h2>
+
+<p>複数パネルや複数タブを持つフォームは Rico アコーディオンクラスを利用して、完全にサポートされます。
+ そのパネルのフィールドを定義するために、AddEntryField を呼ぶ前に、単に AddPanel を呼ぶだけです。
+ 例えば。
+<pre>
+' these fields appear on the first panel
+oForm.AddPanel "Panel #1"
+oForm.AddEntryField "field1", "Field #1", "T", ""
+oForm.AddEntryField "field2", "Field #2", "T", ""
+oForm.AddEntryField "field3", "Field #3", "T", ""
+
+' these fields appear on the second panel
+oForm.AddPanel "Panel #2"
+oForm.AddEntryField "field4", "Field #4", "T", ""
+oForm.AddEntryField "field5", "Field #5", "T", ""
+oForm.AddEntryField "field6", "Field #6", "T", ""
+</pre>
+
+<p>あるいは panelIdx プロパティは、それが定義されるように、それぞれのフィールドにセットされる事が出来ます。
+この場合、DisplayPage の前にいつでも AddPanel は呼ばれる事が出来ます。
+<pre>
+' these fields appear on the first panel
+oForm.AddEntryField "field1", "Field #1", "T", ""
+oForm.CurrentField("panelIdx")=0
+oForm.AddEntryField "field2", "Field #2", "T", ""
+oForm.CurrentField("panelIdx")=0
+oForm.AddEntryField "field3", "Field #3", "T", ""
+oForm.CurrentField("panelIdx")=0
+
+' these fields appear on the second panel
+oForm.AddEntryField "field4", "Field #4", "T", ""
+oForm.CurrentField("panelIdx")=1
+oForm.AddEntryField "field5", "Field #5", "T", ""
+oForm.CurrentField("panelIdx")=1
+oForm.AddEntryField "field6", "Field #6", "T", ""
+oForm.CurrentField("panelIdx")=1
+
+oForm.AddPanel "Panel #1"
+oForm.AddPanel "Panel #2"
+</pre>
+
+
+<h2>フォームメソッド</h2>
+<dl>
+  <dt>AddPanel "パネルの見出し"
+  <dd>入力フォーム上で、タブパネルのための見出しを定義します。
+
+  <dt>DisplayPage
+  <dd>グリッドを表示するか、"action" の値に応じてデータベースを更新します。
+
+  <dt><a name='DefineAltTable'></a>DefineAltTable (TableName, FieldList, FieldData, Delim)
+  <dd>次の <a href='#AltTable'>AltTable</a> の呼び出しで利用される TabId を返す関数。
+  関連のあるフィールドの追加を記録するために、二番目のテーブルを定義して下さい。
+  メインテーブルのキーフィールド（達）も、 AltTable に存在べきです。
+  FieldList と FieldData は、二番目のテーブルに記録される定数や固定された関数を、
+  追加で定義する区切られた文字列です。
+  Delim は、FieldList と FieldData で利用されるデリミタキャラクタを定義します。
+  FieldList と FieldData は、同じ数の区切られたエントリを含まなければなりません。
+
+  <dt>genXHTML
+  <dd>純粋な XHTML アウトプットを生成するために呼び出して下さい。
+
+  <dt>SetDbConn (dbcls)
+  <dd>dbClass を利用するためのインスタンスを定義します
+  oDB と言う名前のグローバルインスタンスが存在するのなら、このメソッドの呼び出しをしないでも利用する事が出来るでしょう。
+</dl>
+
+
+<h2>フォームプロパティ</h2>
+
+<p>これら LiveGrid フォーム特有のものに加えて、すべての <a href="LiveGrid.html#options">LiveGrid</a> のオプションはプロパティとしてサポートされています。
+
+<dl>
+
+<dt>action (read only)
+<dd>実行されているカレントアクションを指定します。table、ins、upd、del
+
+<dt>gridVar (read only)
+<dd>クライアントサイドの LiveGrid オブジェクトの名前を返します
+
+<dt>bufferVar (read only)
+<dd>クライアントサイドの LiveGrid バッファオブジェクトの名前を返します
+
+<dt>AutoInit
+<dd>自動的にグリッドを初期化します（データの行を作成）
+    デフォルトは true です
+
+<dt>InitScript (read only)
+<dd>グリッドを初期化するための javascript コードを（文字列として）返します（AutoInit が false の時に利用する）
+
+<dt>TableFilter
+<dd>テーブルビューで利用される節がどこかを指定します（オプションの）
+<pre>
+// only show records for the logged in user
+$oForm->TableFilter = "userid=$myuserid";
+</pre>
+
+<dt>canAdd
+<dd>ユーザが新しいレコードを追加する事を許可する、デフォルトは true
+<dt>canEdit
+<dd>ユーザがレコードを編集する事を許可する、デフォルトは true
+<dt>canDelete
+<dd>ユーザがレコードを削除する事を許可する、デフォルトは true
+<dt>canClone
+<dd>ユーザがレコードを複製する事を許可する（既存のレコードの編集するが、新規で保存する）デフォルトは false
+
+<dt>updateURL
+<dd>この位置へのポストアップデートを行います、デフォルトはグリッドを生成したページ
+
+<dt>ConfirmDelete
+<dd>ユーザが削除ボタンをクリックした後で、確認のポップアップを表示するかどうかを指定するフラグ、
+    デフォルトは true 
+    （<a href='#ConfirmDeleteCol'>ConfirmDeleteCol</a> も見て下さい）
+
+<dt>DebugFlag
+<dd>デバッグメッセージを表示します、デフォルトは false
+
+<dt>RecordName
+<dd>追加、編集および削除タイトルタグのカスタマイズ用の文字列、
+    デフォルトは "Record"
+
+<dt>SelectMaxLen
+<dd>セレクトボックスの文字数の最大値、デフォルトは 50。
+
+<dt>TableName (write only)
+<dd>表示／編集されるテーブルまたはビュー（必須）
+
+<dt>TableSelectNew
+<dd>EntryType が N のフィールドの、新しい値を作成するためにユーザが選択した時に、
+識別するために用いる文字列。デフォルトは "___new___"。
+
+<dt>showSaveMsg
+<dd>データベースの更新レスポンスの処理。
+<ul>
+<li>full - すべてのレスポンスを表示する
+<li>errors - エラーに関するすべてのレスポンスか、そうで無い場合は短いレスポンスを表示する（デフォルト）
+</ul>
+</dd>
+
+<dt style='color:navy;'><em>入力フォームで、タブパネルを利用する時。</em>
+
+<dt>panelWidth
+<dd>タブパネルのピクセル単位の幅。デフォルトは 500。
+
+<dt>panelHeight
+<dd>タブパネルのピクセル単位の高さ。デフォルトは 200。
+
+<dt>hoverClass
+<dd>タブパネルの上をホバーする時の CSS クラス。デフォルトは "tabHover"。
+
+<dt>selectedClass
+<dd>タブパネルを選択する時の CSS クラス。デフォルトは "tabHover"。
+
+</dl>
+
+
+<h2>フォームイベント</h2>
+
+<p>いくつかのフォームイベントをフックする事が可能です。
+
+<dl>
+<dt>formOpen
+<dd>入力フォームが表示される時、始動します。
+<pre>
+oForm.options("formOpen")=
+  "alert('Questions? Please call the support desk.');"
+</pre>
+
+<dt>formClose
+<dd>入力フォームが閉じられてすぐに、始動します。
+
+<dt>onSubmitResponse
+<dd>フォームがサーバに送信され、レスポンスを受け取って処理された後で、起動されます。
+
+</dl>
+
+
+<h2>フィールド定義メソッド</h2>
+<dl>
+<dt>AddEntryField (ColumnName, Heading, EntryTypeCode, DefaultValue)
+<dd>グリッドへ新しい列と、ASP と PHP でのポップアップフォームにより新しいエントリフィールドを追加します。
+  <dl>
+
+  <dt>ColumnName
+  <dd>データベーステーブルの列名（空白や角括弧を含む SQL をサポートしません、例えば [Apr 2005] ）
+
+  <dt>Heading
+  <dd>グリッドの列見出しやポップアップフォーム上に現れる名前
+
+  <dt>EntryTypeCode
+  <dd>どのように入力フォーム上に列が表示されるかについて、コントロールするコードを含む文字列
+
+    <ul>
+    <li><strong>S</strong>:
+    データエントリ中のドロップダウンセレクトリストとして、この列を表示します。
+    "SelectValues" または "SelectSql" オプションを利用して指定された値です。
+    どちらも指定されなければ、列の値は "select distinct" クエリを利用して得られます。
+    <li><strong>R</strong>: ラジオボタンを利用してアイテムが表示される以外は "S" と同じです。
+    <li><strong>SL,RL</strong>: 
+    テーブルビューに検索された値を表示する以外は、S & R と同じです
+    （SelectSql により指定されたクエリを利用して）。
+    外部キーの列で典型的に利用されます。
+    表示する値を取得するための SQL は "SelectSql" オプションを利用して指定します。
+    <li><strong>CL</strong>: 
+    カスタムコントロールを利用して値が選択される以外は "SL" と同じです
+    （Rico ツリーコントロールのような）。
+    SelectCtl オプションは、カスタムコントロールの id を割り当てられるべきです。
+    <li><strong>N</strong>:
+    "S" と同じですが、ユーザが新しい値を作成する事を許します。
+    典型的には "SelectValues" または "SelectSql" オプション <em>無し</em> で利用されます。
+    <li><strong>H</strong>:   列はユーザから隠されます（DefaultValue が、追加と編集でテーブルに保管されます）
+    <li><strong>D</strong>:   これはデータフィールドです（列が null を許していたら、空白が許されます）
+    <li><strong>DT</strong>:  時間も含む以外は D と同じです
+    <li><strong>I</strong>:   整数値（列が null を許していて、false が必要とされるなら、空白が許されます）
+    <li><strong>F</strong>:   浮動小数点数（列が null を許していて、false が必要とされるなら、空白が許されます）
+    <li><strong>B</strong>:   空白の無いテキストフィールド（フィールドが空で保存をクリックするとき、ユーザはフォームビューでのポップアップメッセージを取得します）
+    <li><strong>T</strong>:   標準テキストフィールド（空白が許されます）
+    <li><strong>TA</strong>:  テキストエリアフィールド
+    <li><strong>tinyMCE</strong>:  <a href="http://tinymce.moxiecode.com/">tinyMCE</a> 
+    ライブラリを利用するリッチテキスト編集フィールド。
+    </ul>
+
+  <dt>DefaultValue
+  <dd>フォームビューでの列のデフォルト値
+  </dl>
+
+  <p>.net で AddEntryField() と同等なのは、マークアップの一部として列フィールドを宣言する事です。
+  "ColData" 属性はデフォルト値を含みます。
+  ex2edit.aspx からの例は、ここにあります。
+<pre>
+&lt;Rico:Column runat='server' heading='Order#' width='60' 
+             ColName='OrderID' EntryType='B' ColData='&lt;auto&gt;' /&gt;
+</pre>
+
+<dt>AddEntryFieldW (ColumnName, Heading, EntryTypeCode, DefaultValue, ColWidth)
+<dd>列の（ピクセルでの）幅のためのエクストラパラメータが追加される以外は AddEntryField と同じです。
+
+<dt>AddCalculatedField (ColumnFormula, Heading)
+<dd>ColumnFormula は、どれも妥当な SQL 式またはサブクエリです。
+    サブクエリが表示されているテーブルの列への参照を必要としているなら、
+    列名はエイリアス "t." で始まらなくてはなりません
+    計算されたフィールドは、フォームビューでは無く、テーブルビューに表示されます。
+
+<dt>AddFilterField (ColumnName, FilterValue)
+<dd>ColumnName=FilterValue の内容のレコードを表示するだけです。
+    隠れたフィールドになります（エントリタイプ H）。
+
+<dt><a name='ConfirmDeleteCol'></a>ConfirmDeleteCol
+<dd>最も最近追加された列の内容は、削除確認メッセージに含まれます
+
+<dt>SortAsc
+<dd>テーブルビューにて昇順で列をソートします（最も最近追加されたフィールドに適応されます）
+
+<dt>SortDesc
+<dd>テーブルビューにて降順で列をソートします（最も最近追加されたフィールドに適応されます）
+
+</dl>
+
+
+<h2>フィールド定義プロパティ</h2>
+
+<p>これらの LiveGrid フォーム特有のものに加えて、すべての <a href="LiveGrid.html#column">LiveGrid</a> 列プロパティはサポートされます。
+
+<dl>
+
+<dt>AddQuotes
+<dd>false で、データベースに挿入するか更新する時は、列の値はバッククォートで囲まれません
+    （デフォルト=true）
+    これは SQL 関数呼び出しで、列を実装する事を可能にします。例えば。
+<pre>
+oForm.AddEntryField "LastEditUser","","H","suser_sname()"
+oForm.CurrentField("AddQuotes")=false
+oForm.AddEntryField "LastEditDate","","H","getdate()"
+oForm.CurrentField("AddQuotes")=false
+</pre>
+
+<dt>required
+<dd>入力フィールドが空のままにしてもよいかどうかを指定する真偽値です
+（デフォルトは、 列が null を許して EntryType が "B" で無ければ false 、そうで無い場合は true です）。
+  
+<dt><a name='AltTable'></a>AltTable (TabId)
+<dd>代わりのテーブルにフィールドは保存されるべきである事を指定し、
+    TabId は以前の <a href='#DefineAltTable'>DefineAltTable</a> の呼び出しによって返される値でなければなりません。
+
+<dt>TxtAreaRows
+<dd>エントリタイプが "TA" の列のための、フォームビューの時に
+    テキストエリアに表示する行数です（デフォルト 4）
+
+<dt>FilterFlag
+<dd>true なら、グリッドはその列のデフォルト値によってフィルタされます（デフォルト = false）
+
+<dt>TxtAreaCols
+<dd>エントリタイプが "TA" の列のための、フォームビューの時に
+    テキストエリアに表示する列数です（デフォルト 80）
+
+<dt>Help
+<dd>指定されたテキストを含んでいるタイトルタグを作成します（フォームビューのみ）。
+そして、ユーザがフィールドラベルの上をホバーするなら、バルーンヘルプとしてこのテキストを見るでしょう。例えば。
+<pre>
+oForm.CurrentField("Help")="Date must be entered in mm/dd/yyyy format"
+</pre>
+
+<dt>pattern
+<dd>正規表現を含んでいる文字列。
+ユーザエントリは、その指定されたパターンにマッチする事を確実にするためにチェックされます。
+少しの特別な値があります。
+<ul>
+<li>"email" - メールアドレスを検証するためのテスト
+<li>"float-unsigned" - 符号無し浮動小数点（実）数を検証するためのテスト
+<li>"float-signed" - 符号付き浮動小数点（実）数を検証するためのテスト（EntryType が "F" の時、これがデフォルトです）
+<li>"int-unsigned" - 符号無し整数を検証するためのテスト
+<li>"int-signed" - 符号付き整数を検証するためのテスト（EntryType が "I" の時、これがデフォルトです）
+</ul>
+<br>いつでも、パターンを指定するヘルプエントリが含まれる事が推薦されます。
+フィールドが検証に失敗したなら、そのヘルプテキストは、ユーザに表示されるエラーメッセージに含まれます。
+例えば。
+<pre>
+oForm.CurrentField("Help")="Enter date as mm/dd/yyyy"
+oForm.CurrentField("pattern")="^\\d{1,2}/\\d{1,2}/\\d{4}$"
+</pre>
+
+<dt>min/max
+<dd>EntryType が "I" 、"F" 、そして "D" のフィールドの、最大／最少の許される値を指定します。
+例えば。
+<pre>
+oForm.AddEntryField "field1", "Field #1", "I", "0"
+oForm.CurrentField("min")=1
+oForm.CurrentField("max")=10
+oForm.CurrentField("Help")="Enter a value between 1 and 10"
+
+oForm.AddEntryField "field2", "Field #2", "D", Date()
+oForm.CurrentField("min")="2000-01-01"
+oForm.CurrentField("max")="2099-12-31"
+oForm.CurrentField("Help")="Enter a value in the 21st century!"
+</pre>
+
+<dt>InsertOnly
+<dd>挿入を実行する時は、データベースに単にこのフィールドを書いて下さい（デフォルト=false）。
+<pre>
+oForm.AddEntryField "CreateDate","","H","getdate()"
+oForm.CurrentField("AddQuotes")=false
+oForm.CurrentField("InsertOnly")=true
+</pre>
+
+<dt>UpdateOnly
+<dd>更新を実行する時は、データベースに単にこのフィールドを書いて下さい（デフォルト=false）。
+<pre>
+oForm.CurrentField("UpdateOnly")=true
+</pre>
+
+<dt>ReadOnly
+<dd>true なら、データはエントリフォームで表示されますが、変更は出来ず、テキストは灰色です（デフォルト = false）。
+
+<dt>SelectValues
+<dd>N、S、そして R の EntryType  のために、ユーザをフォームビューに案内する選択を指定して下さい。
+    供給されるなら、カンマで区切られた値の文字列で無ければなりません。例えば。
+<pre>
+oForm.CurrentField("SelectValues")="Y,N"
+</pre>
+
+<dt>SelectSql
+<dd>SL 、CL 、そして RL の EntryType のために、SQL 検索ステートメントを指定します。
+    その検索ステートメントは 2 つの列を返さなければなりません。
+    一つ目はコードで、そして二つ目は値または説明のテキストです。例えば。
+<pre>
+oForm.CurrentField("SelectSql")="select ID,Name from Customers"
+</pre>
+
+</dl>
+
+</body>
+</html>

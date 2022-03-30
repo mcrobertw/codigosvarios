@@ -1,0 +1,124 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Rico Grid Styles</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>グリッドスタイル</h1>
+
+<p>Rico LiveGrid と SimpleGrid のスタイルをカスタマイズすることは、非常に簡単です。
+実際に、LiveGrid と SimpleGrid は同じクラス名と DOM 構造の多くを共有するので、
+一方にあてはまるスタイルは他方に適用されることが出来ます。
+
+<h2>あらかじめ構成されたスタイル</h2>
+
+<p>Rico には、LiveGrid のためのいろいろなスタイルシートが付属します。
+PHP、ASP、.net または Perl のセクションの、最初の LiveGrid の実例を選択する事によって、
+それらがどのように見えるのかを知る事が出来ます。
+実例のページのトップで、あなたの気に入るものを見つけるために、
+それぞれの "style" セレクションを試して下さい。
+実際のスタイルシートは src/css ディレクトリにあります。
+
+<p>ここに、"Cursor Row" が設定される "highlight" を持つ、それぞれのスタイルのスクリーンショットがあります。
+
+<p><strong>greenHdg.css</strong>
+<br><img src='client/images/gridsamples/greenHdg.png'>
+
+<p><strong>tanChisel.css</strong>
+<br><img src='client/images/gridsamples/tanChisel.png'>
+
+<p><strong>grayedout.css</strong>
+<br><img src='client/images/gridsamples/grayedout.png'>
+
+<p><strong>coffee-with-milk.css</strong>
+<br><img src='client/images/gridsamples/coffee-with-milk.png'>
+
+<p><strong>warmfall.css</strong>
+<br><img src='client/images/gridsamples/warmfall.png'>
+
+<p><strong>iegradient.css</strong> <em>（Internet Explorer のみで動作します）</em>
+<br><img src='client/images/gridsamples/iegradient.png'>
+
+<p>これらのスタイルのいくつかは、<a href="http://icant.co.uk/csstablegallery/index.php">CSS Table Gallery</a> 
+から変更して作成されました。
+そのギャラリーは LiveGrid のスタイルのためのインスピレーションとして用いる事が出来ますが、
+ギャラリーの CSS は直接 LiveGrid に適用する事は出来ません。
+
+<h2>スタイルのカスタマイズ</h2>
+
+<p>利用出来るあらかじめ構成されたスタイルの種類でさえ、
+望む方法でデータを表示するためには、
+必然的にいくつかのスタイル宣言がオーバーライドされる必要があります。
+以下は、スタイルがオーバーライドされる事を必要とするいくつかの一般的な状況と、
+その問題を解決するために提案される CSS スタイルです。
+
+<h3>列見出しの行の高さ</h3>
+
+<p>列見出しが長すぎる時、
+一般的に 2 または 3 行のテキストとして語句を送る事を認めたいです。
+
+<p>2 行のテキストによる見出しの表示。
+<pre>
+.ricoLG_top div.ricoLG_cell {
+  height:2.5em;
+}
+</pre>
+
+<p>3 行のテキストによる見出しの表示。
+<pre>
+.ricoLG_top div.ricoLG_cell {
+  height:3.5em;
+}
+</pre>
+
+<h3>グリッドボディの行の高さ</h3>
+
+<p>同様に、長い内容を表示するために、グリッドボディのそれぞれの行を、
+より高くする必要があるかも知れません。
+
+<p>2 行のテキストによるボディ行の表示。
+<pre>
+.ricoLG_bottom div.ricoLG_cell {
+  height:2.5em;
+}
+</pre>
+
+<h3>ワードラップ</h3>
+
+<p>デフォルトで、ワードラップはそれぞれのグリッドセルで利用可能にされます。
+しかし、時にはワードラップをオフにする事は意味をなします。
+
+<p>見出しとボディでワードラップをオフにする。
+<pre>
+div.ricoLG_cell {
+  white-space:nowrap;
+}
+</pre>
+
+<p>ボディのみでワードラップをオフにする。
+<pre>
+.ricoLG_bottom div.ricoLG_cell {
+  white-space:nowrap;
+}
+</pre>
+
+<h3>グリッド全体への参照</h3>
+
+<p>時々、あなたはスタイルをグリッド全体に適用したいかもしれません。
+それぞれのグリッドは "ricoLG_outerDiv" クラスと共に &lt;div&gt; で囲まれ、
+id は "_outerDiv" を追加された LiveGrid コンストラクタに渡した id と等しい id です。
+（すなわち、最初の実例のグリッド id は "ex1_outerDiv" です）。
+このように、ページ上ですべてのグリッドにスタイルを適用する時はセレクタとして ".ricoLG_outerDiv" を、
+ex1 グリッドにのみスタイルを適用する時は "#ex1_outerDiv" 利用する事が出来ます。
+
+<p>グリッドの背景色を設定する。
+<pre>
+div.ricoLG_outerDiv {
+  background-color:aqua;
+}
+</pre>
+
+</body>
+</html>

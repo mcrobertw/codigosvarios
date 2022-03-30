@@ -1,0 +1,201 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+<title>Rico Grid Overview</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css">
+</head>
+
+<body>
+<h1>Rico Grids</h1>
+
+<p><a href='grids_ja.html'><img src='client/images/japanese.gif' alt='View this page in Japanese'></a>
+<a href='grids_ja.html'>View this page in Japanese</a></p>
+
+<p>The Rico library supports 2 different types of grids: 
+<strong>LiveGrid</strong> and <strong>SimpleGrid</strong>. 
+LiveGrid data is always buffered in a 2-dimensional JavaScript array. As the user scrolls
+vertically through the grid, data is dynamically copied from the array onto the grid.
+SimpleGrids on the other hand are unbuffered -- all data for the grid exists in the 
+<a href="http://en.wikipedia.org/wiki/Document_Object_Model">DOM</a>, not
+in a JavaScript data structure.
+
+<p>Both types of grids share some common features, including:
+<ul>
+<li>column headings that stay fixed and don't scroll off the top of the screen
+<li>frozen columns on the left side of the grid
+<li>resizable columns
+<li>common css styling - styles developed for LiveGrids also work for SimpleGrids and vice versa
+<li>compatibility with languages that read right-to-left (rtl) - 
+<a href="asp/rtl/ex1.asp">ASP</a> &amp; <a href="php/rtl/ex1.php">PHP</a> examples are included
+<li>compatibility with Rico pop-up (context) menus
+</ul>
+
+<hr>
+<h2>LiveGrid</h2>
+<p>Rico provides lots of support for loading a LiveGrid buffer. The buffer can can be loaded from:
+<ul>
+<li>a SQL database query
+<li>an XML file
+<li>an HTML table
+<li>a javascript array
+</ul>
+
+<h3>Connecting LiveGrid to a database</h3>
+<p>To simplify the task of loading a LiveGrid with SQL query results, Rico comes with a set of "plug-ins" which
+connect your database to your LiveGrid. Rico plug-ins have been tested with the following
+databases:
+
+<p><table border='1' cellspacing='0' cellpadding='4' class='compat' style='margin-bottom:0px'>
+<thead>
+<tr>
+<th>&nbsp;</th>
+<th>MySQL</th>
+<th>Oracle</th>
+<th>DB2</th>
+<th>SQL Server</th>
+<th>MS Access</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>PHP</th>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+<td>&nbsp;</td>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+</tr>
+<tr>
+<th>ASP</th>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+</tr>
+<tr>
+<th>.net</th>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+<td><img src='client/images/checkmark.gif' alt='checkmark'></td>
+</tr>
+</tbody>
+</table>
+<p style='font-size:8pt; margin:0px;'>Rico plug-in/database compatibility as of Nov 2007
+<br>
+<br>* The ASP plug-in uses ADO and the .net plug-in uses ADO.net,
+<br>and thus should be able to connect with any data source that is compatible with ADO</p>
+
+<p>LiveGrid uses <a href="http://en.wikipedia.org/wiki/Ajax_%28programming%29">AJAX</a> 
+technology so that only a portion of the SQL query result is
+sent to the client at a time. As the user scrolls the grid, the JavaScript code determines
+which portion of the query results are required and sends an AJAX request back to the plug-in.
+The plug-in retrieves those results from the database and returns them back to the client.
+So whether your query returns 10 rows or 100,000 rows, LiveGrid can display the results
+quickly and easily with an intuitive user interface.
+
+<p>Finally, if your users are allowed to make changes to the data, the Rico plug-ins 
+make that easy too. Just define your grid using <strong>LiveGrid Forms</strong> -- 
+Add, Edit, and Delete record
+selections will be added to the grid's context (popup) menu. 
+
+<ul>
+<li>When Add or Edit is selected, a popup
+form will be presented to the user. 
+<li>When the user "saves" the form, the data is posted back
+to the original script, which writes the results back to the database. 
+</ul>
+
+<p>If it sounds complicated, don't worry! All of this work is handled by the plug-in. 
+See the "ex2edit" example
+for a demonstration of how easy it is, both for the user and the programmer.
+"ex4edit" demonstrates how to make multiple grids on a page editable.
+
+<h3>Populating LiveGrid with XML</h3>
+
+<p>While plug-ins make it easy to load data into a LiveGrid, they are not required.
+A LiveGrid buffer can be loaded with XML data from any source, as long as the data follows this format:
+
+<pre>
+&lt;ajax-response&gt;
+&lt;response type='object' id='MyGridId_updater'&gt;
+&lt;rows update_ui='true' offset='0'&gt;
+&lt;tr&gt;&lt;td&gt;Data for row 1, cell 1&lt;/td&gt;&lt;td&gt;Data for row 1, cell 2&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Data for row 2, cell 1&lt;/td&gt;&lt;td&gt;Data for row 2, cell 2&lt;/td&gt;&lt;/tr&gt;
+&lt;/rows&gt;
+&lt;/response&gt;
+&lt;/ajax-response&gt;
+</pre>
+
+<p>See the weather and photo examples, which retrieve data from Yahoo Weather and Flickr respectively and reformat the data
+into the structure shown above. These examples are currently available in PHP and .net versions, but not ASP.
+
+<h3>Populating LiveGrid with data from an HTML table</h3>
+
+<p>A LiveGrid can also be easily created on a web page that contains a traditional HTML table.
+Just assign an id to the table and pass that id in during LiveGrid initialization. Headings
+will be taken from the table's thead section and data from the tbody. No AJAX is
+performed in this case, but the data is still buffered in a JavaScript array. Several
+examples are included in the Rico distribution, look for the ones marked "LiveGrid-Static Buffer"</p>
+
+<hr>
+<h2>SimpleGrid</h2>
+
+<p>SimpleGrid's are new to Rico 2.0 and share some of the same functionality as LiveGrids - 
+resizable columns, frozen columns, and frozen headings. 
+However, unlike a LiveGrid, the data is static and resides in the DOM -
+so no buffering, no AJAX refreshes, no sorting, no filtering.
+Why would you use a SimpleGrid? 
+<ol>
+<li>Because it is more flexible in what each cell can contain - 
+cells in a column do not all have to be of the same type.
+<li>In some circumstances, it can perform better on the client than LiveGrid; 
+particularly on a slow client displaying a grid with many columns.
+<li>Finally, a SimpleGrid can contain input elements (checkboxes, select lists, etc). 
+While a LiveGrid can also contain input elements, because the element values are stored in the
+LiveGrid buffer, submitting the values back to the server can be tricky.
+SimpleGrids do not suffer from this problem. You can simply surround the
+entire grid with standard &lt;form&gt;&lt;/form&gt; tags and any
+input elements within the grid will be submitted back to the server.
+</ol>
+
+<p>The most sophisticated example of a SimpleGrid is the spreadsheet
+included with this distribution. You can enter formulas and it will
+recalculate when you change the inputs - just like a commercial spreadsheet.
+A link to the spreadsheet example can be found under the "HTML Examples" section
+of the examples menu.
+When in the spreadsheet, click the <img alt="help" style="vertical-align:top;" src="client/images/sheet/help.gif"> button to see all it can do.
+
+<p>SimpleGrids can be created either of two ways:
+<ul>
+<li>By using one of the SimpleGrid plug-ins. Plug-ins exist for PHP, ASP, and .net.
+<li>By using XSLT. Rico includes an XSL file that will convert a standard
+HTML table to a SimpleGrid.
+</ul>
+
+<h3>Creating a SimpleGrid by using a plug-in</h3>
+
+<p>Each plug-in defines a SimpleGrid class. Within the class, there are methods
+to start header rows and data rows - just call one of these methods everywhere
+you would put a &lt;tr&gt; tag in an HTML table. There is also a method to
+create a cell - just call it everywhere
+you would put a &lt;th&gt; or &lt;td&gt; tag in an HTML table.
+When you are done defining the table content, just call the render method
+(except in the .net plugin where render is called automatically).
+It's that easy!
+
+<h3>Creating a SimpleGrid by using XSLT</h3>
+
+<p>If your web page is XHTML compliant, then there is another way to generate a SimpleGrid.
+Just use the XSL stylesheet "ricoSimpleGrid.xsl" to transform tables in your page
+to SimpleGrids. The stylesheet looks for tables with a class name of "ricoSimpleGrid" 
+and then does the transformation for you. At one time, Rico supported doing this
+transformation on the client. However, due to changes in the Prototype library, this
+is no longer possible. Therefore, if you choose to use this approach, the XSLT transform
+must be performed on the server.
+
+</body>
+</html>

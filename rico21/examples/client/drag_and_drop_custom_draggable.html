@@ -1,0 +1,281 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<title>Rico Custom Draggable</title>
+
+<script src="../../src/rico.js" type="text/javascript"></script>
+<script type='text/javascript'>
+Rico.loadModule('DragAndDrop');
+
+var CustomDraggable;
+Rico.onLoad( function() {
+  Rico.setDebugArea('logger');
+  CustomDraggable = Class.create();
+  checkQueryString();
+  CustomDraggable.prototype = Object.extend(new Rico.Draggable(), CustomDraggableMethods);
+  writeNameSpans();
+  createDraggables();
+  dndMgr.registerDropZone( new Rico.Dropzone($('dropZone')));
+});
+
+function checkQueryString() {
+  var inputs=document.getElementsByTagName('input');
+  var s=window.location.search;
+  for (var i=0; i<inputs.length; i++) {
+    if (s.indexOf(inputs[i].id+'=') >= 0) {
+      CustomDraggable[inputs[i].id]=true;
+      inputs[i].checked=true;
+    }
+    inputs[i].onclick=function() { document.forms[0].submit(); };
+  }
+}
+
+var names = [ "Holloman, Debbie", "Barnes, Pat", "Dampier, Joan", "Alvarez, Randy",
+              "Neil, William", "Hardoway, Kimber", "Story, Leslie", "Lott, Charlie",
+              "Patton, Sabrina", "Lopez, Juan" ];
+
+function writeNameSpans() {
+  var s='';
+  for ( var i = 0 ; i < names.length ; i++ )
+    s+="<div id='d" + i + "'>" + names[i] + "<\/div>";
+  $('nameList').innerHTML=s;
+}
+
+function createDraggables() {
+   for ( var i = 0 ; i < names.length ; i++ )
+      dndMgr.registerDraggable( new CustomDraggable($('d'+i), names[i]) );
+}
+
+/**
+ *  Sample 'CustomDraggable' object which extends the Rico.Draggable to
+ *  override the behaviors associated with a draggable object...
+ **/
+var CustomDraggableMethods = {
+
+   initialize: function( htmlElement, name ) {
+      this.type        = 'Custom';
+      this.htmlElement = $(htmlElement);
+      this.name        = name;
+   },
+
+   select: function() {
+      this.selected = true;
+      var el = this.htmlElement;
+
+      // show the item selected.....
+      el.style.color           = "#ffffff";
+      el.style.backgroundColor = "#08246b";
+   },
+
+   deselect: function() {
+      this.selected = false;
+      var el = this.htmlElement;
+      el.style.color           = "#2b2b2b";
+      el.style.backgroundColor = "transparent";
+   },
+
+   startDrag: function() {
+      Rico.writeDebugMsg("startDrag: [" + this.name +"]");
+   },
+
+   cancelDrag: function() {
+      Rico.writeDebugMsg("cancelDrag: [" + this.name +"]");
+   },
+
+   endDrag: function() {
+      Rico.writeDebugMsg("endDrag: [" + this.name +"]");
+      if ( CustomDraggable.removeOnDrop )
+         this.htmlElement.style.display = 'none';
+   },
+
+   getSingleObjectDragGUI: function() {
+      var div = document.createElement("div");
+      div.className = 'customDraggable';
+      div.style.width = (this.htmlElement.offsetWidth - 10) + "px";
+      Element.insert(div,this.name);
+      return div;
+   },
+
+   getDroppedGUI: function() {
+      var div = document.createElement("div");
+      var n=this.name
+      if (CustomDraggable.reverseNamesOnDrop) {
+        var names = n.split(",");
+        n=names[1].substring(1) + " " + names[0];
+      }
+      Element.insert(div,"[" + n + "]");
+      return div;
+   },
+
+   toString: function() {
+      return this.name;
+   }
+
+}
+</script>
+
+<style type="text/css">
+body, p {
+	font-family : Trebuchet MS, Arial, Helvetica, sans-serif;
+}
+h1 { font-size: 16pt; }
+
+span.code {
+  font-family : fixed;
+  font-size   : 11px;
+  color       : #4b4b4b;
+}
+
+.logBox {
+  background-color : #ffffee;
+  border           : 1px solid #8b8b8b;
+  font-size        : 8pt;
+}
+
+.customDraggable {
+  background-color : #E0DDB5;
+  color            : #5b5b5b;
+  border           : 1px solid #5b5b5b;
+ /*  filter           : alpha(Opacity=70); */
+  -moz-opacity     : 0.7;
+  padding          : 1px 5px 1px 5px;
+  font-size    : 11px;
+}
+.listBox {
+  padding-top      : 5px;
+  padding-bottom   : 5px;
+  background-color : #ffffff;
+  border           : 1px solid #8b8b8b;
+}
+.listBox * {
+  margin: 0px;
+  padding: 0px;
+  font-size    : 11px;
+  font-family  : Verdana, Arial, Helvetica;
+}
+.catHeader {
+  font-family : Arial;
+  font-weight : bold;
+  font-size   : 11px;
+  color       : #5b5b5b;
+  margin-left : 8px;
+  margin-top  : 12px;
+  margin-bottom: 0px;
+  display     : block;
+}
+.codeBox {
+  padding-top      : 5px;
+  padding-bottom   : 5px;
+  background-color : #E0DDB5;
+}
+input {
+  margin-left: 2em;
+}
+</style>
+</head>
+
+
+<body>
+
+<h1 style='float:left;'>Rico Drag &amp; Drop with Custom Drag Class</h1>
+<p style='float:right;'>
+<a href="http://validator.w3.org/check?uri=referer"><img style='border:none;'
+    src="images/valid-html401.png"
+    alt="Valid HTML 4.01 Strict" height="31" width="88"></a>
+</p>
+
+<form method='get' action=''>
+<p style='font-size:9pt;clear:both;'>Select drag-and-drop options:
+<br>
+<input type='checkbox' name='removeOnDrop' id='removeOnDrop' value='Y'> <label for='removeOnDrop'>Remove On Drop</label>
+<input type='checkbox' name='reverseNamesOnDrop' id='reverseNamesOnDrop' value='Y'> <label for='reverseNamesOnDrop'>Reverse Names On Drop</label>
+</p>
+</form>
+
+<p class="catHeader">the example</p>
+<div id="exampleContainer" style="width:540px;background-color:#E0DDB5;padding-bottom:8px;">
+
+<div id="dragBox" style="display:inline;margin-left:8px;margin-bottom:8px;float:left;">
+   <span class="catHeader">availalble name-list</span>
+   <div class="listBox" id="nameList" style="width:250px;height:140px;overflow:auto;"></div>
+</div>
+
+<div id="dropBox" style="margin-left:8px;margin-bottom:8px;float:left">
+   <span class="catHeader">dropped name-list</span>
+   <div class="listBox" id="dropZone" style="width:250px;height:140px;overflow:auto;">
+   </div>
+</div>
+
+<div style="clear:both;margin-left:8px;">
+   <span id='loghead' class="catHeader">drag-n-drop message log:</span>
+   <textarea class="logBox" id="logger" rows='8' cols='60'></textarea>
+</div>
+
+</div>
+
+<p class="catHeader">the code</p>
+<div class="codeBox" style="width:540px;height:250px;overflow:auto;">
+<pre><span class="code">var CustomDraggable = Class.create();
+
+CustomDraggable.prototype = (new Rico.Draggable()).extend( {
+
+   <b>initialize</b>: function( htmlElement, name ) {
+      this.type        = 'Custom';
+      this.htmlElement = $(htmlElement);
+      this.name        = name;
+   },
+
+   <b>select</b>: function() {
+      this.selected = true;
+      var el = this.htmlElement;
+
+      // show the item selected.....
+      el.style.color           = "#ffffff";
+      el.style.backgroundColor = "#08246b";
+   },
+
+   <b>deselect</b>: function() {
+      this.selected = false;
+      var el = this.htmlElement;
+      el.style.color           = "#2b2b2b";
+      el.style.backgroundColor = "transparent";
+   },
+
+   <b>startDrag</b>: function() {
+      Rico.writeDebugMsg("startDrag: [" + this.name +"]");
+   },
+
+   <b>cancelDrag</b>: function() {
+      Rico.writeDebugMsg("cancelDrag: [" + this.name +"]");
+   },
+
+   <b>endDrag</b>: function() {
+      Rico.writeDebugMsg("endDrag: [" + this.name +"]");
+   },
+
+   <b>getSingleObjectDragGUI</b>: function() {
+      var div = document.createElement("div");
+      div.className = 'customDraggable';
+      div.style.width = this.htmlElement.offsetWidth - 10;
+      Element.insert(div,this.name);
+      return div;
+   },
+
+   <b>getDroppedGUI</b>: function() {
+      var div = document.createElement("div");
+      var n=this.name
+      if (CustomDraggable.reverseNamesOnDrop) {
+        var names = n.split(",");
+        n=names[1].substring(1) + " " + names[0];
+      }
+      Element.insert(div,"[" + n + "]");
+      return div;
+   }
+
+} );</span></pre>
+
+</div>
+
+</body>
+</html>

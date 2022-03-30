@@ -1,0 +1,23 @@
+body {font-family: Arial, Tahoma, Verdana, sans-serif; padding: 8px;}
+li { margin-top: 0.25em; margin-bottom: 0.25em; }
+pre { background-color: #DDD; }
+img { border: 0px; }
+
+h1 { 
+  font-family : Trebuchet MS, Arial, Tahoma, Verdana, Helvetica, sans-serif; 
+  background-color:#EEE;
+  margin-top: 0px;
+  padding: 4px;
+  -moz-border-radius: 8px;
+  -webkit-border-radius: 8px;
+}
+h2 { margin-top: 2em; }
+h4 { text-decoration: underline; }
+
+dl { margin-left: 2em; }
+dt { font-weight: bold; margin-top: 0.7em; }
+
+thead tr { background-color:#DDD; }
+table.compat td { text-align:center; }
+table.compat tr { vertical-align:bottom; }
+tbody th {   text-align: left; }

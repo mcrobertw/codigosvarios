@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<title>Rico Tabbed Panel Example</title>
+
+<script src="../../src/rico.js" type="text/javascript"></script>
+<script type='text/javascript'>
+Rico.loadModule('Accordion','Corner');
+Rico.onLoad( function() {
+  var options={panelHeight:200, hoverClass: 'panelHover', selectedClass: 'panelSelected'};
+  options.corners=checkQueryString();
+  new Rico.TabbedPanel( $$('div.panelheader'), $$('div.panelContent'), options);
+});
+
+function checkQueryString() {
+  var inputs=document.getElementsByTagName('input');
+  var s=window.location.search;
+  var i=s.indexOf('corner=');
+  if (i >= 0) {
+    s=s.slice(i+7);
+    var i=s.indexOf('&');
+    if (i >= 0) s=s.substr(0,i-1);
+    for (var i=0; i<inputs.length; i++)
+      if (inputs[i].value==s) inputs[i].checked=true;
+  } else {
+    inputs[0].checked=true;
+    s='top';
+  }
+  for (var i=0; i<inputs.length; i++)
+    inputs[i].onclick=function() { document.forms[0].submit(); };
+  return s;
+}
+</script>
+
+<style type="text/css">
+body {font-family: Arial, Tahoma, Verdana;}
+h1 {
+	font-family : Trebuchet MS, Arial, Helvetica, sans-serif;
+	font-size: 16pt;
+}
+
+#tabsExample {
+  width: 650px;
+}
+
+.panelContentContainer {
+  border : 1px solid #4f4f4f;
+  clear:both;
+}
+
+.panelheader{
+  height: 1.5em;
+  color : #AAA;
+  background: #D8E0F2;
+  font-weight : bold;
+  float: left;
+  display: inline;
+  margin-left: 2px;
+  margin-right: 2px;
+  text-align: center;
+  white-space:nowrap;
+  overflow:hidden;
+  width: 20%;
+  padding-top:3px;
+}
+
+.panelHover {
+  color : #666;
+  cursor: pointer;
+}
+
+.panelSelected {
+  color : #444;
+  background: #CFD4E6;
+  cursor: auto;
+}
+
+.panelContent {
+    background: #f8f8f8;
+    overflow: auto;
+}
+
+input {
+  margin-left: 2em;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1 style='float:left;'>Rico Tabbed Panels #1</h1>
+<p style='float:right;'>
+<a href="http://validator.w3.org/check?uri=referer"><img style='border:none;'
+    src="images/valid-html401.png"
+    alt="Valid HTML 4.01 Strict" height="31" width="88"></a>
+</p>
+
+<form method='get' action=''>
+<p style='clear:both;'>Select which corners should be rounded on the tabs:
+<p>
+<input type='radio' name='corner' id='corner_top' value='top'> <label for='corner_top'>Both</label>
+<input type='radio' name='corner' id='corner_left' value='tl'> <label for='corner_left'>Left</label>
+<input type='radio' name='corner' id='corner_right' value='tr'> <label for='corner_right'>Right</label>
+<input type='radio' name='corner' id='corner_none' value='none'> <label for='corner_none'>None</label>
+</form>
+
+<div id="tabsExample">
+   <div>
+     <div class="panelheader">Overview</div>
+     <div class="panelheader">HTML Code</div>
+     <div class="panelheader">Rico Code</div>
+   </div>
+
+   <div class="panelContentContainer">
+     <div class="panelContent">
+      <br>This example illustrates how to use the Rico.TabbedPanel behavior to transform a set of 
+      divs into a first class tabbed panel component.<br><br>
+     The Rico.TabbedPanel is actually a very simple component built off of Rico behaviors and effects.
+     It adds the necessary event handlers on the respective divs to handle the visual aspects of switching tabs.
+     </div>
+     <div class="panelContent">
+     <br>The example HTML structure is an outer div that holds all of the panels.  Then, each panel is just a
+     couple of DIVs (one for the header and one for the content) wrapped in an outer DIV.  You can actually use 
+     elements other than divs.
+      <pre> &lt;div id="tabContainer"&gt;
+         &lt;div id="panelHeaders"&gt;
+           &lt;div id="Header1"&gt;
+             Overview
+            &lt;/div&gt;
+         &lt;/div&gt;
+         &lt;div id="panelContents"&gt;
+            &lt;div id="Content1"&gt;
+             ... content text ...
+            &lt;/div&gt;
+         &lt;/div&gt;
+      &lt;/div&gt;
+      </pre>
+          </div>
+          <div class="panelContent">
+          <br>To attach the tabbed panel behavior to the tabbed panel container div, construct a Rico.TabbedPanel
+          object and pass the panel titles and contents to it.  With the Prototype Selector class it is very easy.
+<pre>
+new Rico.TabbedPanel( $$('div.panelheader'), $$('div.panelContent') );
+
+ -or-
+
+new Rico.TabbedPanel( $$('div.panelheader'), $$('div.panelContent'), 
+                      {panelHeight  : 200, 
+                       hoverClass   : 'mdHover',
+                       selectedClass: 'mdSelected'} );
+</pre>
+    The second example specifies the height of the panels and the css classes that can be associated 
+    with the tabbed panel behaviors.  
+    There are many other configuration parameters that can be specified to modify various visual aspects of the
+    tabbed panel. The panelHeight is the attribute that is most commonly overridden.
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

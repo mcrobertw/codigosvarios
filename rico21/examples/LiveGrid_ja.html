@@ -1,0 +1,1156 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Rico LiveGrid</title>
+<link href="ricoDocs.css" rel="Stylesheet" type="text/css" />
+</head>
+
+<body>
+<h1>Rico LiveGrid の作成</h1>
+
+<p>Rico LiveGrid は 2 次元の JavaScript 配列でデータをバッファリングして、スクロールするテーブルにデータを表示します。
+ユーザがグリッドを垂直にスクロールする事によって、データは配列からグリッド上へ動的にコピーされます。
+バッファは次の項目からロードされる事が出来ます。
+<ol>
+<li><a href='#model1'>javascript 配列</a>
+<li><a href='#model2'>HTML テーブル</a>
+<li><a href='#model3'>XML ファイル</a>
+<li><a href='#model4'>SQL データベースクエリ</a>
+<li><a href='#model5'>カスタム javascript コールバック関数</a>
+</ol>
+
+
+<h2><a name='model1'>利用モデル 1: javascript 配列からのデータのロード</a></h2>
+
+<ul><li>javascript 配列へ表示されるデータをロードして下さい。
+<pre>
+  var myData = [
+    [1,'Cell 1:2','Cell 1:3','Cell 1:4','Cell 1:5'],
+    [2,'Cell 2:2','Cell 2:3','Cell 2:4','Cell 2:5'],
+    [3,'Cell 3:2','Cell 3:3','Cell 3:4','Cell 3:5'],
+    [4,'Cell 4:2','Cell 4:3','Cell 4:4','Cell 4:5']
+  ];
+</pre>
+
+<li>グリッドを表示するのに必要な Rico javascript と css ファイルをロードして下さい。
+<pre>
+Rico.loadModule('LiveGrid','LiveGridMenu','greenHdg.css');
+</pre>
+<dl>
+<dt>LiveGrid
+<dd>これは、静的なバッファ（ AJAX では無い）で LiveGrid を表示するのに必要な Rico javascript と css ファイルをロードします。
+<dt>LiveGridMenu
+<dd>これは、デフォルトのグリッドメニューをロードします。
+このメニューは、LiveGrid で出来る事の全てにアクセスする方法を提供します。
+それは選択された列と使用されるバッファのタイプに基づく、ユーザに提示された選択項目を調整します。
+メニュー無しでグリッドを使用するか、またはアプリケーションの必要性によりカスタマイズされた独自のメニューを作成するかを、選ぶことが出来ます。
+<dt>greenHdg.css
+<dd>Rico は、いくつかのサンプルグリッドスタイルを持っています。
+coffee-with-milk、grayedout、greenHdg、iegradient (Internet Explorer 専用)、tanChisel、そして warmfall。
+あなたは、含まれているスタイルの 1 つを選ぶか、独自の物を作成するかを選ぶでしょう。
+</dl>
+
+<li>テーブルのデータ列を Rico バッファオブジェクトにロードして下さい。
+<pre>
+  var buffer=new Rico.Buffer.Base();
+  buffer.loadRowsFromArray(myData);
+</pre>
+
+<li>グリッドの見出しを含む、グリッドのオプションを定義して下さい。
+<pre>
+  var opts = {  
+    useUnformattedColWidth: false,
+    defaultWidth : 90,
+    visibleRows  : 'data',
+    frozenColumns: 1,
+    columnSpecs  : [{Hdg:'Column 1',type:'number', ClassName:'alignright'},
+                    {Hdg:'Column 2'},
+                    {Hdg:'Column 3'},
+                    {Hdg:'Column 4'},
+                    {Hdg:'Column 5'}]
+  };
+</pre>
+
+<li>グリッド、Rico.Buffer インスタンス、およびグリッドオプションのためにベース id を渡して、LiveGrid をインスタンス化してください。
+
+<pre>
+  var ex1=new Rico.LiveGrid ('ex1', buffer, opts);
+</pre>
+
+<li>グリッドのためのデフォルトポップアップメニューを利用可能にするために、グリッドのメニューのプロパティを Rico.GridMenu のインスタンスに割り当てて下さい。
+
+<pre>
+  ex1.menu=new Rico.GridMenu();
+</pre>
+
+<li>Rico.loadModule は、window.onload イベントの終了<em>後</em>に実行されると思います。
+あなたは Rico.onLoad メソッドに初期化関数を渡さなければなりません、なぜなら、Rico モジュールがロードされた後で、グリッドの初期化が実行される事を確実なものにするためです。
+javascript のすべてをまとめると、このようになります。
+<pre>
+&lt;script type='text/javascript'&gt;
+Rico.loadModule('LiveGrid','LiveGridMenu','greenHdg.css');
+
+Rico.onLoad( function() {
+  var myData = [
+    [1,'Cell 1:2','Cell 1:3','Cell 1:4','Cell 1:5'],
+    [2,'Cell 2:2','Cell 2:3','Cell 2:4','Cell 2:5'],
+    [3,'Cell 3:2','Cell 3:3','Cell 3:4','Cell 3:5'],
+    [4,'Cell 4:2','Cell 4:3','Cell 4:4','Cell 4:5']
+  ];
+  var opts = {  
+    useUnformattedColWidth: false,
+    defaultWidth : 90,
+    visibleRows  : 'data',
+    frozenColumns: 1,
+    columnSpecs  : [{Hdg:'Column 1',type:'number', ClassName:'alignright'},
+                    {Hdg:'Column 2'},
+                    {Hdg:'Column 3'},
+                    {Hdg:'Column 4'},
+                    {Hdg:'Column 5'}]
+  };
+  var buffer=new Rico.Buffer.Base();
+  buffer.loadRowsFromArray(myData);
+  var ex1=new Rico.LiveGrid ('ex1', buffer, opts);
+  ex1.menu=new Rico.GridMenu();
+});
+&lt;/script&gt;
+</pre>
+
+<li>最後に、グリッドを実行すべき位置に、HTML マークアップ に div 要素を配置して下さい。
+ブックマークのためのマークアップを含む事により、グリッドのスクロール位置が表示されます。
+<pre>
+&lt;p class="ricoBookmark"&gt;&lt;span id="ex1_bookmark"&gt;&nbsp;&lt;/span&gt;&lt;/p&gt;
+&lt;div id="ex1"&gt;&lt;/div&gt;
+</pre>
+
+
+
+</ul>
+
+
+<h2><a name='model2'>利用モデル 2: HTML テーブルからのデータのロード</a></h2>
+
+<ul><li>見出しは <code>&lt;thead&gt;</code> セクションにより、データは <code>&lt;tbody&gt;</code> セクションにより、HTML テーブルを定義して下さい。
+ブックマークのためのマークアップを含む事により、グリッドのスクロール位置が表示されます。
+<pre>
+&lt;p class="ricoBookmark"&gt;&lt;span id="data_grid_bookmark"&gt;&nbsp;&lt;/span&gt;&lt;/p&gt;
+&lt;table id="data_grid"&gt;
+  &lt;thead&gt;
+
+  &lt;tr&gt;
+    &lt;th&gt;First column name&lt;/th&gt;
+    &lt;th&gt;Second column name&lt;/th&gt;
+    ...
+    &lt;th&gt;Last column name&lt;/th&gt;
+  &lt;/tr&gt;
+
+  &lt;/thead&gt;
+
+  &lt;tbody&gt;
+
+  &lt;tr&gt;
+    &lt;td&gt;Row 1, column 1 data&lt;/td&gt;
+    &lt;td&gt;Row 1, column 2 data&lt;/td&gt;
+    ...
+    &lt;td&gt;Row 1, last column data&lt;/td&gt;
+  &lt;/tr&gt;
+
+  &lt;tr&gt;
+    &lt;td&gt;Row 2, column 1 data&lt;/td&gt;
+    &lt;td&gt;Row 2, column 2 data&lt;/td&gt;
+    ...
+    &lt;td&gt;Row 2, last column data&lt;/td&gt;
+  &lt;/tr&gt;
+
+  ...
+
+  &lt;tr&gt;
+    &lt;td&gt;Row n, column 1 data&lt;/td&gt;
+    &lt;td&gt;Row n, column 2 data&lt;/td&gt;
+    ...
+    &lt;td&gt;Row n, last column data&lt;/td&gt;
+  &lt;/tr&gt;
+
+  &lt;/tbody&gt;
+&lt;/table&gt;
+</pre>
+
+<li>グリッドを表示するために必要な Rico javascript と css ファイルをロードして下さい。
+<pre>
+Rico.loadModule('LiveGrid','LiveGridMenu','greenHdg.css');
+</pre>
+<dl>
+<dt>LiveGrid
+<dd>これは、静的なバッファ（ AJAX では無い）で LiveGrid を表示するのに必要な Rico javascript と css ファイルをロードします。
+<dt>LiveGridMenu
+<dd>これは、デフォルトのグリッドメニューをロードします。
+このメニューは、LiveGrid で出来る事の全てにアクセスする方法を提供します。
+それは選択された列と使用されるバッファのタイプに基づく、ユーザに提示された選択項目を調整します。
+メニュー無しでグリッドを使用するか、またはアプリケーションの必要性によりカスタマイズされた独自のメニューを作成するかを、選ぶことが出来ます。
+<dt>greenHdg.css
+<dd>Rico は、いくつかのサンプルグリッドスタイルを持っています。
+coffee-with-milk、grayedout、greenHdg、iegradient (Internet Explorer 専用)、tanChisel、そして warmfall。
+あなたは、含まれているスタイルの 1 つを選ぶか、独自の物を作成するかを選ぶでしょう。
+</dl>
+
+<li>テーブルのデータ列を Rico バッファオブジェクトにロードして下さい。
+<pre>
+var buffer = new Rico.Buffer.Base($('data_grid').tBodies[0]);
+</pre>
+
+<li>最後に、HTML テーブルの DOM の id とオプションを Rico.Buffer インスタンス に渡して
+（これは、 LiveGrid がテーブルの thead セクションから列の見出しをロードするのを許可します）、
+LiveGrid を初期化します
+（この場合、最初の列の幅は 50 ピクセル、2 番目の列は 80 ピクセルの幅となります）。
+
+<pre>
+var grid_options = { columnSpecs: [ {width:50}, {width:80} ] };
+var grid = new Rico.LiveGrid('data_grid', buffer, grid_options);
+</pre>
+
+<li>Rico.loadModule は、window.onload イベントの終了<em>後</em>に実行されると思います。
+あなたは Rico.onLoad メソッドに初期化関数を渡さなければなりません、
+なぜなら、Rico モジュールがロードされた後で、グリッドの初期化が実行される事を確実なものにするためです。
+javascript のすべてをまとめると、このようになります。
+
+<pre>
+&lt;script type='text/javascript'&gt;
+Rico.loadModule('LiveGrid','LiveGridMenu','greenHdg.css');
+
+Rico.onLoad( function() {
+  var buffer = new Rico.Buffer.Base($('data_grid').tBodies[0]);
+  var grid_options = { columnSpecs: [width:50, width:80] };
+  var grid = new Rico.LiveGrid('data_grid', buffer, grid_options);
+});
+&lt;/script&gt;
+</pre>
+
+</ul>
+
+
+<h2><a name='model3'>利用モデル 3: XML ファイルからのデータのロード</a></h2>
+
+<ul><li>テーブルのヘッダセルを持ち、テーブルのボディセルは持たない、HTML テーブルを定義して下さい。
+ブックマークのためのマークアップを含む事により、グリッドのスクロール位置が表示されます。
+<pre>
+&lt;p class="ricoBookmark"&gt;&lt;span id="data_grid_bookmark"&gt;&nbsp;&lt;/span&gt;&lt;/p&gt;
+&lt;table id="data_grid"&gt;
+  &lt;tr&gt;
+
+    &lt;th&gt;First column name&lt;/th&gt;
+    &lt;th&gt;Second column name&lt;/th&gt;
+
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+
+<li>グリッドを表示するために必要な Rico javascript と css ファイルをロードして下さい。
+<pre>
+Rico.loadModule('LiveGridAjax','LiveGridMenu','greenHdg.css');
+</pre>
+<dl>
+<dt>LiveGridAjax
+<dd>これは、AJAX 対応のバッファで LiveGrid を表示するのに必要な Rico javascript と css ファイルをロードします。
+<dt>LiveGridMenu
+<dd>これは、デフォルトのグリッドメニューをロードします。
+このメニューは、LiveGrid で出来る事の全てにアクセスする方法を提供します。
+それは選択された列と使用されるバッファのタイプに基づく、ユーザに提示された選択項目を調整します。
+メニュー無しでグリッドを使用するか、またはアプリケーションの必要性によりカスタマイズされた独自のメニューを作成するかを、選ぶことが出来ます。
+<dt>greenHdg.css
+<dd>Rico は、いくつかのサンプルグリッドスタイルを持っています。
+coffee-with-milk、grayedout、greenHdg、iegradient (Internet Explorer 専用)、tanChisel、そして warmfall。
+あなたは、含まれているスタイルの 1 つを選ぶか、独自の物を作成するかを選ぶでしょう。
+</dl>
+
+<li>データをフェッチしてテーブルを実装するために、Rico バッファを作成して下さい。
+AjaxXML バッファは、グリッドのスタートアップで提供された URL に、一つだけのデータのリクエストを行います。
+<pre>
+var buffer = new Rico.Buffer.AjaxXML('/controller/action?format=xml');
+</pre>
+
+この URL（実例の中にある "/controller/action?format=xml"）は、次のフォーマットでデータを返さなければなりません。
+<pre>
+&lt;ajax-response&gt;
+&lt;response type='object' id='data_grid_updater'&gt;
+&lt;rows update_ui='true' offset='0'&gt;
+&lt;tr&gt;&lt;td&gt;Data for row 1, cell 1&lt;/td&gt;&lt;td&gt;Data for row 1, cell 2&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Data for row 2, cell 1&lt;/td&gt;&lt;td&gt;Data for row 2, cell 2&lt;/td&gt;&lt;/tr&gt;
+&lt;/rows&gt;
+&lt;/response&gt;
+&lt;/ajax-response&gt;
+</pre>
+
+<li>最後に、HTML テーブルの DOM の ID とオプションを Rico.Buffer インスタンス に渡して、LiveGrid を初期化します
+（columnSpecs は必要ではありませんが、列のカスタム化のためのプレースホルダーとして、ここに表示されます）。
+<pre>
+var grid_options = { columnSpecs: [,] };
+var grid = new Rico.LiveGrid('data_grid', buffer, grid_options);
+</pre>
+
+<li>Rico.loadModule は、window.onload イベントの終了<em>後</em>に実行されると思います。
+あなたは Rico.onLoad メソッドに初期化関数を渡さなければなりません、
+なぜなら、Rico モジュールがロードされた後で、グリッドの初期化が実行される事を確実なものにするためです。
+javascript のすべてをまとめると、このようになります。
+
+<pre>
+&lt;script type='text/javascript'&gt;
+Rico.loadModule('LiveGridAjax','LiveGridMenu','greenHdg.css');
+
+Rico.onLoad( function() {
+  var buffer = new Rico.Buffer.AjaxXML('/controller/action?format=xml');
+  var grid_options = { columnSpecs: [,] };
+  var grid = new Rico.LiveGrid('data_grid', buffer, grid_options);
+});
+&lt;/script&gt;
+</pre>
+</ul>
+
+
+<h2><a name='model4'>利用モデル 4: SQL データベースクエリからデータをロードする</a></h2>
+
+<p>下記の説明は、Rico LiveGrid プラグインにおける ASP と PHP の実装に直接当てはまります。
+概念は .net の同じですが、実装方法は全く異なります
+(これがどのように .net で実装されるかについては、"ex2simple.aspx" を調べて下さい)。
+
+<ul>
+<li>実行するためにクエリを含むセッション変数を定義して下さい。
+変数名は、下の表の ID に適合しなければなりません。
+データを要求するとき、グリッドは ricoXMLquery にそのIDを渡します、そして、ricoXMLquery はセッションからクエリテキストを取得するためにそれを利用するでしょう。
+<ul>
+<li>ASP:
+<pre>
+&lt;%
+session.contents("data_grid")="select ID,Name,City from customers"
+%&gt;
+</pre>
+
+<li>PHP:
+<pre>
+&lt;? 
+$_SESSION['data_grid']="select ID,Name,City from customers";
+?&gt;
+</pre>
+
+<li>.net:
+<pre>
+Sub Page_Load(Sender As object, e As EventArgs)
+  data_grid.sqlQuery="select ID,Name,City from customers"
+  ' session variable is set by the control
+End Sub
+</pre>
+</ul>
+
+
+<li>テーブルのボディセルでは無く、ヘッダセルを供給して、HTML テーブルを定義して下さい。
+ブックマークのためのマークアップを含む事により、グリッドのスクロール位置が表示されます。
+<pre>
+&lt;p class="ricoBookmark"&gt;&lt;span id="data_grid_bookmark"&gt;&nbsp;&lt;/span&gt;&lt;/p&gt;
+&lt;table id="data_grid"&gt;
+  &lt;tr&gt;
+
+    &lt;th&gt;Customer #&lt;/th&gt;
+    &lt;th&gt;Customer Name&lt;/th&gt;
+    &lt;th&gt;City&lt;/th&gt;
+
+  &lt;/tr&gt;
+&lt;/table&gt;
+</pre>
+
+<li>グリッドを表示するために必要な Rico javascript と css ファイルをロードして下さい。
+<pre>
+Rico.loadModule('LiveGridAjax','LiveGridMenu','greenHdg.css');
+</pre>
+<dl>
+<dt>LiveGridAjax
+<dd>これは、AJAX 対応バッファで LiveGrid を表示するのに必要な Rico javascript と css ファイルをロードします。
+<dt>LiveGridMenu
+<dd>これは、デフォルトのグリッドメニューをロードします。
+このメニューは、LiveGrid で出来る事の全てにアクセスする方法を提供します。
+それは選択された列と使用されるバッファのタイプに基づく、ユーザに提示された選択項目を調整します。
+メニュー無しでグリッドを使用するか、またはアプリケーションの必要性によりカスタマイズされた独自のメニューを作成するかを、選ぶことが出来ます。
+<dt>greenHdg.css
+<dd>Rico は、いくつかのサンプルグリッドスタイルを持っています。
+coffee-with-milk、grayedout、greenHdg、iegradient (Internet Explorer 専用)、tanChisel、そして warmfall。
+あなたは、含まれているスタイルの 1 つを選ぶか、独自の物を作成するかを選ぶでしょう。
+</dl>
+
+<li>データをフェッチしてテーブルを実装するために、Rico バッファを作成して下さい。
+一度にすべてのデータをグリッドにフェッチする AjaxXML バッファと異なり、 AjaxSQL バッファは、塊でデータをフェッチします。
+これは、LiveGrid が能率的に数千または何十万の列を含んでいるクエリ結果を表示する事を可能にします。
+
+<pre>
+var buffer = new Rico.Buffer.AjaxSQL('ricoXMLquery.asp');
+</pre>
+
+この URL （"ricoXMLquery.asp" の実例で）は、データベースからデータをフェッチして、
+この XML フォーマットでグリッドにそれを戻すために、含まれるプラグインの内の 1 つを利用します。
+
+<pre>
+&lt;ajax-response&gt;
+&lt;response type='object' id='data_grid_updater'&gt;
+&lt;rows update_ui='true' offset='0'&gt;
+&lt;tr&gt;&lt;td&gt;Data for row 1, cell 1&lt;/td&gt;&lt;td&gt;Data for row 1, cell 2&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;Data for row 2, cell 1&lt;/td&gt;&lt;td&gt;Data for row 2, cell 2&lt;/td&gt;&lt;/tr&gt;
+&lt;/rows&gt;
+&lt;rowcount&gt;99&lt;/rowcount&gt;
+&lt;/response&gt;
+&lt;/ajax-response&gt;
+</pre>
+
+&lt;rowcount&gt; タグはオプションですが、リクエストに "get_total" クエリーストリングパラメータが存在する場合は、
+いつでも返されなければなりません。
+
+<li>最後に、HTML テーブルの DOM の ID とオプションを Rico.Buffer インスタンス に渡して、LiveGrid を初期化します
+（columnSpecs は必要ではありませんが、列のカスタム化のためのプレースホルダーとして、ここに表示されます）。
+<pre>
+var grid_options = { columnSpecs: [,,] };
+var grid = new Rico.LiveGrid('data_grid', buffer, grid_options);
+</pre>
+
+<li>Rico.loadModule は、window.onload イベントの終了<em>後</em>に実行されると思います。
+あなたは Rico.onLoad メソッドに初期化関数を渡さなければなりません、
+なぜなら、Rico モジュールがロードされた後で、グリッドの初期化が実行される事を確実なものにするためです。
+javascript のすべてをまとめると、このようになります。
+<pre>
+&lt;script type='text/javascript'&gt;
+Rico.loadModule('LiveGridAjax','LiveGridMenu','greenHdg.css');
+
+Rico.onLoad( function() {
+  var buffer = new Rico.Buffer.AjaxSQL('ricoXMLquery.asp');
+  var grid_options = { columnSpecs: [,,] };
+  var grid = new Rico.LiveGrid('data_grid', buffer, grid_options);
+});
+&lt;/script&gt;
+</pre>
+</ul>
+
+
+<h2><a name='model5'>利用モデル 5: カスタムコールバック関数を利用してデータをロードする</a></h2>
+
+<p>このモデルは、 xmlHTTPrequest を利用してデータをフェッチするのでは無く、 javascript コールバック関数を
+利用してデータをフェッチする事以外はモデル 3 や 4 と同じ方法で動作します。
+これにより、コールバック関数で Google Gears を呼ぶような創造的な事をすることが出来ます。
+コールバックをセットアップする事は、非常に簡単です。
+データプロバイダの URL の文字列を含むデータを AjaxXML または AjaxSQL コンストラクタに渡すのでは無く、
+その代りにコールバック関数を渡すだけです。
+
+<p>以下の AjaxXML バッファを利用するコードは <a href='client/gridJSbuffer.html'>examples/client/gridJSbuffer.html</a> から取得出来ます。
+"jsfetch" コールバック関数は 100 行の長さで 5 列の幅の二次元配列を返します。
+AjaxXML は、そのバッファを（グリッドのスタートアップで）一度だけロードするので、 jsfetch は一度だけ呼ばれます。
+このオプションのハッシュは、Prototype の Ajax.Request メソッドで利用されるオプションのハッシュと構造が同じです。
+
+<pre>
+buffer=new Rico.Buffer.AjaxXML(<strong>jsfetch</strong>);
+
+function <strong>jsfetch</strong>(options) {
+  Rico.writeDebugMsg("jsfetch");
+  var newRows=[], offset=options.parameters.offset;
+  for (var r=0; r<100; r++) {
+    var row=[];
+    row.push(offset.toString());
+    row.push(new Date().toString());
+    for (var c=2; c<5; c++) row.push('cell '+r+':'+c);
+    newRows.push(row);
+  }
+  options.onComplete(newRows);
+}
+</pre>
+
+<p>以下の AjaxSQL バッファを利用するコードは <a href='client/gridJSbuffer2.html'>examples/client/gridJSbuffer2.html</a> から取得出来ます。
+"jsfetch" コールバック関数は、500 行の長さで 5 列の幅の二次元配列をシミュレーションします。
+しかし、どんなコールバック中でも、その配列の <code>options.parameters.offset</code> 行から 
+<code>options.parameters.offset + options.parameters.page_size</code> 行までのセクションが返されます。
+
+<pre>
+buffer=new Rico.Buffer.AjaxSQL(<strong>jsfetch</strong>);
+
+function <strong>jsfetch</strong>(options) {
+  var newRows=[], totrows=500;
+  var offset=options.parameters.offset;
+  var limit=Math.min(totrows-offset,options.parameters.page_size)
+  for (var r=0; r&lt;limit; r++) {
+    var row=[];
+    row.push(new Date().toString());
+    row.push(offset.toString());
+    for (var c=2; c&lt;5; c++) row.push('cell '+(r+offset)+':'+c);
+    newRows.push(row);
+  }
+  options.onComplete(newRows,false,totrows);
+}
+</pre>
+
+<p>options.onComplete は、次のパラメータをとります。
+<ul>
+<li>newRows - それぞれのアイテムが文字列の二次元配列
+<li>newAttr - それぞれのアイテムが、セルの acceptAttr の値、または acceptAttr が利用されていないなら false を含むオブジェクトの二次元配列
+<li>totalRows - データセット内の行の総数を表す整数
+<li>errMsg - エラーが起こったとき、ユーザに表示されるメッセージテキスト
+</ul>
+
+</ul>
+
+
+<h2><a name='debug'></a>デバッグ</h2>
+<p>Rico 2.0 はメッセージログにタイムスタンプデバッグメッセージを配達する能力を持っています。
+そのログは、HTML のテキストエリアか、ブラウザの javascript コンソールに表示されるでしょう。
+<ul>
+<li>もし、テキストエリアが '_debugmsgs' を加えたライブグリッドテーブルの ID と共に存在するならば、例えば
+<pre style='margin:3px;'>&lt;textarea cols="100" rows="5" id="data_grid_debugmsgs" /&gt;</pre>
+そして、このテキストエリアがメッセージログのために使われます。
+<li>あるいは、テキストエリアは Rico.setDebugArea() の呼び出しによって指定されるかもしれません。
+
+<pre>
+&lt;textarea id='debug' rows='5' cols='80'&gt;&lt;/textarea&gt;
+&lt;script type='text/javascript'&gt;
+Rico.setDebugArea('debug');
+&lt;/script&gt;
+</pre>
+
+<li>テキストエリアが指定されないならば、Rico はブラウザのビルトイン javascript コンソールを使おうとします。
+以下のコンソールで動作する事が知られています:
+  <ul>
+  <li>Firefox の <a href='http://www.getfirebug.com/' target='_blank'>Firebug</a> アドオンコンソール
+  <li>Opera javascript コンソール
+  <li>Safari javascript コンソール
+  </ul>
+</ul>
+
+<h2>グリッドメニュー</h2>
+
+<p>Rico LiveGrid は、多くの機能的なビルトインが付属します
+その機能にアクセスするために、Rico はメニューのデフォルトの設定を含みます -- 
+ricoLiveGridMenu.js で定義されています。
+デフォルトメニューを使うために、単に 'LiveGridMenu' モジュールをロードして、
+そのグリッドメニュープロパティを Rico.GridMenu クラスのインスタンスに割り当てて下さい。
+<pre>
+  Rico.loadModule('LiveGridMenu');
+  ...
+  var ex1=new Rico.LiveGrid ('ex1', buffer, grid_options);
+  ex1.menu=new Rico.GridMenu();
+</pre>
+<p>デフォルトでは、ユーザがグリッドセルをダブルクリックする時メニューが開きます。
+メニューを開くイベントを変更するために、グリッドの <a href='#menuEvent'>menuEvent</a> 
+オプションに値を割り当てて下さい。
+以下のコードは、右クリックでメニューを開きます。
+<pre>
+  Rico.loadModule('LiveGridMenu');
+  ...
+  var grid_options = {
+    menuEvent: 'contextmenu'
+  }
+  var ex1=new Rico.LiveGrid ('ex1', buffer, grid_options);
+  ex1.menu=new Rico.GridMenu();
+</pre>
+<p>Rico.GridMenu は、更なるメニューアイテムを追加するために、コールバック（dataMenuHandler）を提供します。
+グリッドメニューは常に動的に構築されます -- ユーザーがクリックした行と列のためにカスタマイズされます。
+コールバック関数が毎回呼ばれるように、メニューは起動されて、
+それぞれの起動で要求されるメニューアイテムを加えなければなりません。
+<pre>
+  Rico.loadModule('LiveGridMenu');
+  ...
+  var ex1=new Rico.LiveGrid ('ex1', buffer, grid_options);
+  ex1.menu=new Rico.GridMenu();
+  ex1.menu.options.dataMenuHandler=myCustomMenuItems;
+  ...
+function myCustomMenuItems(grid,r,c,onBlankRow) {
+  if (buffer.getWindowValue(r,c)=='Special Value')
+    grid.menu.addMenuItem("Special menu item", specialAction);
+}
+function specialAction() {
+  ...
+}
+</pre>
+
+<p>完全なカスタムメニューを作成する事も可能です。
+例えば、ex5.php/asp/aspx を見て下さい。
+
+
+<h2>注意</h2>
+<ul>
+<li>もし、ライブグリッドテーブル名に '_bookmark' が追加された名前に、DOM の ID が一致する要素を作成するなら、
+グリッドに表示されいるレコードの数を示しているテキストが更新されるでしょう。
+LiveGrid の実例は、一般的にこのマークアップを使います。
+<pre>
+&lt;p class="ricoBookmark"&gt;&lt;span id="data_grid_bookmark"&gt;&nbsp;&lt;/span&gt;&lt;/p&gt;
+</pre>
+<li>ライブグリッドを表示するブラウザは、<a href="http://www.quirksmode.org/css/quirksmode.html">strict （別名 "標準" ）モード</a> で実行されていなければなりません。
+したがって、あなたは <code> &lt;html&gt; </code> タグの直前に doctype の宣言を含めなければなりません。例えば
+
+<pre>
+&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+ "http://www.w3.org/TR/html4/strict.dtd"&gt;
+</pre>
+</ul>
+
+<h2>リファレンス</h2>
+<h3>コンストラクタ</h3>
+<pre>
+
+  var grid = new Rico.LiveGrid (table_id, rico_buffer, grid_options);
+
+</pre>
+
+<ul>
+<li><strong>table_id</strong> はライブグリッドによって実装される、テーブルの DOM id です
+<li><strong>rico_buffer</strong> は Rico のバッファです、例えば
+  <ul>
+  <li>Rico.Buffer.Base （AJAX 対応では無いテーブルのために）
+  <li>Rico.Buffer.AjaxXML
+  <li>Rico.Buffer.AjaxSQL
+  </ul>
+<li><strong>grid_options</strong> （下記参照）
+</ul>
+
+<h3><a name="options"></a>オプション</h3>
+
+<h4>グリッドサイズ</h4>
+<dl>
+<dt>visibleRows （.net の行）
+<dd>グリッドに何行表示しますか？
+正の整数は、グリッドが正確に多くの行を常に含まなければならないことを示しています。
+負の値は、以下の意味を持ちます。
+  <ul>
+  <li>-1: クライアントウィンドウに合わせたグリッドサイズ（デフォルト）
+  <li>-2: クライアントウィンドウとデータの小さい方のグリッドサイズ
+  <li>-3: ページのボディにスクロールバーを持たないためのグリッドサイズ
+  <li>-4: DOM の親ノードによるグリッドサイズ
+  </ul>
+  
+<dt>minPageRows
+<dd>表示される行数の最小値。visibleRows が 0 以下の時のみ利用される。（Rico 2b3 からはデフォルトが 2 で、Rico 2b3 までは 1）
+
+<dt>maxPageRows
+<dd>表示される行数の最大値。visibleRows が 0 以下の時のみ利用される。（デフォルトは 50）
+
+<dt>defaultWidth
+<dd>列の初期幅を設定する際に使われる整数。
+説明については <a href='#width'>列幅オプション</a> を見て下さい。
+（デフォルトは 100）
+
+<dt>useUnformattedColWidth
+<dd>列の初期幅を設定する際に使われる真偽値。
+説明については <a href='#width'>列幅オプション</a> を見て下さい。
+（デフォルトは true）
+
+<dt>scrollBarWidth
+<dd>いくらかの計算のために、LiveGrid はページ上のスクロールバーの幅を知っている必要があります。（デフォルトは 19）
+
+<dt>minScrollWidth
+<dd>固定された列の幅がウィンドウ幅を上回る時の、スクロールエリアのピクセル幅の最小値。（デフォルトは 100）
+</dl>
+
+
+<h4>グリッドデータ</h4>
+<dl>
+<dt>offset<dd>表示されるデータの最初の行（デフォルトは 0）
+<dt>prefetchBuffer<dd>ページのロード時にバッファの（そして、その結果グリッドの）ロードを行いますか？
+<dt>sortCol<dd>初期ソートのための、列の名前かインデックス
+<dt>sortDir<dd>初期ソートの方向
+  <br>取り得る値は 'ASC'、'DESC'
+<dt>getQueryParms<dd>もし true なら、フィルタパラメータのための、そのウェブページのクエリ文字列をチェックし、そして見つかるどんなフィルタでも適用します。
+フィルタパラメータは "f[x]=" の形でなければならず、"x" は列のインデックスです。（デフォルトは false ）
+</dl>
+
+<h4>ヘッダ構成</h4>
+<dl>
+<dt>frozenColumns
+<dd>グリッドの左側の固定された列の数（Excel のように）
+
+<dt>headingSort
+<dd>ソートを容易にするために、どのように見出しが表示されるかを定義する文字列。
+  <ul>
+  <li>'link' -- 見出しに列をソートしてくれるリンクを作成します（デフォルト）
+  <li>'hover' -- ユーザは、ソートするために、見出しのセルのどんな部分でもクリックする事が出来ます。カーソルがセル上でホバーする時、見出しは背景色を変えます。
+  <li>'none' -- 見出し上のイベントは利用不能です。
+  </ul>
+
+<dt>hdrIconsFirst<dd>見出しの前後に、ソートとフィルタのアイコンを置きます（デフォルトは true）
+
+<dt><a name='allowColResize'>allowColResize</a><dd>ユーザによる列のリサイズを許しますか？
+true なら、個々の列のリサイズを利用不能にするために columnSpecs の <a href='#noResize'>noResize</a> を利用します。
+
+<dt>panels<dd>第二の見出しとして用いる事が出来る文字列の配列です。
+LiveGrid Forms で、入力フォーム上のタブを付けられたパネルのための見出しを提供します。
+
+<dt>PanelNamesOnTabHdr<dd>panels[] の文字列を第二の見出しとして利用するために 'true' を設定します。
+LiveGrid Forms では、 panels[] は入力フォームとしてのみ利用されるので、'false' が設定されるでしょう。
+
+<dt><a name='FilterLocation'></a>FilterLocation
+<dd>フィルタを設置する見出しの行を指定します。
+-1 は、新しい行をヘッダに追加し、新しい行がフィルタリングのために利用されるようにします。
+<a href='#filterUI'>filterUI</a> のオプションも見て下さい。
+
+<dt>FilterAllToken
+<dd>選択フィルタで "show all values" を示すトークン（デフォルトは "___ALL___"）。
+</dl>
+
+<h4>画像</h4>
+<dl>
+<dt>resizeBackground
+<dd>列のリサイズハンドルに利用される画像（デフォルトは 'resize.gif'）
+
+<dt>sortAscendImg
+<dd>列を昇順でソートする事を示すために使われる画像（デフォルトは 'sort_asc.gif'）
+
+<dt>sortDescendImg
+<dd>列を降順でソートする事を示すために使われる画像（デフォルトは 'sort_desc.gif'）
+
+<dt>filterImg
+<dd>列に対し現在利用中のフィルタを示すために使われる画像（デフォルトは 'filtercol.gif'）
+</dl>
+
+
+<h4>クッキーオプション</h4>
+<dl>
+
+<dt>saveColumnInfo
+<dd>グリッドのクッキーに、どの詳細設定を保存するかを指定します。
+一つのクッキーだけが、それぞれのグリッドのために利用されます。
+幅の設定が、列の非表示／表示の状態を含む事に注意して下さい。
+（デフォルトは {width:true, filter:false, sort:false}）
+<br>.netプラグインでは、このオプションは、3 つの別々のプロパティによって表現されます。
+saveColumnWidth、saveColumnFilter、saveColumnSort。
+
+<dt>cookiePrefix
+<dd>クッキー名の先頭に付け加えられる文字列（デフォルトは 'RicoGrid.'）
+
+<dt>cookieDays
+<dd>数字の日数前のクッキーは期限切れになります。
+指定しなければ、クッキーは現在のセッションの間だけ維持されます。（デフォルトは null）
+
+<dt>cookiePath
+<dd>グリッドのクッキーを読む事が出来るトップレベルディレクトリを設定します。
+指定しなければ、それはクッキーを設定するページのパスになります。（デフォルトは null）
+
+<dt>cookieDomain
+<dd>クッキーがどのドメインに送られなければならないかについて、ブラウザに知らせます。
+指定しなければ、それはクッキーを設定するページのドメインになります。（デフォルトは null）
+
+</dl>
+
+<h4>ハイライティングとセレクション</h4>
+<dl>
+
+<dt>highlightElem
+<dd>何がハイライトまたは選択されるかについて指定する文字列。
+  <ul>
+  <li>'cursorRow' -- the grid row under the cursor
+  <li>'cursorCell' -- the grid cell under the cursor
+  <li>'menuRow' -- the grid row where the menu is displayed
+  <li>'menuCell' -- the grid cell where the menu is displayed
+  <li>'selection' -- allow the user to select cells
+  <li>'none' -- never highlight
+  </ul>
+
+<dt>highlightSection
+<dd>テーブルのどのセレクションがハイライトされるかについて指定する整数
+  <ul>
+  <li>1 -- 固定された部分
+  <li>2 -- スクロールする部分
+  <li>3 -- すべて（デフォルト）
+  <li>0 -- 無し
+  </ul>
+<dt>highlightMethod
+<dd>セルや行がハイライトされる方法。取り得る値は
+  <ul>
+  <li>'outline' -- クライアント側で、最も CPU 集約型では無い
+  <li>'class' -- ハイライトされた セル／行 のCSS クラスを追加（デフォルト）
+  <li>'both' -- アウトラインとクラスの両方を利用するハイライト
+  </ul>
+<dt>highlightClass
+<dd>クラスによってハイライトされる時、クラス名として利用されます（デフォルトは 'ricoLG_selection'）
+</dl>
+
+<h4>エクスポートと印刷</h4>
+<dl>
+<dt>maxPrint
+<dd>ユーザに 印刷／エクスポート を許す最大行数。
+印刷／エクスポート を利用不能にするには 0 を設定します。（デフォルトは 1000）
+
+<dt>exportWindow
+<dd>エクスポートウィンドウが生成される時に、
+<a href='http://www.w3schools.com/htmldom/met_win_open.asp'>window.open()</a> に渡されるオプション文字列。
+（デフォルトは "height=400,width=500,scrollbars=1,menubar=1,resizable=1"）
+</dl>
+
+<h4>イベントコントロール</h4>
+<dl>
+<dt><a name='menuEvent'></a>menuEvent
+<dd>グリッドメニューがいつ呼び出されるべきかを指定する文字列
+  <ul>
+  <li>'click' -- シングルクリックでメニューを呼び出す
+  <li>'dblclick' -- ダブルクリックでメニューを呼び出す（デフォルト）
+  <li>'contextmenu' -- 右クリックでメニューを呼び出す
+  <li>'none' -- メニューをポップアップしない
+  </ul>
+
+<dt>windowResize
+<dd>window.resize イベントの間にグリッドの大きさを変更するかどうかを指定する真偽値？
+グリッドがアコーディオンに組み込まれる時に、これに false が設定されなくてはなりません。（デフォルトは true）
+</dl>
+
+<h4>イベントハンドル</h4>
+<dl>
+<p>コンストラクタにオプションでイベントハンドラを渡す事は出来ませんが、LiveGrid が生成された後なら、設定されるかも知れません。</p>
+<dt>sortHandler<dd> （デフォルトは Rico.LiveGridMethods.sortHandler -- バインドされた）
+<dt>filterHandler<dd> （デフォルトは Rico.LiveGridMethods.filterHandler -- バインドされた）
+<dt>onRefreshComplete<dd> （デフォルトは Rico.LiveGridMethods.bookmarkHandler -- バインドされた）
+<dt>rowOverHandler<dd> （デフォルトは Rico.LiveGridMethods.rowMouseOver -- イベントリスナーとしてバインドされた）
+<dt>mouseDownHandler<dd> （デフォルトは Rico.LiveGridMethods.selectMouseDown -- イベントリスナーとしてバインドされた）
+<dt>mouseOverHandler<dd>（デフォルトは Rico.LiveGridMethods.selectMouseOver -- イベントリスナーとしてバインドされた）
+<dt>mouseUpHandler<dd> （デフォルトは Rico.LiveGridMethods.selectMouseUp -- イベントリスナーとしてバインドされた）
+<dt>onscroll<dd> グリッドが垂直にスクロールされる時は、いつでも呼ばれます。（デフォルトは null）
+<dt>onscrollidle<dd> グリッドが垂直にスクロールされた 1、2 秒後に呼ばれます。（デフォルトは null）
+<dt>click<dd> グリッドセルがクリックされた時に呼ばれます。（デフォルトは menuEvent='click' で無ければ null）
+<dt>dblclick<dd> グリッドセルがダブルクリックされた時に呼ばれます。（デフォルトは menuEvent='dblclick' で無ければ null）
+<dt>contextmenu<dd> グリッドセルが右クリックされた時に呼ばれます。（デフォルトは menuEvent='contextmenu' で無ければ null）
+</dl>
+
+<h4><a name="column"></a>列ごとの構成</h4>
+<dl>
+<p>各々の列のためのオプションは、columnSpecs オプションに含まれます。
+columnSpecs は、各々の列のためのエントリに関する配列です。
+各々の列のエントリは、以下のいずれかで行う事が出来ます。
+<ul>
+
+<li>null （デフォルト） -- その場合、Rico.TableColumn.DEFAULT. の仕様によって列はフォーマットされます。
+グリッドの多くの列が共通のフォーマットを共有するならば、グリッドのデフォルト列仕様をオーバーライドする事は意味があるかもしれません。
+<pre>
+Rico.TableColumn.DEFAULT = {ClassName:'aligncenter', width:50};
+</pre>
+この場合は、仕様の無いどんな列でも、整列は中央で幅は 50 ピクセルの内容を持ちます。
+
+<li>a string -- 列のフォーマットを指定する単純な方法を提供します。
+DOLLAR、EURO、PERCENT、QTY、DEFAULT の値がビルトインされています。
+独自のものを定めることも可能です。
+温度フォーマットを定義したこの例は、weather.php から取得されます
+
+<pre>
+Rico.TableColumn.TEMP = {type:'number', decPlaces:0, 
+  ClassName:'alignright', suffix:'&amp;deg;C', width:50};
+var opts = {  
+  frozenColumns : 1,
+  columnSpecs   : [{width:120},{width:70},{width:70},{width:100},
+                   'TEMP','TEMP','TEMP',
+                   {width:150},{width:200},{width:60}]
+};
+</pre>
+
+<li>an object -- 下記の表にあるプロパティの一つ以上のエントリを含む。
+ここに、列 0、1 と 3 が仕様を含む例を挙げます。
+列 2 はデフォルトの仕様を取得します。
+<pre>
+columnSpecs : [{canSort:false, noResize:true, ClassName:'alignright'},
+               {ClassName:'aligncenter'},
+               ,
+               {visible:false}]
+</pre>
+</ul>
+
+<dt>Hdg
+<dd>列の見出しテキストを指定する代わりの方法。
+グリッド ID が、html テーブルの代わりに &lt;div&gt; を参照するなら、LiveGrid によってのみ利用されます。
+
+<dt>canSort
+<dd>列をソートする事が出来ます。（デフォルトは grid.options.canSortDefault）
+
+<dt>canFilter
+<dd>列をフィルタする事が出来ます。（デフォルトは grid.options.canFilterDefault）
+
+<dt>canDrag
+<dd>列のセルは、ドラッグアンドドロップオペレーションのソースとして用いられる事が出来ます。
+"DragAndDrop" モジュールはロードされなければなりません。
+一時的なドラッグオブジェクトは "LiveGridDraggable" クラスが持ちます。
+実例として、<a href='client/drag_and_drop_grid.html'>drag_and_drop_grid.html</a> を見て下さい。（デフォルトは false）
+
+<dt>canHide
+<dd>列を 表示／非表示 する事が出来ます。（デフォルトは grid.options.canHideDefault）
+
+<dt>visible
+<dd>列は、初めは隠されていません。
+grid.options.saveColumnInfo.width が true で、列のためのクッキーに値があるなら、クッキーの値が優先されます。
+（デフォルトは true）
+
+<dt><a name='width'></a>width
+<dd>列の初期幅（ピクセルで）を指定する整数。
+ここに、それぞれの列の初期幅を設定するために LiveGrid が利用するアルゴリズムがあります。
+<ol>
+<li>options.saveColumnInfo.width が true で、列情報がグリッドのクッキーに存在する場合は
+（以前にグリッドの列の上でリサイズを実行したユーザのために）
+クッキーのその幅が利用されます。
+そうでない場合は、、、
+
+<li>options.columnSpecs に列の幅仕様があれば、その幅仕様が利用されます。一例として、 ex3.php/asp/aspx を見て下さい。そうでない場合は、、、
+
+<li>options.useUnformattedColWidth が true で（デフォルト）、グリッドヘッダが html テーブルから初期化されるならば、htmlテーブルの列の幅が利用されます。
+通常 col タグを用いて初期テーブルの列幅をコントロールする事が出来ます。(例えば &lt;col style='width:40px;' &gt;)。
+
+テーブル幅全体がブラウザー幅より小さいならば、これは動作します。
+しかし、それがより大きいならば、ブラウザはしばしば "col width" を無視して、全ての列を利用できるウインドウ幅の中に押し込もうとします。
+このように、列幅を設定するためにこの方法を使用することは信頼出来ません。
+そうでない場合は、、、
+
+<li>options.useUnformattedColWidth が false ならば、列の幅は options.defaultWidth により設定されます。（デフォルトは 100）
+</ol>
+したがって、列幅を LiveGrid と SimpleGrid で設定する最も信頼できる方法は、options.columnSpecs[] ですべての列に幅を指定することになります。 
+多くの列が共通の幅を共有するならば、options.useUnformattedColWidth=false を設定して、options.defaultWidth を共通の幅に設定する事によって、
+いくらかの近道をする事が出来ます。
+
+<dt><a name='noResize'>noResize</a>
+<dd>列のリサイズを許しますか？（デフォルトは <a href='#allowColResize'>grid.options.allowColResize</a>）
+
+<dt>ClassName
+<dd>デフォルトでは、LiveGrid はユニークな CSS クラス名を、table_id + '_col' + column_index の命名規約に従い、それぞれの列に割り当てます。
+例えば、グリッド 'mygrid' の第 4 列は、クラス名 'mygrid_col3' を持ちます。
+ClassName オプションの値は、このデフォルト名をオーバーライドします。
+ClassName オプションは、Rico が提供する 'alignright' と 'aligncenter' クラスによって列の整列を指定するために、最も一般的に用いられます。
+なので、グリッドの最初の 3 つの列が赤い背景色に白いテキストで表示されることを望むならば、あなたは以下のどちらでもすることが出来ます。
+
+<pre>
+In CSS:
+.mygrid_col0 div.ricoLG_cell, 
+.mygrid_col1 div.ricoLG_cell, 
+.mygrid_col2 div.ricoLG_cell {
+  color: white;
+  background-color: red;
+}
+</pre>
+
+または
+
+<pre>
+In CSS:
+.WhiteOnRed div.ricoLG_cell {
+  color: white;
+  background-color: red;
+}
+
+In javascript:
+columnSpecs : [{ClassName:'WhiteOnRed'},
+               {ClassName:'WhiteOnRed'},
+               {ClassName:'WhiteOnRed'},
+               ...
+</pre>
+
+最後に、この ClassName がグリッドの見出しに適用されない点に注意してください - 
+ヘッダの整列を達成するためには、&lt;th&gt; タグで align="right" を利用して下さい。
+
+<dt>type
+<dd>これらの値の内の一つを含む文字列。
+<ul>
+<li>text - 列の値のどんなタグでも、ユーザに表示される前に取り除かれます。
+<li>showTags - 列の値のどんなタグでも、ユーザにテキストとして表示されます。
+<li>number - 列の値は数として扱われ、列仕様で与えられるどんな <a href='#NumberFormatting'>number formatting options</a> でも適用されます。
+<li>datetime - 列の値は 日付 &amp; 時間 として扱われ、列仕様で与えられるどんな <a href='#DateFormatting'>date formatting options</a> でも適用されます。
+<li>UTCasLocalTime - 列やデータベースの値は GMT/UTC 日付 &amp; 時間 として扱われ、列仕様で与えられるどんな <a href='#DateFormatting'>date formatting options</a> でも適用されます。
+表示される前に、その値はユーザのローカルタイムゾーンに変換されます。
+<li>date - 列の値は日付として扱われ、列仕様で与えられるどんな <a href='#DateFormatting'>date formatting options</a> でも適用されます。
+<li>raw (default) - 列の値は、グリッドのセルに直接表示されます。どんなHTMLマークアップでもセルにコピーされます。
+</ul>
+</dd>
+
+<dt><a name='control'></a>コントロール
+<dd>特別なフォーマットを列に提供するのに用いられるオブジェクト。
+いくつかの列コントロールは LiveGrid により提供されます。
+それらのためのコードは、 ricoLiveGridControls.js にあります。
+ここに、提供されるコントロールの簡潔な記述があります。
+
+<dl style='font-size:smaller;'>
+<dt>Rico.TableColumn.checkboxKey(showKey)
+<dd> &lt;checkbox&gt; &lt;key value&gt; として列のユニークキーを表示し、どのキーがユーザによって選択されているかを見逃しません。
+キーの値は &lt;、 &gt;、 または &amp; を含むべきではありません。
+
+<dt>Rico.TableColumn.checkbox(checkedValue, uncheckedValue, defaultValue, readOnly)
+<dd>チェックボックスとして列を表示します。データベースの列は、二つの値のみを含まなければなりません（例えば yes/no）。
+以下のコードは、ex7 から取得されます（列の値は 1 と 0）。
+<pre>
+columnSpecs: [{canHide:false,
+               control:new Rico.TableColumn.checkbox('1','0'),
+               ClassName:'aligncenter'},
+              'specQty'],
+</pre>
+
+<dt>Rico.TableColumn.textbox(boxSize, boxMaxLen, readOnly)
+<dd>テキストボックス内に列の値を表示します。
+
+<dt>Rico.TableColumn.HighlightCell(chkcol,chkval,highlightColor,highlightBackground)
+<dd>特定の値が指定された列に存在する時、グリッドのセルをハイライトします。
+以下のコードは ex2highlight から取得され、列 1 が "HANAR" を含む時、行全体をハイライトします。
+<pre>
+var CustId='HANAR';
+var CustIdCol=1;
+var highlight=Rico.TableColumn.HighlightCell;
+...
+columnSpecs: [
+{ control:new highlight(CustIdCol,CustId,'red','yellow') },
+{ control:new highlight(CustIdCol,CustId,'red','yellow') },
+{ control:new highlight(CustIdCol,CustId,'red','yellow') },
+{ control:new highlight(CustIdCol,CustId,'red','yellow') },
+{ control:new highlight(CustIdCol,CustId,'red','yellow') },
+{ type:'date', control:new highlight(CustIdCol,CustId,'red','yellow') },
+{ type:'date', control:new highlight(CustIdCol,CustId,'red','yellow') }]
+</pre>
+
+<dt>Rico.TableColumn.bgColor()
+<dd>データベースの値が css カラーの名前や値を含みます。
+
+<dt>Rico.TableColumn.link(href,target)
+<dd>データベースの値が、他のページへの URL を含みます。
+href パラメータは、文字列に "{x}" を含む事により、グリッドの値への参照を含むかもしれません。 x は列の番号です。
+以下のコードは ex6 から取得されます。
+<pre>
+columnSpecs: [,
+{control:new Rico.TableColumn.link('ex2.asp?id={0}','_blank'),
+ width:250},
+,'specQty']
+</pre>
+
+<dt>Rico.TableColumn.image()
+<dd>データベースの値が画像への url を含みます。
+以下のコードは photos.php から取得されます。
+<pre>
+imgctl=new Rico.TableColumn.image();
+...
+columnSpecs: [
+{control:imgctl,width:90},,,
+{type:'datetime'},{width:200}]
+</pre>
+
+<dt>Rico.TableColumn.lookup(map, defaultCode, defaultDesc)
+<dd>データベースの値を表示される値にマップします。
+</dl>
+
+<br>アプリケーション特有のロジックを実装する、独自の列コントロールを書く事も可能です。
+ここに例があります。
+<pre>
+// Display values white on black if
+//   first column contains the value "reverse"
+// Usage: { control:new MyCustomColumn() }
+MyCustomColumn = Class.create();
+
+MyCustomColumn.prototype = {
+  initialize: function() {},
+
+  _clear: function(gridCell,windowRow) {
+    gridCell.style.color='';
+    gridCell.style.backgroundColor='';
+    gridCell.innerHTML='&amp;nbsp;';
+  },
+
+  _display: function(v,gridCell,windowRow) {
+    var col0=this.liveGrid.buffer.getWindowValue(windowRow,0);
+    if (col0=="reverse") {
+      gridCell.style.color='white';
+      gridCell.style.backgroundColor='black';
+    } else {
+      gridCell.style.color='';
+      gridCell.style.backgroundColor='';
+    }
+    gridCell.innerHTML=this._format(v);
+  }
+}
+</pre>
+
+<dt><a name='filterUI'></a>filterUI
+<dd><a href='#FilterLocation'>FilterLocation</a> オプションがグリッドに指定されるならば、filterUI はそれぞれの列がどのようにフィルタされるかについてコントロールします。
+もし filterUI が、
+<ul>
+<li>null または省略されたら、列にはフィルタが表示されません。
+<li>'t' - テキストボックスフィルタを生成し、レコードはユーザのキーボードからの入力によってフィルタされて表示されます。
+<br>任意に後につくキャレット（^）は、テキストボックスの値が列の値の始めに一致すべき事を示します。
+そうでない場合は、列の値のどこにでも一致します。
+<br>任意に後につく数値はテキストボックスの数値を意味します（デフォルトのサイズは 10）
+<pre>
+filterUI:'t^20' 
+// will create a text box that is 20 characters wide
+// text typed into the box will be compared to
+//    the beginning of each column value
+</pre>
+<li>'s' - リストに含む事の出来るすべての列の値と共にセレクトリストフィルタを生成します。
+グリッドのソースが SQL クエリなら、'select distinct' クエリを利用して実装されます。
+<ul>
+</dl>
+
+<dl>
+<a name='NumberFormatting'></a>
+<p><em>数値フォーマット：</em></p>
+
+<dt>multiplier
+<dd>表示される前に、その値はこの数値によって乗算されます。（デフォルトは 1）
+
+<dt>decPlaces
+<dd>小数点より右側の桁数（デフォルトは 0）
+
+<dt>decPoint
+<dd>小数点のシンボル（翻訳ファイルでオーバーライドされなければ、デフォルトは '.'）
+
+<dt>thouSep
+<dd>千桁区切りのためのシンボル。（翻訳ファイルでオーバーライドされなければ、デフォルトは ','）
+
+<dt>negSign
+<dd>負数がどのように表示されるべきかを指定します。取り得る値は
+<ul>
+<li>L= 先頭にマイナスをつける（デフォルト）
+<li>T= 後ろにマイナスをつける
+<li>P= 括弧で囲む
+</ul>
+
+<dt>prefix
+<dd>数に始まりの文字列を付加します。一般的に通貨シンボルです。
+
+<dt>suffix
+<dd>数値の終わりに付加される文字列。例えば、 "%" シンボル。</dd>
+</dl>
+
+<dl>
+<a name='DateFormatting'></a>
+<p><em>日付フォーマット:</em></p>
+
+<dt>dateFmt
+<dd>date または datetime をどのように表示するのかを指定する文字列。
+デフォルトは "translateDate" であり、RicoTranslate オブジェクトで利用される dateFmt と timeFmt 文字列を意味します。
+（各種言語の翻訳ファイルでオーバーライドされなければ、、date のデフォルトは "mm/dd/yyyy" であり、datetime は "mm/dd/yyyy hh:mm:ss a/pm" です。）
+dateFmt="localeDate" ならば、その値は javascript のビルトイン関数である toLocaleDateString() を利用してフォーマットされる。
+dateFmt="localeDateTime" ならば、その値は javascript のビルトイン関数である toLocaleString() を利用してフォーマットされる。
+dateFmt 文字列は、以下の特殊文字シーケンスを含むでしょう。
+
+<ul>
+<li>yyyy - 4 桁の年
+<li>yy - 2 桁の年
+<li>mmmm - 月名
+<li>mmm - 3 文字の月名省略形。アジアの言語では、これはしばしば意味をなしません - これらの場合、それは完全な月の名前（mmmm と同じ）を返します。
+<li>mm - 2 桁の月数（ゼロで埋められた）
+<li>m - 1 または 2 桁の月数
+<li>dddd - 曜日
+<li>ddd - 3 文字の曜日省略形
+<li>dd - 2 桁の日数（ゼロで埋められた）
+<li>d - 1 または 2 桁の日数
+<li>hh - 2 桁の時、 12 時間時計（ゼロで埋められた）
+<li>h - 1 または 2 桁の時、 12 時間時計
+<li>HH - 2 桁の分、 24 時間時計（ゼロで埋められた）
+<li>H - 1 または 2 桁の時間、 24 時間時計
+<li>nn - 2 桁の分（ゼロで埋められた）
+<li>ss - 2 桁の秒（ゼロで埋められた）
+<li>a/p - a または p （am または pm のための）
+</ul>
+
+<pre>
+// display first column as "month year"
+columnSpecs : [{type:date, dateFmt:'mmm yyyy'}]
+</pre>
+</dd>
+
+<dt>prefix
+<dd>日付の先頭に付け加えられる文字列
+
+<dt>suffix
+<dd>日付の終わりに付加される文字列。例えば、タイムゾーンを含めるために利用出来ます。
+<pre>
+// indicate that times are GMT/UTC
+columnSpecs : [{type:datetime, suffix:' UTC'}]
+</pre>
+</dl>
+
+</body>
+</html>

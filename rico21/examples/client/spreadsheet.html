@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Rico Spreadsheet</title>
+
+<script src="../../src/prototype.js" type="text/javascript"></script>
+<script src="../../src/rico.js" type="text/javascript"></script>
+<link href="../client/css/demo.css" type="text/css" rel="stylesheet" />
+<script type='text/javascript'>
+Rico.loadModule('CustomMenu', 'SpreadSheet', 'ColorPicker');
+
+var grid,cp;
+Rico.onLoad( function() {
+  var opts = {
+    numRows: 50
+  };
+  grid = new Rico.SpreadSheet ('ss', opts);
+
+  var fmtmenu=new Rico.Menu('7em');
+  grid.registerScrollMenu(fmtmenu);
+  fmtmenu.addMenuItem('Number...',grid.openFormatNumber.bind(grid));
+  //fmtmenu.addMenuItem('Date/Time...',formatDate);
+  //fmtmenu.addMenuItem('Text...',formatText);
+  //fmtmenu.addMenuItem('Boolean...',formatBoolean);
+  grid.menu.addSubMenuItem('Format as', fmtmenu);
+
+  var alignmenu=new Rico.Menu('7em');
+  grid.registerScrollMenu(alignmenu);
+  alignmenu.addMenuItem('Left',grid.textalign.bind(grid,'left'));
+  alignmenu.addMenuItem('Center',grid.textalign.bind(grid,'center'));
+  alignmenu.addMenuItem('Right',grid.textalign.bind(grid,'right'));
+  alignmenu.addMenuItem('Word Wrap',grid.textwrap.bind(grid));
+  grid.menu.addSubMenuItem('Align', alignmenu);
+
+  var clrmenu=new Rico.Menu('7em');
+  grid.registerScrollMenu(clrmenu);
+  clrmenu.addMenuItem('All',grid.clearSelection.bind(grid,'all'));
+  clrmenu.addMenuItem('Formats',grid.clearSelection.bind(grid,'formats'));
+  clrmenu.addMenuItem('Formulas',grid.clearSelection.bind(grid,'formulas'));
+  clrmenu.addMenuItem('Values',grid.clearSelection.bind(grid,'values'));
+  grid.menu.addSubMenuItem('Clear', clrmenu);
+
+  cp=new Rico.ColorPicker('colorpick');
+  cp.atLoad();
+  cp.returnValue=this.returnColor.bind(this);
+  Event.observe(window,'keydown',chkEscape,false);
+  Event.observe('help_button','click',grid.showHelp.bindAsEventListener(grid),false);
+  document.getElementsByTagName('body')[0].focus();
+});
+
+function chkEscape(e) {
+  e=e || event;
+  if (e.keyCode==27) cp.close();
+}
+
+function returnColor(newcolor) {
+  grid.updateSelectionStyle(cp.attribute,newcolor);
+}
+
+function pickcolor(e,attr) {
+  if (cp.container.style.display!='none' && cp.attribute==attr) {
+    cp.close();
+  } else {
+    var elem=Event.element(e);
+    cp.attribute=attr;
+    RicoUtil.positionCtlOverIcon(cp.container,elem);
+    cp.open();
+  }
+  Event.stop(e);
+}
+</script>
+</head>
+
+
+<body>
+<table border='0' class='toolbar'><tr>
+<td><img src="../client/images/sheet/bold.gif" onclick="grid.toggleAttr('font-weight', 'normal', Prototype.Browser.Opera ? '700' : 'bold')" title="bold"></td>
+<td><img src="../client/images/sheet/italics.gif" onclick="grid.toggleAttr('font-style','normal','italic')" title="italic"></td>
+<td><img src="../client/images/sheet/underline.gif" onclick="grid.toggleAttr('text-decoration','none','underline')" title="underline"></td>
+<td><img src="../client/images/sheet/alignleft.gif" onclick="grid.textalign('left')" title="align left"></td>
+<td><img src="../client/images/sheet/aligncenter.gif" onclick="grid.textalign('center')" title="align center"></td>
+<td><img src="../client/images/sheet/alignright.gif" onclick="grid.textalign('right')" title="align right"></td>
+<td><img src="../client/images/sheet/backcolor.gif" onclick="pickcolor(event,'background-color')" title="background color"></td>
+<td><img src="../client/images/sheet/textcolor.gif" onclick="pickcolor(event,'color')" title="text color"></td>
+
+<td><img src="../client/images/sheet/cut.gif" onclick="grid.clip=grid.cutSelection()" title="cut"></td>
+<td><img src="../client/images/sheet/copy.gif" onclick="grid.clip=grid.copySelection()" title="copy"></td>
+<td><img src="../client/images/sheet/paste.gif" onclick="grid.pasteSelection(grid.clip)" title="paste"></td>
+<td><img src="../client/images/sheet/paste_formats.gif" onclick="grid.pasteSelection(grid.clip,'formats')" title="paste formats"></td>
+
+<td><img src="../client/images/sheet/help.gif" id="help_button" title="help" style='padding-left:1em;'></td>
+</tr></table>
+
+<div id='ss_outerDiv'></div>
+
+</body>
+</html>

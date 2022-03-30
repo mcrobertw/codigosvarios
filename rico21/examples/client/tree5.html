@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Rico-Tree Control</title>
+
+<link href="../client/css/demo.css" type="text/css" rel="stylesheet" />
+<script src="../../src/prototype.js" type="text/javascript"></script>
+<script src="../../src/rico.js" type="text/javascript"></script>
+<script type='text/javascript'>
+Rico.loadModule('Tree');
+var tree1;
+
+Rico.onLoad( function() {
+  // initialize tree
+  var options={
+    showCheckBox : false,
+    showLines    : false,
+    showPlusMinus: false,
+    showFolders  : true
+  }
+  tree1=new Rico.TreeControl("tree1", null, options);
+  tree1.setTreeDiv('tree1');
+  //addNode: function(parentId, nodeId, nodeDesc, isContainer, isSelectable, leafIcon, isLast) {
+  tree1.addNode(null,'root','Rico Resources',1,0);
+
+  tree1.addNode('root','forums','Rico Forums',1,0);
+  tree1.addNode('root','ricoex','Rico Examples at openrico.org',1,0);
+  tree1.addNode('root','dbex','Rico Examples at dowdybrown.com',1,0);
+
+  tree1.addNode('forums','forums1','Current forums on SourceFourge',0,'http://sourceforge.net/forum/forum.php?forum_id=470997');
+  tree1.addNode('forums','forums2','Old forums at openrico.org',1,0);
+  tree1.addNode('forums2','forums2a','Rico 1.1',0,'http://forum.openrico.org/forum/4');
+  tree1.addNode('forums2','forums2b','Examples',0,'http://forum.openrico.org/forum/8');
+  tree1.addNode('forums2','forums2c','Rico 2.0',0,'http://forum.openrico.org/forum/5');
+  tree1.addNode('forums2','forums2d','Rico Wish List',0,'http://forum.openrico.org/forum/6');
+  tree1.addNode('forums2','forums2e','Rico Site Improvements',0,'http://forum.openrico.org/forum/7');
+  tree1.addNode('forums2','forums2f','Jobs',0,'http://forum.openrico.org/forum/9');
+
+  tree1.addNode('ricoex','ricoex1','AJAX DEMOS',1,0);
+  tree1.addNode('ricoex','ricoex2','DRAG & DROP DEMOS',1,0);
+  tree1.addNode('ricoex','ricoex3','CINEMATIC DEMOS',1,0);
+  tree1.addNode('ricoex','ricoex4','BEHAVIOR DEMOS',1,0);
+
+  tree1.addNode('ricoex1','ricoex1a','Inner Html',0,'http://demos.openrico.org/inner_ajax_HTML');
+  tree1.addNode('ricoex1','ricoex1b','Javascript Updater',0,'http://demos.openrico.org/complex_ajax');
+
+  tree1.addNode('ricoex2','ricoex2a','Simple',0,'http://demos.openrico.org/demos/drag_and_drop_simple');
+  tree1.addNode('ricoex2','ricoex2b','Custom Draggable',0,'http://demos.openrico.org/demos/drag_and_drop_custom_draggable');
+  tree1.addNode('ricoex2','ricoex2c','Custom Drop Zone',0,'http://demos.openrico.org/demos/drag_and_drop_custom_dropzone');
+
+  tree1.addNode('ricoex3','ricoex3a','Animate & Effects',0,'http://demos.openrico.org/demos/effect_animation');
+  tree1.addNode('ricoex3','ricoex3b','Pull Down',0,'http://demos.openrico.org/demos/pull_down');
+  tree1.addNode('ricoex3','ricoex3c','Round a Shape',0,'http://demos.openrico.org/demos/effect_round');
+  tree1.addNode('ricoex3','ricoex3d','Color Example',0,'http://demos.openrico.org/demos/color');
+  tree1.addNode('ricoex3','ricoex3e','Rounded Corner Examples',0,'http://demos.openrico.org/demos/corner');
+
+  tree1.addNode('ricoex4','ricoex4a','Accordion',0,'http://demos.openrico.org/demos/accordion');
+  tree1.addNode('ricoex4','ricoex4b','Weather Widget',0,'http://demos.openrico.org/weather_demo');
+  tree1.addNode('ricoex4','ricoex4c','LiveGrid - Data Table',0,'http://demos.openrico.org/livegrid');
+
+  tree1.addNode('dbex','dbex1','HTML Examples (do not rely on any plug-in)',1,0);
+  tree1.addNode('dbex','dbex2','LiveGrid-Static Buffer',1,0);
+  tree1.addNode('dbex','dbex3','LiveGrid-Database Connection',1,0);
+  tree1.addNode('dbex','dbex4','LiveGrid Forms-Database Connection',1,0);
+  tree1.addNode('dbex','dbex5','LiveGrid-XML Data Source',1,0);
+  tree1.addNode('dbex','dbex6','SimpleGrid',1,0);
+  tree1.addNode('dbex','dbex7','Popup Controls',1,0);
+
+  tree1.addNode('dbex1','dbex1a',"Basic Accordion",0,"http://dowdybrown.com/dbprod/rico2/examples/client/accordion.html");
+  tree1.addNode('dbex1','dbex1b',"Accordion with 3D backgrounds",0,"http://dowdybrown.com/dbprod/rico2/examples/client/accordion1.html");
+  tree1.addNode('dbex1','dbex1c',"Accordion used for site navigation",0,"http://dowdybrown.com/dbprod/rico2/examples/client/accordion2.html");
+  tree1.addNode('dbex1','dbex1d',"Nested accordions",0,"http://dowdybrown.com/dbprod/rico2/examples/client/accordion3.html");
+  tree1.addNode('dbex1','dbex1e',"Pull-down",0,"http://dowdybrown.com/dbprod/rico2/examples/client/pull_down.html");
+  tree1.addNode('dbex1','dbex1f',"Tabbed panels #1",0,"http://dowdybrown.com/dbprod/rico2/examples/client/panel1.html");
+  tree1.addNode('dbex1','dbex1g',"Tabbed panels #2",0,"http://dowdybrown.com/dbprod/rico2/examples/client/panel2.html");
+  tree1.addNode('dbex1','dbex1h',"Corners without borders",0,"http://dowdybrown.com/dbprod/rico2/examples/client/corners.html");
+  tree1.addNode('dbex1','dbex1i',"Corners with borders",0,"http://dowdybrown.com/dbprod/rico2/examples/client/corners_with_border.html");
+  tree1.addNode('dbex1','dbex1j',"Animation",0,"http://dowdybrown.com/dbprod/rico2/examples/client/effect_animation.html");
+  tree1.addNode('dbex1','dbex1k',"Drag & Drop-Simple",0,"http://dowdybrown.com/dbprod/rico2/examples/client/drag_and_drop_simple.html");
+  tree1.addNode('dbex1','dbex1l',"Drag & Drop-dynamically created drop zones",0,"http://dowdybrown.com/dbprod/rico2/examples/client/drag_and_drop_dyn.html");
+  tree1.addNode('dbex1','dbex1m',"Drag & Drop-log from/to elements",0,"http://dowdybrown.com/dbprod/rico2/examples/client/drag_and_drop_log.html");
+  tree1.addNode('dbex1','dbex1n',"Drag & Drop-custom draggable",0,"http://dowdybrown.com/dbprod/rico2/examples/client/drag_and_drop_custom_draggable.html");
+  tree1.addNode('dbex1','dbex1o',"Rico Spreadsheet",0,"http://dowdybrown.com/dbprod/rico2/examples/client/spreadsheet.html");
+  tree1.addNode('dbex1','dbex1p',"LiveGrid populated from a javascript array",0,"http://dowdybrown.com/dbprod/rico2/examples/client/gridFromJSarray.html");
+  tree1.addNode('dbex1','dbex1q',"LiveGrid populated from an HTML table",0,"http://dowdybrown.com/dbprod/rico2/examples/client/gridFromTable.html");
+  tree1.addNode('dbex1','dbex1r',"LiveGrid with AjaxXML buffer and javascript callback",0,"http://dowdybrown.com/dbprod/rico2/examples/client/gridJSbuffer.html");
+  tree1.addNode('dbex1','dbex1s',"LiveGrid with AjaxSQL buffer and javascript callback",0,"http://dowdybrown.com/dbprod/rico2/examples/client/gridJSbuffer2.html");
+  tree1.addNode('dbex1','dbex1t',"Calendar, Color-picker, and popup window controls",0,"http://dowdybrown.com/dbprod/rico2/examples/client/controls.html");
+  tree1.addNode('dbex1','dbex1u',"Tree control",0,"http://dowdybrown.com/dbprod/rico2/examples/client/tree5.html");
+
+  tree1.addNode('dbex2','dbex2a',"Simple demo with pre-filled grid and selectable styles",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex1.php");
+  tree1.addNode('dbex2','dbex2b',"Even simpler demo - same as above, but without the style selections",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex1simple.php");
+  tree1.addNode('dbex2','dbex2c',"Select a range of cells and fill them in from the pop-up menu",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex5.php");
+  tree1.addNode('dbex2','dbex2d',"Check boxes in pre-filled grid",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex7.php");
+
+  tree1.addNode('dbex3','dbex3a',"Simple demo with 1 grid and selectable styles",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex2.php");
+  tree1.addNode('dbex3','dbex3b',"Even simpler demo",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex2simple.php");
+  tree1.addNode('dbex3','dbex3c',"Grid positioned in a div with position:absolute",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex2abs.php");
+  tree1.addNode('dbex3','dbex3d',"Filter as you type",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex3livegrid.php");
+  tree1.addNode('dbex3','dbex3e',"3 grids on a page with drill-down",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex4.php");
+  tree1.addNode('dbex3','dbex3f',"Same as above, but the 3 grids are displayed one at a time (created dynamically)",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex4btn.php");
+  tree1.addNode('dbex3','dbex3g',"Applying a filter to the SQL query",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex6.php");
+  tree1.addNode('dbex3','dbex3h',"Filter grid based on a user selection external to the grid",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex2filterbyproduct.php");
+  tree1.addNode('dbex3','dbex3i',"Cross-browser gradient headings",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex2gradient.php");
+  tree1.addNode('dbex3','dbex3j',"Grid highlighting using outline",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex2outline.php");
+  tree1.addNode('dbex3','dbex3k',"Highlight rows where cell contains a specific value",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex2highlight.php");
+  tree1.addNode('dbex3','dbex3l',"Display debug messages generated by grid",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex2debug.php");
+  tree1.addNode('dbex3','dbex3m',"Grid does not fetch the total number of records",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex2nototal.php");
+
+  tree1.addNode('dbex4','dbex4a',"Single grid editable via pop-up forms",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex2edit.php");
+  tree1.addNode('dbex4','dbex4b',"3 grids editable via pop-up forms",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex4edit.php");
+
+  tree1.addNode('dbex5','dbex5a',"Yahoo Weather via AJAX",0,"http://dowdybrown.com/dbprod/rico2/examples/php/weather.php");
+  tree1.addNode('dbex5','dbex5b',"Flickr photos via AJAX",0,"http://dowdybrown.com/dbprod/rico2/examples/php/photos.php");
+  tree1.addNode('dbex5','dbex5c',"Filter as you type",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex3livegridxml.php");
+
+  tree1.addNode('dbex6','dbex6a',"Example using SimpleGrid plug-in for PHP",0,"http://dowdybrown.com/dbprod/rico2/examples/php/simplegrid.php");
+  tree1.addNode('dbex6','dbex6b',"SimpleGrid embedded in a form",0,"http://dowdybrown.com/dbprod/rico2/examples/php/simplegrid2.php");
+  tree1.addNode('dbex6','dbex6c',"Filter as you type",0,"http://dowdybrown.com/dbprod/rico2/examples/php/ex3simplegrid.php");
+
+  tree1.addNode('dbex7','dbex7a',"Calendar, Color-picker, and popup window controls",0,"http://dowdybrown.com/dbprod/rico2/examples/php/controls.php");
+  tree1.addNode('dbex7','dbex7b',"Tree control #1 - single selection",0,"http://dowdybrown.com/dbprod/rico2/examples/php/tree1.php");
+  tree1.addNode('dbex7','dbex7c',"Tree control #2 - checkbox selection",0,"http://dowdybrown.com/dbprod/rico2/examples/php/tree2.php");
+  tree1.addNode('dbex7','dbex7d',"Tree control #3 - single selection",0,"http://dowdybrown.com/dbprod/rico2/examples/php/tree3.php");
+  tree1.addNode('dbex7','dbex7e',"Tree control #4 - checkbox selection",0,"http://dowdybrown.com/dbprod/rico2/examples/php/tree4.php");
+  tree1.addNode('dbex7','dbex7f',"Tree control #5 - populated without AJAX",0,"http://dowdybrown.com/dbprod/rico2/examples/client/tree5.html");
+
+  tree1.open();
+});
+
+function TreeClick1(e) {
+  var items=tree1.getCheckedItems();
+  var msg=items.length==0 ? 'No items are checked' : items.join('\n');
+  alert(msg);
+}
+</script>
+
+<style type="text/css">
+div.ricoTree {
+  border:none;
+}
+.ricoTreeLevel0 {
+  font-weight: bold;
+  font-size: larger;
+}
+.ricoTreeBranch {
+  margin-left: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Rico Tree Example</h2>
+
+This example shows how the tree control can be embedded in a page (i.e. not a pop-up).
+In this case, it is used to navigate a hierarchy of links to Rico resources.
+Data for the tree is loaded via discrete javascript statements instead of AJAX.
+
+<p><div id='tree1' class='ricoTree'></div>
+
+</body>
+</html>
