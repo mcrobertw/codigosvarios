@@ -1,0 +1,12 @@
+<ajax-response>
+	<response type="element" id="mostrar">
+		<p>
+			<address>
+				Explorando rico.js y ajax
+			</address>
+		</p>
+	</response>
+	<response type="element" id="titular">
+		<h3>Qué buen programa para probar ajax en rico.js</h3>
+	</response>
+</ajax-response>
