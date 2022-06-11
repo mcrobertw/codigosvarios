@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Creación de aplicación basada en rico</title>
+	<title>Acceso con notación literal a los valores de un array</title>
 	<script>
 		function mostrandoArrayLiteral(){
 			var arreglo=['Andrea',"Lolie", true, null, 30];
