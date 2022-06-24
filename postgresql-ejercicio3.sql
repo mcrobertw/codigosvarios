@@ -95,8 +95,6 @@ begin
    end if;
    
   END IF;
-  
-  
 end
 $$
 language plpgsql
