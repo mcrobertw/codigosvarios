@@ -5,13 +5,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Javascript, mezclando objetos y arrays literales</title>
 	<script>
-		//Objeto que contiene un array
+		//Objeto que contiene dos arrays
 		var oCocheInfo={
 			"coloresDisponibles":["rojo","blanco","azul"],
 			"puertasDisponibles":[2,4]
 		};
 
-		//Array que contiene un objeto
+		//Array que contiene tres objetos
 		var aCoches=[
 			{"color":"rojo","puertas":2,"pagado":true},
 			{"color":"azul","puertas":4,"pagado":true},
