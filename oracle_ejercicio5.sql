@@ -52,7 +52,6 @@ insert into persona(idpersona,nombres,apellidos,genero,idpadre,idmadre)
     ) group by idpersona, nombres, apellidos order by numerohijos;
 
 
-
 ---Solución 2: Vía CURSOR
 DECLARE
   conteohijos number:=0;
