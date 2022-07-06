@@ -7,7 +7,7 @@
 	<scrip type="text/javascript" src="json2.js"></script>
 	<script>
 		var sJSON="{\"coloresDisponibles\":[\"rojo\",\"azul\"],\"puertasDisponibles\":[2,4]}"
-		//var oCocheInfo=eval("("+sJSON+")");
+
 		var oCocheInfo=JSON.parse(sJSON);
 		function sintaxisMostrarArray(){
 			alert(oCocheInfo.coloresDisponibles[0]); //Imprime "rojo"
