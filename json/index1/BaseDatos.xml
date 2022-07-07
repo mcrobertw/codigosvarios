@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<infoclase>
+	<estudiantes>
+		<estudiante>
+			<nombre>Miguel González</nombre>
+			<nota>9,5</nota>
+			<edad>17</edad>
+			<titulado>true</titulado>
+		</estudiante>
+		<estudiante>
+			<nombre>Esteban Jardiel</nombre>
+			<nota>3,87</nota>
+			<edad>17</edad>
+			<titulado>false</titulado>
+		</estudiante>
+		<estudiante>
+			<nombre>Rebeca Joven</nombre>
+			<nota>8,6</nota>
+			<edad>18</edad>
+			<titulado>true</titulado>
+		</estudiante>
+	</estudiantes>
+</infoclase>

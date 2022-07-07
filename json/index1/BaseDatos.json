@@ -1,0 +1,21 @@
+{
+    "infoclase": {
+        "estudiantes": [{
+                "nombre": "Miguel González",
+                "nota": 9.5,
+                "edad": 17,
+                "titulado": true
+            }, {
+                "nombre": "Esteban Jardiel",
+                "nota": 3.87,
+                "edad": 17,
+                "titulado": false
+            }, {
+                "nombre": "Rebeca Joven",
+                "nota": 8.6,
+                "edad": 18,
+                "titulado": true
+            }
+        ]
+    }
+}
