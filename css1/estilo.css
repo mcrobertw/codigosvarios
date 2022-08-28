@@ -1,0 +1,46 @@
+/*PARA MOSTRAR UN CUADRITO DE TEXTO CON COLOR******************************************************************/
+/*En equiteta "head", luego de "title"*/
+
+/*BODY.- Letra azul sobre fondo celeste obscuro*/
+body{
+	font: 16px normal arial, helvetica, verdana;
+	color: #660099;
+	background-color: #009999;
+}
+
+
+/*CLASS.- Sección de menus de una página, letras negras sobre fondo amarillo*/
+div.displaybox{
+			width: 150px;
+			background-color: #CC9900;
+			border: 2px solid #000000;
+			padding:10px;
+			font: 24p normal verdana, helvetica, arial, sans-serif;
+		}
+			
+/*Class.- para crear cajitas*/
+div.box{
+	width:  200px;
+	cursor: hand;
+	background-color:  #ffffff;
+	-moz-opacity: 0.6;
+	filter:  alpha(Opacity=60);
+	border:  1px solid #333333;
+}
+			
+/*Class.- para crear contenedor de cajitas*/
+div.simpleDropPanel{
+	width:  260px;
+	height: 180px;
+	background-color:  #ffffff;
+	padding:  5px;
+	border:  1px solid #333333;
+}
+
+div.simpleDropPanel2{
+	width:  260px;
+	height: 180px;
+	background-color:  #999999;
+	padding:  5px;
+	border:  1px solid #333333;
+}
