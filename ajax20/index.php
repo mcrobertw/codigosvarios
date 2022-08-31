@@ -28,7 +28,6 @@
 <body style="background-color: #006666">
 	<center>
 		<h1 style="color: #FFFF00">Función global Form de prototype.js</h1>
-		
 		<form id="miform">
 			<input type="text" id="textfield" name="textfield" value="me">
 			<br>
