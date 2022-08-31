@@ -16,9 +16,13 @@
 	<script language="JavaScript" type="text/javascript" src="prototype.js "></script>
 	<script language="JavaScript" type="text/javascript">
 		function utilizarFuncionGlobal_F(){
-			alert($F('checkfield'));
+			alert('Text es: '+$F('entrada1')+"\n"+
+					'Select es:'+$F('entrada2')+"\n"+
+					'Textfield es:'+$F('textfield')+"\n"+
+					'Areafield es:'+$F('areafield')+"\n"+
+					'Selectfield es:'+$F('selectfield')+"\n"+
+					'Checkfield es:'+$F('checkfield'));
 		}
-
 	</script>
 </head>
 <body style="background-color: #006666">
@@ -47,8 +51,6 @@
 		<form>
 			<input type="button" onclick="utilizarFuncionGlobal_F()" value="Usando Prototype.js">
 		</form>
-
-
-	</center>
+</center>
 </body>
 </html>
