@@ -2,13 +2,19 @@
 	header('Content-Type: text/xml');	//Generará el header XML
 	echo '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
 	echo '<response>';
-		$name=$_GET['name'];	//Recupera el nombre del usuario
-		$userNames=array('MAYRA','ROBERT','AMAIA','DANTE');
-		if(in_array(strtoupper($name), $userNames))
-			echo '&#161; Hola, integrante de la familia MOREIRA VILLAVICENCIO '.htmlspecialchars($name).'!';
-		else if(trim($name)=='')
-			echo 'Desconocido, dime tu nombre, por favor';
-		else
-			echo htmlspecialchars($name).', no te conozco';
+		$mejoresMarcasPortatil=array('MAC','ASUS','DELL');
+		if (isset($_GET['name']))
+		{
+			$name=$_GET['name'];	//Recupera el nombre del usuario
+			if(in_array(strtoupper($name), $mejoresMarcasPortatil))
+				echo '&#161; Hola, es una buena marca de portatiles las '.htmlspecialchars($name).'!';
+			else if(trim($name)=='')
+				echo 'Escriba una marca de portatiles que prefiera';
+			else
+				echo htmlspecialchars($name).', no he comprado máquinas de ese tipo, no las puedo calificar';
+		}
+		else {
+			echo "No marcas reconocidas";
+		}
 	echo '</response>';
 ?>
