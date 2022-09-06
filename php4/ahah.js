@@ -14,7 +14,6 @@ function llamarAHAHCliente(url,elementoPag,mensLlamada){
 			}
 		}
 	}
-
 	miPeticion.onreadystatechange=function(){manejarRespuestaAHAHServidor(elementoPag);};
 	miPeticion.open("GET", url, true);
 	miPeticion.send(null);
