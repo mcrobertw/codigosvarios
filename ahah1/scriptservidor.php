@@ -9,3 +9,4 @@
 		echo "No disponible metatag Description";
 	//var_dump($tags); Por si se quiere imprimir todos los meta de una página
 ?>
+
