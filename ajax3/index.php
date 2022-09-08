@@ -4,8 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
-	<script language="JavaScript" type="text/javascript">
-			
+	<script language="JavaScript" type="text/javascript">	
 			function getXMLHTTPRequest(){
 				try{
 						req=new XMLHttpRequest(); /*p.e. firefox*/
@@ -21,10 +20,7 @@
 						}
 				}
 				return req;
-
 			}
-
-			
 
 			function llamarAjax(){
 				var apellido=document.form1.minombre.value;//Declara una variable que contiene alguna información para pasar al servidor
@@ -36,7 +32,6 @@
 				miPeticion.send(null);
 			}
 
-			
 			function respuestaAjax(){//respuestaAjax
 				if(miPeticion.readyState == 4)
 				{
@@ -60,6 +55,5 @@
 				Teléfono: <input type='text' name='teln'><br>
 				<input type="submit">
 			</form>
-
 </body>
 </html>
