@@ -2,7 +2,7 @@ version: "20.10"
 services:
     DataBasePg:
         container_name: dbpg
-        image: postgres:12
+        image: postgres:13
         environment:
           - POSTGRES_DB=test
           - POSTGRES_USER=admin
@@ -19,7 +19,7 @@ services:
 
     DatabaseSqlServer:
         container_name: dbmssql
-        image: mcr.microsoft.com/mssql/server:2017-latest
+        image: mcr.microsoft.com/mssql/server:2019-latest
         environment:
           - ACCEPT_EULA=Y
           - MSSQL_SA_PASSWORD=12345678Pa@
