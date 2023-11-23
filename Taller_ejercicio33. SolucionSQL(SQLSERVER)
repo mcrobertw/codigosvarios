@@ -1,0 +1,30 @@
+---SQL Server
+--Inserción de registros
+
+INSERT INTO persona VALUES(1,'Luis','Moreira','M',null,null)
+insert into persona VALUES(2,'Carmen','Hidalgo','F',null,null) 
+insert into persona VALUES(3,'Gualberto','Centeno','M',null,null) 
+insert into persona VALUES(4,'Hermelinda','Ganchozo','F',null,null) 
+insert into persona VALUES(5,'Isabela','Moreira','F',1,null) 
+insert into persona VALUES(6,'Angela','Moreira','F',1,2) 
+insert into persona VALUES(7,'Wilfrido','Moreira','M',1,2) 
+insert into persona VALUES(8,'Auxiliadora','Centeno','F',3,4) 
+insert into persona VALUES(9,'Leonardo','Centeno','M',3,4) 
+insert into persona VALUES(10,'Doris','Veliz','M',null,null) 
+insert into persona VALUES(11,'Mayra','Villavicencio','F',null,null) 
+insert into persona VALUES(12,'Robert','Moreira','M',7,8) 
+insert into persona VALUES(13,'Jimena','Moreira','F',7,8)
+insert into persona VALUES(14,'Cesar','Valdiviezo','M',null,null) 
+insert into persona VALUES(15,'Adrián','Centeno','M',9,10) 
+insert into persona VALUES(16,'Amaia','Moreira','F',12,11) 
+insert into persona VALUES(17,'Dante','Moreira','M',12,11)
+insert into persona VALUES(18,'Abdiel','Valdiviezo','M',14,13) 
+insert into persona VALUES(19,'Cael','Valdiviezo','M',14,13) 
+
+--SubConsulta
+
+select idpersona, nombres, apellidos, sum(conteohijo) as numerohijo
+from (
+	select t1.idpersona, t1.nombres, t1.apellidos, case when t2.idpadre IS NOT NULL OR t2.idmadre IS NOT NULL then 1 else 0 end as conteohijo
+	from persona t1 LEFT JOIN persona t2 on t1.idpersona = t2.idpadre OR t1.idpersona = t2.idmadre) as consulta
+group by idpersona, nombres, apellidos order by numerohijo;

@@ -1,0 +1,29 @@
+--Inserción de registros
+insert into Persona(idpersona,nombres,apellidos,genero,idpadre,idmadre)
+values 
+           ('1','Luis','Moreira','M',null,null),
+           ('2','Carmen','Hidalgo','F',null,null),
+           ('3','Gualberto','Centeno','M',null,null),
+           ('4','Hermelinda','Ganchozo','F',null,null),
+           ('5','Isabela','Moreira','F',1,null),
+           ('6','Angela','Moreira','F',1,2),
+           ('7','Wilfrido','Moreira','M',1,2),
+           ('8','Auxiliadora','Centeno','F',3,4),
+           ('9','Leonardo','Centeno','M',3,4),
+           ('10','Doris','Veliz','M',null,null),
+           ('11','Mayra','Villavicencio','F',null,null),
+           ('12','Robert','Moreira','M',7,8),
+           ('13','Jimena','Moreira','F',7,8),
+           ('14','Cesar','Valdiviezo','M',null,null),
+           ('15','Adrián','Centeno','M',9,10),
+           ('16','Amaia','Moreira','F',12,11),
+           ('17','Dante','Moreira','M',12,11),
+           ('18','Abdiel','Valdiviezo','M',14,13),
+           ('19','Cael','Valdiviezo','M',14,13);
+select*from Persona;
+
+select t1.idpersona, t1.nombres, t1.apellidos, count(t2.idpersona) as numerohijo 
+from persona t1 
+left join persona t2 on t1.idpersona = t2.idpadre or t1.idpersona = t2.idmadre 
+group by t1.idpersona, t1.nombres, t1.apellidos 
+order by numerohijo;
