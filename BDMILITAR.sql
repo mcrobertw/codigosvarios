@@ -52,7 +52,7 @@ nombreprueba	varchar(40),
 codigoprueba	varchar(10),				
 categoriaprueba	varchar(20),				
 dscripcionprueba	varchar(100),				
-puntajeaprobatorio	numeric(2, 2)	default '7',			
+puntajeaprobatorio	numeric(4, 2)	default '7',			
 duracionminutos	int,				
 constraint chk_tipoprueba_categoriaprueba check (categoriaprueba IN ('Física','Teórica')),					
 constraint chk_tipoprueba_puntajeaprobatorio check(puntajeaprobatorio>=7 and puntajeaprobatorio<=10)					
