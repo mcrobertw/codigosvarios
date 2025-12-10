@@ -84,15 +84,22 @@ idbrigada	int	primary key,
 idmilitarencargado	int	not null,	
 nombrebrigada	varchar(50)	not null,	
 abreviaturabrigada	varchar(7),		
+insigniabrigada	varchar(255),		
+descripcionbrigada	varchar(150),		
+efectivostotales	int,		
+presupuesto	numeric(10,2),		
 tipobrigada	varchar(20),		
 estadooperativo	varchar(10)	not null default 'Activo',	
 ubicacionbrigada	varchar(200),		
 fechacreacionbrigada	date,		
-insigniabrigada	varchar(255),		
+fechainiciooperacionbrigada	date,		
+fechafinproyectadaoperacionbrigada	date,		
+fechafinrealoperacionbrigada	date,		
 constraint chk_brigada_tipobrigada check (tipobrigada IN ('Infantería','Mecanizada','Blindada','Acorazada','Paracaidista','Aerotransportada','Selva','Montaña','Anfibia')),			
 constraint fk_brigada_militar foreign key(idmilitarencargado) references militar(idmilitar),			
 constraint chk_brigada_estadooperativo check(estadooperativo in ('Activo', 'Inactivo')),			
-)						
+)			
+
 
 CREATE TABLE HISTORIALDOTACION(					
 idhistorialdotacion	int	primary key,			
@@ -184,19 +191,18 @@ constraint fk_historialascenso_rango foreign key(idrango) references rango(idran
 constraint chk_historialascenso_resultado check(resultado in ('aprobado', 'reprobado'))		
 )		
 
-CREATE TABLE HISTORIALBRIGADA(			
-ighistorialbrigada	int	primary key,	
-idbrigada	int	not null,	
-idmilitar	int	not null,	
-estado	varchar(20),		
-fechacreacion	date,		
-efectivostotales	int,		
-presupuesto	numeric(10,2),		
-descripcion	Varchar(150),		
-tipobrigada	Varchar(20),		
-fechainiciobrigada	date,		
-fechafinbrigada	date,		
-constraint fk_hstorialbrigada_brigada foreign key(idbrigada) references brigada(idbrigada),			
-constraint fk_historialbrigada_militar foreign key(idmilitar) references militar(idmilitar),			
-constraint fk_Historialbrigada_estado check (estado in ('activo', 'inactivo'))			
-)			
+CREATE TABLE HISTORIALBRIGADA(		
+ighistorialbrigada	int	primary key,
+idbrigada	int	not null,
+idmilitar	int	not null,
+estadomilitarbrigada	varchar(30),	
+funcionmilitar	varchar(250),	
+resultadofuncionmilitar	varchar(250),	
+ubicaciondelalabordelmilitar	varchar(80),	
+fechaingresomilitarbrigada	date,	
+fechasalidamilitarbrigada	date,	
+constraint fk_historialbrigada_brigada foreign key(idbrigada) references brigada(idbrigada),		
+constraint fk_historialbrigada_militar foreign key(idmilitar) references militar(idmilitar),		
+constraint fk_historialbrigada_estadomilitarbrigada check (estadomilitarbrigada in ('vacaciones', 'dado de baja','satisfactorio','renuncia','relevo','muerto en operaciones','muerte natural', 'otro')),		
+constraint fk_historialbrigada_ubicaciondelalabordelmilitar check (ubicaciondelalabordelmilitar in ('en campo', 'en oficina','otro'))		
+)		
